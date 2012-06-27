@@ -1,0 +1,8 @@
+## SECTION=initmethod_bbinit
+
+config LOADKMAP_BBINIT_STARTLINK
+	string
+	depends on LOADKMAP_STARTSCRIPT
+	prompt "loadkmap"
+	default "S98loadkmap"
+

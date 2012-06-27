@@ -1,0 +1,21 @@
+## SECTION=initmethod_bbinit
+
+config NTP_NTPD_BBINIT_STARTLINK
+	string
+	depends on NTP_NTPD_STARTSCRIPT
+	prompt "ntp"
+	default "S20ntp-server"
+
+config NTP_NTPD_BBINIT_STOPLINK
+	string
+	depends on NTP_NTPD_STARTSCRIPT
+	prompt "ntp"
+	default "K80ntp-server"
+
+config NTP_NTPC_BBINIT_LINK
+	string
+	depends on NTP_NTPC_STARTSCRIPT
+	prompt "ntpc"
+	default "S20ntp-client"
+
+

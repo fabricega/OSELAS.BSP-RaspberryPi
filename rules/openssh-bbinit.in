@@ -1,0 +1,13 @@
+## SECTION=initmethod_bbinit
+
+config OPENSSH_BBINIT_STARTLINK
+	string
+	depends on OPENSSH_SSHD_STARTSCRIPT
+	prompt "openssh"
+	default "S16openssh"
+
+config OPENSSH_BBINIT_STOPLINK
+	string
+	depends on OPENSSH_SSHD_STARTSCRIPT
+	prompt "openssh"
+	default "K83openssh"

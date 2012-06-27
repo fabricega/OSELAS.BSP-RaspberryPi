@@ -1,0 +1,28 @@
+## SECTION=rootfs
+
+menuconfig LOADKMAP
+	tristate
+	prompt "loadkmap                      "
+	select	BUSYBOX_LOADKMAP
+	help
+	  load keyboard layout
+
+if LOADKMAP
+
+config LOADKMAP_STARTSCRIPT
+	bool
+	prompt "install /etc/init.d/loadkmap"
+	default y
+	help
+	  install startup script
+
+config LOADKMAP_FILE
+	string
+	prompt "kmap file"
+	default "/etc/keybfr.kmap"
+	depends on LOADKMAP_STARTSCRIPT
+	help
+	  kmap file to load
+
+endif
+

@@ -1,0 +1,61 @@
+2011-11-16	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: using the current ptxdist-2011.11.0
+		* Platforms: use 2011.11.0 platform releases
+		* BSP: Release 2011.11.0
+
+2011-10-24	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: using the current ptxdist-2011.10.1
+
+2011-01-28	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: Continue development with GIT as the Revision Control
+		  System at:
+		  git://git.pengutronix.de/git/jbe/OSELAS.BSP-Pengutronix-Generic.git
+
+2011-01-28	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: using the current ptxdist-2011.01.0
+		* Platforms: are using the 2.6.32 and 2.6.37 kernels
+		* BSP: Release for ptxdist-2011.01.0
+
+2010-07-01	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: using the current ptxdist-2010.07.1
+
+2010-06-28	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: enable network support
+		  - configure 'lo' and 'eth0' interfaces
+		  - enable 'telnetd' at system start time
+
+2010-06-15	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP/Platforms: All parts back to the ptxdist
+		  development tree
+
+2010-06-14	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: using the current ptxdist-2010.06.1
+		* Platforms: using the current -4 releases
+		* BSP: The June release
+
+2010-05-20	Juergen Beisert <jbe@pengutronix.de>
+
+		* BSP: Add binary examples in accordance to our application note
+
+2010-01-08	Juergen Beisert <jbe@pengutronix.de>
+
+		* Platforms: Change to arm-qemu-3 and i586-qemu-3
+		* BSP: Release for ptxdist-2010.01.0
+
+2010-01-05	Juergen Beisert <jbe@pengutronix.de>
+
+		* Platforms: Adding the i586 generic platform
+		* Platforms: Change to arm-qemu-1 and i586-qemu-1
+
+2009-12-16	Juergen Beisert <jbe@pengutronix.de>
+
+		* Platforms: Adding the ARM versatile PB platform
+

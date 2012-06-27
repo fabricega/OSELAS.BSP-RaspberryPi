@@ -1,0 +1,38 @@
+Index: omxplayer-2ae29d7/omxplayer
+===================================================================
+--- omxplayer-2ae29d7.orig/omxplayer	2012-06-24 20:48:36.000000000 +0200
++++ omxplayer-2ae29d7/omxplayer	2012-06-24 20:49:52.000000000 +0200
+@@ -15,20 +15,20 @@
+   export LD_LIBRARY_PATH=$PWD/ffmpeg_compiled/usr/local/lib:/opt/vc/lib:$LD_LIBRARY_PATH
+ fi
+ 
+-XRES=1920
+-YRES=1080
++#XRES=1920
++#YRES=1080
+ 
+-XRES=1600
+-YRES=900
++#XRES=1600
++#YRES=900
+ 
+-if [ -e $FBSET ]; then
+-  echo 0 >  /sys/class/vtconsole/vtcon1/bind
+-  fbset -xres 1 -yres 1
+-fi
++#if [ -e $FBSET ]; then
++#  echo 0 >  /sys/class/vtconsole/vtcon1/bind
++#  fbset -xres 1 -yres 1
++#fi
+ 
+-./omxplayer.bin "$@"
++$OMXPLAYER "$@"
+ 
+-if [ -e $FBSET ]; then
+-  fbset -xres ${XRES} -yres ${YRES}
+-  echo 1 >  /sys/class/vtconsole/vtcon1/bind
+-fi
++#if [ -e $FBSET ]; then
++#  fbset -xres ${XRES} -yres ${YRES}
++#  echo 1 >  /sys/class/vtconsole/vtcon1/bind
++#fi

@@ -1,0 +1,29 @@
+From 6ea536e2ebdad7af8082d40623e6e2b4dd1af273 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sun, 27 May 2012 19:24:35 +0100
+Subject: [PATCH 50/74] remove unwanted file
+
+---
+ arch/arm/mach-bcm2708/power.c.rej |   10 ----------
+ 1 files changed, 0 insertions(+), 10 deletions(-)
+ delete mode 100644 arch/arm/mach-bcm2708/power.c.rej
+
+diff --git a/arch/arm/mach-bcm2708/power.c.rej b/arch/arm/mach-bcm2708/power.c.rej
+deleted file mode 100644
+index 2d4db0c..0000000
+--- a/arch/arm/mach-bcm2708/power.c.rej
++++ /dev/null
+@@ -1,10 +0,0 @@
+---- arch/arm/mach-bcm2708/power.c
+-+++ arch/arm/mach-bcm2708/power.c
+-@@ -163,6 +163,7 @@
+-    int i;
+- 
+-    printk(KERN_INFO "bcm_power: Broadcom power driver\n");
+-+   bcm_mailbox_write(MBOX_CHAN_POWER, 0);
+- 
+-    for (i = 0; i < BCM_POWER_MAXCLIENTS; i++)
+-        g_state.client_request[i] = BCM_POWER_NOCLIENT;
+-- 
+1.7.0.4
+

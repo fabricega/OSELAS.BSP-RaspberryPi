@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Stopping services ..."
+for k in /etc/rc.d/K*; do
+	if [ -x $k ]; then
+		$k stop
+	fi
+done

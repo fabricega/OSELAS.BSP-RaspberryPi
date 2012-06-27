@@ -1,0 +1,39 @@
+## SECTION=raspberry
+
+menuconfig FIRMWARE
+	tristate
+	prompt "firmware                      "
+	help
+	  pre-compiled binaries of the current Raspberry Pi 
+	  kernel and modules, userspace libraries, and
+	  bootloader/GPU firmware
+
+if FIRMWARE
+
+	comment "revision                   ---"
+	
+config FIRMWARE_VERSION
+	prompt "firmware version              "
+	string
+	default "fc0232ac463f0618914bab9314e8e2ae27466d8c"
+	help
+	  Enter here desired version from https://github.com/raspberrypi/firmware
+
+config FIRMWARE_MD5
+	prompt "firmware zip md5sum           "
+	string
+	default "cca0a030158516d25e036765dae819fa"
+	help
+	  Enter here md5sum of downloaded firmare-version.zip
+
+	comment "libraries                  ---"
+
+config FIRMWARE_GPULIBS
+	bool
+	prompt "gpu userspace libraries       "
+	default y
+	help
+	  install userspace libraries for GPU such as
+	  libEGL, libGLES, libOpenVG ...
+
+endif

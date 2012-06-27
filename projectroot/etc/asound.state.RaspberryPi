@@ -1,0 +1,39 @@
+state.ALSA {
+	control.1 {
+		iface MIXER
+		name 'PCM Playback Volume'
+		value -39
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '-10240 - 400'
+			tlv '0000000100000008ffffd80000010001'
+			dbmin -9999999
+			dbmax 400
+			dbvalue.0 -39
+		}
+	}
+	control.2 {
+		iface MIXER
+		name 'PCM Playback Switch'
+		value 0
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 1'
+		}
+	}
+	control.3 {
+		iface MIXER
+		name 'PCM Playback Route'
+		value 1
+		comment {
+			access 'read write'
+			type INTEGER
+			count 1
+			range '0 - 3'
+		}
+	}
+}

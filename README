@@ -1,0 +1,56 @@
+OSELAS.BSP-FG-Raspberry-2011.11.0:
+
+derived from: OSELAS.BSP-Pengutronix-Generic-2011.11.0
+
+This PTXdist[1] based project supports:
+
+- Raspberry Pi
+
+For further information please read the following documents (part of this
+archive):
+
+For the generic PC (x86 architecture):
+documentation/OSELAS.BSP-Pengutronix-Generic-x86-Quickstart.pdf
+
+For the "versatilepb" (ARM architecture):
+documentation/OSELAS.BSP-Pengutronix-Generic-arm-Quickstart.pdf
+
+More PTXdist related information can be found at [1].
+
+Enjoy!
+
+Your Pengutronix Development Team
+
+[1] http://www.pengutronix.de/software/ptxdist/index_en.html
+
+-----------------------------------
+Install guidelines :
+
+1 - install toolchain
+OSELAS.Toolchain-2011.11.1
+==========================
+
+OSELAS.Toolchain for Raspberry Pi
+
+First, install ptxdist-2011.11.0 and its dependencies:
+$ apt-get install ...
+$ wget ptxdist-2011.11.0.tar.bz2
+$ tar -xjvf ptxdist-2011.11.0.tar.bz2
+$ ./configure
+$ sudo make install
+
+Then, configure OSELAS.Toolchain-2011.11.1:
+$ cd OSELAS.Toolchain-2011.11.1
+$ ptxdist select ptxconfigs/arm-1176jzfs-linux-gnueabi_gcc-4.6.2_glibc-2.14.1_binutils-2.21.1a_kernel-2.6.39-sanitized.ptxconfig
+$ ptxdist go
+
+2 - prepare BSP, then GO
+==========================
+$ cd OSELAS.BSP-FG-Raspberry-2011.11.0:
+$ ptxdist select configs/ptxconfig
+$ ptxdist platform configs/raspberrypi-2011.11.0/platformconfig
+$ ptxdist toolchain /opt/OSELAS.Toolchain-2011.11.1/arm-1176jzfs-linux-gnueabi/gcc-4.6.2-glibc-2.14.1-binutils-2.21.1a-kernel-2.6.39-sanitized/bin
+$ ptxdist go
+$ ptxdist images
+
+

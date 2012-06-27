@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# loadkmap startup script
+# 
+# ubuntu tip to get kmap: sudo busybox dumpkmap > keybfr.kmap
+
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+KMAP=@KMAP@
+
+start() {			
+	echo -n "Loading kmap $KMAP... "
+	if loadkmap < $KMAP; then
+		echo "done."
+	else
+		echo "failed."
+	fi
+}
+
+
+case "$1" in
+start)
+	start
+	;;
+	
+*)
+  echo "Usage: /etc/init.d/$NTPCLIENT_CMD {start}"
+  exit 1
+esac
+
+exit 0

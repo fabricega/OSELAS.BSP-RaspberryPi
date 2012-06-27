@@ -1,0 +1,12 @@
+This directory is only required, if some local source files or other types
+of files are required to build the BSP's root filesystem.
+
+For this generic BSP its used to show ptxdist's binary files inclusion feature.
+
+If you derive your own BSP from this generic BSP, and you do not need such a
+feature, you can remove this directory and its content.
+
+You can find a description of this feature in our application note
+	    "How to become a ptxdist Guru"
+in chapter
+		"Adding Binaries"

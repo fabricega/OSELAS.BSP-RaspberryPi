@@ -1,0 +1,31 @@
+## SECTION=raspberry
+
+menuconfig OMXPLAYER
+	tristate
+	prompt "omxplayer                     "
+	select LIBPCRE
+	select FFMPEG
+	select FFMPEG_SHARED
+	select FIRMWARE
+	select FIRMWARE_GPULIBS
+	help
+	  FIXME
+
+if OMXPLAYER
+
+config OMXPLAYER_VERSION
+	prompt "omxplayer version             "
+	string
+	default "2ae29d7db7df029badf402939b76412fed798346"
+	help
+	  Enter here desired version from https://github.com/huceke/omxplayer
+
+config OMXPLAYER_MD5
+	prompt "src/omxplayer.zip md5sum      "
+	string
+	default ""
+	help
+	  Enter here md5sum of downloaded src/omxplayer-version.zip
+
+endif
+
