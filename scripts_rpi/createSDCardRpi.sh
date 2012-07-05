@@ -30,7 +30,7 @@ Usage: createSDCardRpi.sh /dev/sdx	[ -h ] \n	\n
 CMDLINE="dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"
 
 PTX_BSP=~/workspace/OSELAS.BSP-FG-Raspberry-2011.11.0
-FIRMWARE_LOC=$PTX_BSP/platform-RaspberryPi/build-target/firmware-fc0232ac463f0618914bab9314e8e2ae27466d8c
+FIRMWARE_LOC=$PTX_BSP/platform-RaspberryPi/build-target/firmware-0671d60180c8d10978b442de5ec9d083596a5f3f
 FIRMWARE_BOOT=$FIRMWARE_LOC/boot
 #images loc: Image, rootfs
 IMAGES_SRC=$PTX_BSP/platform-RaspberryPi/images

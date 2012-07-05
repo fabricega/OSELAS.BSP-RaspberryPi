@@ -72,3 +72,13 @@
 0072-Explicitly-set-usb-host-channels-to-8-as-in-the-spec.patch
 0073-Add-hfs-hfsplus-modules.patch
 0074-Remove-silence-method-and-use-atomic-flags-for-kmall.patch
+0075-Fix-unintended-line-swap-that-cause-cause-memory-lea.patch
+0076-Use-ndelay-rather-than-udelay.-Thanks-lb.patch
+0077-Add-NFSD.-Add-some-dvb-options.-Add-CONFIG_LOCALVERS.patch
+0078-Fixed-issue-with-some-keyboards-giving-too-much-data.patch
+0079-Add-802.1q-vlan-module.patch
+0080-Add-interrupt-support-to-gpio-driver.-Thanks-Mrkva.patch
+0081-Add-a-pm_power_off-function-that-resets-us-and-indic.patch
+0082-Store-palette-info-where-GPU-can-see-it-so-8bpp-mode.patch
+0083-Avoid-blanking-console-when-not-in-palettised-mode.patch
+
