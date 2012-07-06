@@ -1,0 +1,17 @@
+## SECTION=project
+
+menuconfig ECOWATT
+	tristate
+	depends on GDC
+	prompt "ecowatt                   "
+	help
+	  permet de recuperer les infos de l'ecowatt de chacon par usb
+
+if ECOWATT
+
+config ECOWATT_GDC
+	bool "ecowatt gdc plugin"
+	select GNUPLOT
+	help
+	   permet de d'afficher les infos de l'ecowatt dans les pages web de gdc
+endif
