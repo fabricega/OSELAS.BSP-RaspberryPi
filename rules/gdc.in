@@ -1,0 +1,11 @@
+## SECTION=project
+
+config GDC
+	bool
+	select PHP5
+	prompt "php datacenter                   "
+	help
+	  php datacenter permet de mettre en place une interface web permettant de recevoir 
+	  et afficher des infos diverses
+
+

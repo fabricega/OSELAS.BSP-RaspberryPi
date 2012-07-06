@@ -109,6 +109,10 @@ menu "Test Suites                   "
 source "generated/test_suites.in"
 endmenu
 
+menu "Project Specific Configuration"
+source "generated/project.in"
+endmenu
+
 #menu "Development Tools             "
 #source "generated/development.in"
 #endmenu
