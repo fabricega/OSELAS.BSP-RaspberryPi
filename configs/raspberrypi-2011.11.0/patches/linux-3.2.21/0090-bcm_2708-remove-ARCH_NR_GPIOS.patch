@@ -1,0 +1,25 @@
+From f57e28262d788e2c9e5234e4d6eacc570a7508f2 Mon Sep 17 00:00:00 2001
+From: Selsinork <selsinork@gmail.com>
+Date: Sun, 17 Jun 2012 16:40:24 +0100
+Subject: [PATCH 90/95] bcm_2708: remove ARCH_NR_GPIOS
+
+ARCH_NR_GPIOS is a subsystem bug. Remove it.
+---
+ arch/arm/mach-bcm2708/include/mach/gpio.h |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/include/mach/gpio.h b/arch/arm/mach-bcm2708/include/mach/gpio.h
+index 5965d0c..7a87089 100644
+--- a/arch/arm/mach-bcm2708/include/mach/gpio.h
++++ b/arch/arm/mach-bcm2708/include/mach/gpio.h
+@@ -9,7 +9,6 @@
+ #ifndef __ASM_ARCH_GPIO_H
+ #define __ASM_ARCH_GPIO_H
+ 
+-#define ARCH_NR_GPIOS 54 // number of gpio lines
+ #define BCM_NR_GPIOS 54 // number of gpio lines
+ 
+ #include <asm-generic/gpio.h>
+-- 
+1.7.0.4
+

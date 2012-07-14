@@ -1,0 +1,31 @@
+From 5b58aff5248c846cb1f4347342fb00543ac2b129 Mon Sep 17 00:00:00 2001
+From: Iain Paton <selsinork@gmail.com>
+Date: Mon, 11 Jun 2012 18:38:25 +0100
+Subject: [PATCH 80/95] sdhci: disable 1.8v modes when voltage_broken is set
+
+this is the last hunk from
+https://github.com/raspberrypi/linux/commit/7e8ae226fe6e95954df6b0dcdde40a53dbbc1a0b
+---
+ drivers/mmc/host/sdhci.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index e147db2..4cfad2e 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2927,8 +2927,11 @@ int sdhci_add_host(struct sdhci_host *host)
+ 			mmc->caps |= MMC_CAP_MAX_CURRENT_200;
+ 	}
+ 
+-	if(host->ops->voltage_broken)
++	if(host->ops->voltage_broken) {
+ 		ocr_avail |= MMC_VDD_29_30 | MMC_VDD_30_31;
++		// Cannot support UHS modes is we are stuck at 3.3V;
++		mmc->caps &= ~(MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 | MMC_CAP_UHS_SDR104 | MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_DDR50);
++	}
+ 
+ 	mmc->ocr_avail = ocr_avail;
+ 	mmc->ocr_avail_sdio = ocr_avail;
+-- 
+1.7.0.4
+

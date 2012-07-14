@@ -1,0 +1,39 @@
+From 54fd0f59ca60af584a90be6c49c9792204baf23c Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Thu, 17 May 2012 22:24:59 +0100
+Subject: [PATCH 62/95] spi-bcm2708: don't release chipsel when not asked to
+
+We currently assert the appropriate CS line and tear it down again after
+each transfer. What we really want to do is keep the CS line active for
+all transfers unless we are specifically asked to deassert with struct
+spi_transfer->cs_change, or we finish the last transfer in a message.
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ drivers/spi/spi-bcm2708.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-bcm2708.c b/drivers/spi/spi-bcm2708.c
+index 5f95373..0e92a60 100644
+--- a/drivers/spi/spi-bcm2708.c
++++ b/drivers/spi/spi-bcm2708.c
+@@ -238,11 +238,14 @@ static int bcm2708_process_transfer(struct bcm2708_spi *bs,
+ 		cs = bcm2708_rd(bs, SPI_CS);
+ 	} while (!(cs & SPI_CS_DONE));
+ 
+-	bcm2708_wr(bs, SPI_CS, SPI_CS_REN);
+-
+ 	if (xfer->delay_usecs)
+ 		udelay(xfer->delay_usecs);
+ 
++	if (list_is_last(&xfer->transfer_list, &msg->transfers) ||
++			xfer->cs_change) {
++		bcm2708_wr(bs, SPI_CS, cs & ~SPI_CS_TA);
++	}
++
+ 	msg->actual_length += xfer->len;
+ 
+ 	return 0;
+-- 
+1.7.0.4
+

@@ -1,0 +1,24 @@
+From 7ee1fe22e719620fbd49f474699fb355dc49179e Mon Sep 17 00:00:00 2001
+From: Simon Arlott <sa.me.uk>
+Date: Mon, 21 May 2012 22:27:46 +0100
+Subject: [PATCH 68/95] mach-bcm2708: disable power to peripherals at boot
+
+---
+ arch/arm/mach-bcm2708/power.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/power.c b/arch/arm/mach-bcm2708/power.c
+index 0c08678..d147bb6 100644
+--- a/arch/arm/mach-bcm2708/power.c
++++ b/arch/arm/mach-bcm2708/power.c
+@@ -161,6 +161,7 @@ static int __init bcm_power_init(void)
+ 	int i;
+ 
+ 	printk(KERN_INFO "bcm_power: Broadcom power driver\n");
++	bcm_mailbox_write(MBOX_CHAN_POWER, 0);
+ 
+ 	for (i = 0; i < BCM_POWER_MAXCLIENTS; i++)
+ 		g_state.client_request[i] = BCM_POWER_NOCLIENT;
+-- 
+1.7.0.4
+

@@ -1,0 +1,44 @@
+From b5ff2509404f93afeb4208b18a085c439e6648c2 Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Thu, 17 May 2012 22:24:23 +0100
+Subject: [PATCH 61/95] spi-bcm2708: replace u8 with bool
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ drivers/spi/spi-bcm2708.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/spi/spi-bcm2708.c b/drivers/spi/spi-bcm2708.c
+index 2db076e..5f95373 100644
+--- a/drivers/spi/spi-bcm2708.c
++++ b/drivers/spi/spi-bcm2708.c
+@@ -75,7 +75,7 @@ struct bcm2708_spi {
+ 	void __iomem *base;
+ 	int irq;
+ 	struct clk *clk;
+-	u8 stopping;
++	bool stopping;
+ 
+ 	struct list_head queue;
+ 	struct workqueue_struct *workq;
+@@ -431,7 +431,7 @@ static int __devinit bcm2708_spi_probe(struct platform_device *pdev)
+ 
+ 	bs->irq = irq;
+ 	bs->clk = clk;
+-	bs->stopping = 0;
++	bs->stopping = false;
+ 
+ 	err = request_irq(irq, bcm2708_spi_interrupt, 0, dev_name(&pdev->dev),
+ 			master);
+@@ -475,7 +475,7 @@ static int __devexit bcm2708_spi_remove(struct platform_device *pdev)
+ 
+ 	/* reset the hardware and block queue progress */
+ 	spin_lock_irq(&bs->lock);
+-	bs->stopping = 1;
++	bs->stopping = true;
+ 	bcm2708_wr(bs, SPI_CS, SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX);
+ 	spin_unlock_irq(&bs->lock);
+ 
+-- 
+1.7.0.4
+

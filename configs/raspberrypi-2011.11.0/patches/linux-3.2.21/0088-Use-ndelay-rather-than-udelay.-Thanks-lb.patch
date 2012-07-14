@@ -1,0 +1,33 @@
+From a1f8d7a26ecbac6f3e4cec0779045a83eeae8470 Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Sat, 23 Jun 2012 10:53:43 +0100
+Subject: [PATCH 88/95] Use ndelay rather than udelay. Thanks lb
+
+---
+ drivers/mmc/host/sdhci-bcm2708.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-bcm2708.c b/drivers/mmc/host/sdhci-bcm2708.c
+index 934a056..e383cc8 100644
+--- a/drivers/mmc/host/sdhci-bcm2708.c
++++ b/drivers/mmc/host/sdhci-bcm2708.c
+@@ -248,14 +248,14 @@ static void sdhci_bcm2708_raw_writel(struct sdhci_host *host, u32 val, int reg)
+ 		if (now == last_write_hpt || now == last_write_hpt+1) {
+ 			 /* we can't guarantee any significant time has
+ 			  * passed - we'll have to wait anyway ! */
+-			udelay((ns_2clk+1000-1)/1000);
++			ndelay(ns_2clk);
+ 		} else
+ 		{
+ 			/* we must have waited at least this many ns: */
+ 			unsigned int ns_wait = HPTIME_CLK_NS *
+ 					       (last_write_hpt - now - 1);
+ 			if (ns_wait < ns_2clk)
+-				udelay((ns_2clk-ns_wait+500)/1000);
++				ndelay(ns_2clk - ns_wait);
+ 		}
+ 		last_write_hpt = now;
+ 	}
+-- 
+1.7.0.4
+

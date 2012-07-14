@@ -1,0 +1,160 @@
+From f7166ae2644743ddbe168578db4333c6a466a037 Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Tue, 8 May 2012 14:51:16 +0100
+Subject: [PATCH 50/95] bcm2708: update for 3.2 kernel
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ arch/arm/Kconfig                                 |    2 +
+ arch/arm/Kconfig.debug                           |    8 +++++++
+ arch/arm/mach-bcm2708/bcm2708.c                  |   23 +++++++++++++++------
+ arch/arm/mach-bcm2708/include/mach/debug-macro.S |    2 +-
+ arch/arm/mach-bcm2708/include/mach/memory.h      |   10 ++++----
+ 5 files changed, 32 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 39b3d55..98ea27e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -960,6 +960,8 @@ config ARCH_BCM2708
+ 	select CPU_V6
+ 	select ARM_AMBA
+ 	select HAVE_CLK
++	select HAVE_SCHED_CLOCK
++	select NEED_MACH_MEMORY_H
+ 	select CLKDEV_LOOKUP
+ 	select GENERIC_CLOCKEVENTS
+ 	select ARM_ERRATA_411920
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index c5213e7..5e58b8f 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -247,6 +247,14 @@ choice
+ 		  their output to the standard serial port on the RealView
+ 		  PB1176 platform.
+ 
++	config DEBUG_BCM2708_UART0
++		bool "Broadcom BCM2708 UART0 (PL011)"
++		depends on MACH_BCM2708
++		help
++		  Say Y here if you want the debug print routines to direct
++		  their output to UART 0. The port must have been initialised
++		  by the boot-loader before use.
++
+ endchoice
+ 
+ config EARLY_PRINTK
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index bc2362f..bace1a1 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -23,7 +23,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/serial_8250.h>
+ #include <linux/platform_device.h>
+-#include <linux/sysdev.h>
++#include <linux/syscore_ops.h>
+ #include <linux/interrupt.h>
+ #include <linux/amba/bus.h>
+ #include <linux/amba/clcd.h>
+@@ -33,16 +33,13 @@
+ #include <linux/module.h>
+ 
+ #include <linux/version.h>
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ #include <linux/clkdev.h>
+-#else
+-#include <asm/clkdev.h>
+-#endif
+ #include <asm/system.h>
+ #include <mach/hardware.h>
+ #include <asm/irq.h>
+ #include <linux/leds.h>
+ #include <asm/mach-types.h>
++#include <asm/sched_clock.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/flash.h>
+@@ -70,6 +67,8 @@
+  */
+ #define DMA_MASK_BITS_COMMON 32
+ 
++static DEFINE_CLOCK_DATA(cd);
++
+ /* command line parameters */
+ static unsigned boardrev, serial;
+ 
+@@ -173,8 +172,15 @@ static void __init bcm2708_clocksource_init(void)
+ 
+ unsigned long long sched_clock(void)
+ {
+-	return clocksource_cyc2ns(clocksource_stc.read(&clocksource_stc),
+-				  clocksource_stc.mult, clocksource_stc.shift);
++	u32 cyc = clocksource_stc.read(&clocksource_stc);
++	return cyc_to_fixed_sched_clock(&cd, cyc, clocksource_stc.mask,
++			clocksource_stc.mult, clocksource_stc.shift);
++}
++
++static void notrace bcm2708_update_sched_clock(void)
++{
++	u32 cyc = clocksource_stc.read(&clocksource_stc);
++	update_sched_clock(&cd, cyc, clocksource_stc.mask);
+ }
+ 
+ /*
+@@ -591,6 +597,9 @@ static void __init bcm2708_timer_init(void)
+ 	 */
+ 	setup_irq(IRQ_TIMER3, &bcm2708_timer_irq);
+ 
++	init_fixed_sched_clock(&cd, bcm2708_update_sched_clock, 32,
++		STC_FREQ_HZ, clocksource_stc.mult, clocksource_stc.shift);
++
+ 	timer0_clockevent.mult =
+ 	    div_sc(STC_FREQ_HZ, NSEC_PER_SEC, timer0_clockevent.shift);
+ 	timer0_clockevent.max_delta_ns =
+diff --git a/arch/arm/mach-bcm2708/include/mach/debug-macro.S b/arch/arm/mach-bcm2708/include/mach/debug-macro.S
+index 88229d8..2d0dc1c 100644
+--- a/arch/arm/mach-bcm2708/include/mach/debug-macro.S
++++ b/arch/arm/mach-bcm2708/include/mach/debug-macro.S
+@@ -14,7 +14,7 @@
+ 
+ #include <mach/platform.h>
+ 
+-		.macro	addruart, rp, rv
++		.macro	addruart, rp, rv, tmp
+ 		ldr	\rp, =UART0_BASE
+ 		ldr	\rv, =IO_ADDRESS(UART0_BASE)
+ 		.endm
+diff --git a/arch/arm/mach-bcm2708/include/mach/memory.h b/arch/arm/mach-bcm2708/include/mach/memory.h
+index b855d85..5d47513 100644
+--- a/arch/arm/mach-bcm2708/include/mach/memory.h
++++ b/arch/arm/mach-bcm2708/include/mach/memory.h
+@@ -32,8 +32,8 @@
+ /*
+  * Physical DRAM offset.
+  */
+-#define PHYS_OFFSET	 UL(0x00000000)
+-#define ARMMEM_OFFSET    UL(0x00000000)   /* offset in VC of ARM memory */
++#define PLAT_PHYS_OFFSET	UL(0x00000000)
++#define VC_ARMMEM_OFFSET	UL(0x00000000)   /* offset in VC of ARM memory */
+ 
+ #ifdef CONFIG_BCM2708_NOL2CACHE
+  #define _REAL_BUS_OFFSET UL(0xC0000000)   /* don't use L1 or L2 caches */
+@@ -48,11 +48,11 @@
+  * WARNING: this only works because the ARM is given memory at a fixed location
+  *          (ARMMEM_OFFSET)
+  */
+-#define BUS_OFFSET          (ARMMEM_OFFSET + _REAL_BUS_OFFSET)
++#define BUS_OFFSET          (VC_ARMMEM_OFFSET + _REAL_BUS_OFFSET)
+ #define __virt_to_bus(x)    ((x) + (BUS_OFFSET - PAGE_OFFSET))
+ #define __bus_to_virt(x)    ((x) - (BUS_OFFSET - PAGE_OFFSET))
+-#define __pfn_to_bus(x)     (__pfn_to_phys(x) + (BUS_OFFSET - PHYS_OFFSET))
+-#define __bus_to_pfn(x)     __phys_to_pfn((x) - (BUS_OFFSET - PHYS_OFFSET))
++#define __pfn_to_bus(x)     (__pfn_to_phys(x) + (BUS_OFFSET - PLAT_PHYS_OFFSET))
++#define __bus_to_pfn(x)     __phys_to_pfn((x) - (BUS_OFFSET - PLAT_PHYS_OFFSET))
+ 
+ /*
+  * Consistent DMA area set to 2M. Framebuffer now allocated on host
+-- 
+1.7.0.4
+

@@ -1,0 +1,27 @@
+From e6c795e25b3e30682a0b1d02d24ea1b177760598 Mon Sep 17 00:00:00 2001
+From: Selsinork <selsinork@gmail.com>
+Date: Sun, 1 Jul 2012 14:52:30 +0100
+Subject: [PATCH 92/95] bcm2708: allow gpio interrupts to actually work
+
+gpio_to_irq is provided as a generic function by gpiolib now, so we must
+override it with our own version to prevent an infinite recursive loop
+---
+ arch/arm/mach-bcm2708/include/mach/gpio.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/include/mach/gpio.h b/arch/arm/mach-bcm2708/include/mach/gpio.h
+index 6e64bae..034d169 100644
+--- a/arch/arm/mach-bcm2708/include/mach/gpio.h
++++ b/arch/arm/mach-bcm2708/include/mach/gpio.h
+@@ -40,6 +40,8 @@ static inline unsigned irq_to_gpio(unsigned irq) {
+ static inline unsigned gpio_to_irq(unsigned gpio) {
+ 	return GPIO_IRQ_START+gpio;
+ }
++#define gpio_to_irq gpio_to_irq
++
+ #endif /* CONFIG_GPIOLIB */
+ 
+ #endif
+-- 
+1.7.0.4
+

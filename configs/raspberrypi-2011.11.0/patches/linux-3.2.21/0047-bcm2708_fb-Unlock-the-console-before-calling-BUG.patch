@@ -1,0 +1,39 @@
+From 849ad43d98556fd37d007d9f178454ae748aa4c1 Mon Sep 17 00:00:00 2001
+From: Simon Arlott <sa.me.uk>
+Date: Sun, 6 May 2012 18:58:57 +0100
+Subject: [PATCH 47/95] bcm2708_fb: Unlock the console before calling BUG()
+
+---
+ drivers/video/bcm2708_fb.c |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/video/bcm2708_fb.c b/drivers/video/bcm2708_fb.c
+index ff1fffc..797bee0 100644
+--- a/drivers/video/bcm2708_fb.c
++++ b/drivers/video/bcm2708_fb.c
+@@ -27,6 +27,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+ #include <linux/printk.h>
++#include <linux/console.h>
+ 
+ #include <mach/platform.h>
+ #include <mach/vcio.h>
+@@ -243,8 +244,13 @@ static int bcm2708_fb_set_par(struct fb_info *info)
+ 			iounmap(fb->fb.screen_base);
+ 		fb->fb.screen_base =
+ 			(void *)ioremap_wc(fb->fb.fix.smem_start, fb->fb.screen_size);
+-		if (!fb->fb.screen_base)
++		if (!fb->fb.screen_base) {
++			/* the console may currently be locked */
++			console_trylock();
++			console_unlock();
++
+ 			BUG();		/* what can we do here */
++		}
+ 	}
+ 	pr_info
+ 	    ("BCM2708FB: start = %p,%p width=%d, height=%d, bpp=%d, pitch=%d size=%d success=%d\n",
+-- 
+1.7.0.4
+

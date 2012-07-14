@@ -1,0 +1,44 @@
+From e2ae195799af60c84c362f50e6df36b2e4c86d16 Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Mon, 7 May 2012 11:17:52 +0100
+Subject: [PATCH 43/95] mach-bcm2708: Move AMBA clock constant to mach/platform.h
+
+We'll be using this in future patches for setting up the UART early.
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ arch/arm/mach-bcm2708/bcm2708.c               |    2 +-
+ arch/arm/mach-bcm2708/include/mach/platform.h |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 54476fc..bc2362f 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -181,7 +181,7 @@ unsigned long long sched_clock(void)
+  * These are fixed clocks.
+  */
+ static struct clk ref24_clk = {
+-	.rate = 3000000,	/* The UART is clocked at 3MHz via APB_CLK */
++	.rate = UART0_CLOCK,	/* The UART is clocked at 3MHz via APB_CLK */
+ };
+ 
+ static struct clk osc_clk = {
+diff --git a/arch/arm/mach-bcm2708/include/mach/platform.h b/arch/arm/mach-bcm2708/include/mach/platform.h
+index 5cb1caa..bfef96b 100644
+--- a/arch/arm/mach-bcm2708/include/mach/platform.h
++++ b/arch/arm/mach-bcm2708/include/mach/platform.h
+@@ -201,8 +201,8 @@
+ #define PM_RSTC_WRCFG_FULL_RESET       0x00000020
+ #define PM_RSTC_RESET			0x00000102
+ 
+-
+-
++/* AMBA UART clock */
++#define UART0_CLOCK			3000000
+ 
+ 
+ #endif
+-- 
+1.7.0.4
+

@@ -1,0 +1,31 @@
+From 6d4de1b6c2f1df39b813ab951810ac4b6997e7ab Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Thu, 31 May 2012 12:38:55 +0100
+Subject: [PATCH 72/95] i2c-bcm2708: clean up IRQ handler a little
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ drivers/i2c/busses/i2c-bcm2708.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-bcm2708.c b/drivers/i2c/busses/i2c-bcm2708.c
+index ebc8ad7..5ec460f 100644
+--- a/drivers/i2c/busses/i2c-bcm2708.c
++++ b/drivers/i2c/busses/i2c-bcm2708.c
+@@ -164,12 +164,11 @@ static inline void bcm2708_bsc_setup(struct bcm2708_i2c *bi)
+ static irqreturn_t bcm2708_i2c_interrupt(int irq, void *dev_id)
+ {
+ 	struct bcm2708_i2c *bi = dev_id;
+-	bool handled = false;
++	bool handled = true;
+ 	u32 s;
+ 
+ 	spin_lock(&bi->lock);
+ 
+-	handled = true;
+ 	s = bcm2708_rd(bi, BSC_S);
+ 
+ 	if (s & (BSC_S_CLKT | BSC_S_ERR)) {
+-- 
+1.7.0.4
+

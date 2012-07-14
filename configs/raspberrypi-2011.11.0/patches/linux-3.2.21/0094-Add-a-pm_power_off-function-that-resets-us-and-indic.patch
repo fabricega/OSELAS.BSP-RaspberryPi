@@ -1,0 +1,81 @@
+From 7cd7afef368ef490294eec512fad4fd0005360b9 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 30 Jun 2012 16:07:18 +0100
+Subject: [PATCH 94/95] Add a pm_power_off function that resets us, and indicates to bootcode.bin not to reboot us. Should allow a lower power 'off' state
+
+Conflicts:
+
+	arch/arm/mach-bcm2708/include/mach/platform.h
+---
+ arch/arm/mach-bcm2708/bcm2708.c               |   14 ++++++++++++++
+ arch/arm/mach-bcm2708/include/mach/platform.h |   11 +++++++++++
+ 2 files changed, 25 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 0207807..92ad46e 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -51,6 +51,7 @@
+ #include <mach/timex.h>
+ #include <mach/dma.h>
+ #include <mach/vcio.h>
++#include <mach/system.h>
+ 
+ #include "bcm2708.h"
+ #include "armctrl.h"
+@@ -560,10 +561,23 @@ int __init bcm_register_device(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++/* We can't really power off, but if we do the normal reset scheme, and indicate to bootcode.bin not to reboot, then most of the chip will be powered off */
++static void bcm2708_power_off(void)
++{
++	/* we set the watchdog hard reset bit here to distinguish this reset from the normal (full) reset. bootcode.bin will not reboot after a hard reset */
++	uint32_t pm_rsts = readl(IO_ADDRESS(PM_RSTS));
++	pm_rsts = PM_PASSWORD | (pm_rsts & PM_RSTC_WRCFG_CLR) | PM_RSTS_HADWRH_SET;
++	writel(pm_rsts, IO_ADDRESS(PM_RSTS));
++	/* continue with normal reset mechanism */
++	arch_reset(0, "");
++}
++
+ void __init bcm2708_init(void)
+ {
+ 	int i;
+ 
++	pm_power_off = bcm2708_power_off;
++
+ 	for (i = 0; i < ARRAY_SIZE(lookups); i++)
+ 		clkdev_add(&lookups[i]);
+ 
+diff --git a/arch/arm/mach-bcm2708/include/mach/platform.h b/arch/arm/mach-bcm2708/include/mach/platform.h
+index d038597..b16f61f 100644
+--- a/arch/arm/mach-bcm2708/include/mach/platform.h
++++ b/arch/arm/mach-bcm2708/include/mach/platform.h
+@@ -194,6 +194,7 @@
+  * Watchdog
+  */
+ #define PM_RSTC			       (PM_BASE+0x1c)
++#define PM_RSTS			       (PM_BASE+0x20)
+ #define PM_WDOG			       (PM_BASE+0x24)
+ 
+ #define PM_WDOG_RESET                                         0000000000
+@@ -207,6 +208,16 @@
+ /* AMBA UART clock */
+ #define UART0_CLOCK			3000000
+ 
++#define PM_RSTS_HADPOR_SET                                 0x00001000
++#define PM_RSTS_HADSRH_SET                                 0x00000400
++#define PM_RSTS_HADSRF_SET                                 0x00000200
++#define PM_RSTS_HADSRQ_SET                                 0x00000100
++#define PM_RSTS_HADWRH_SET                                 0x00000040
++#define PM_RSTS_HADWRF_SET                                 0x00000020
++#define PM_RSTS_HADWRQ_SET                                 0x00000010
++#define PM_RSTS_HADDRH_SET                                 0x00000004
++#define PM_RSTS_HADDRF_SET                                 0x00000002
++#define PM_RSTS_HADDRQ_SET                                 0x00000001
+ 
+ #endif
+ 
+-- 
+1.7.0.4
+

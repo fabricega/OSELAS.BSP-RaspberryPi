@@ -1,0 +1,32 @@
+From b60ffc0ca95036f83d5206ff9753df4ed5608855 Mon Sep 17 00:00:00 2001
+From: Chris Boot <bootc@bootc.net>
+Date: Sat, 19 May 2012 21:43:42 +0100
+Subject: [PATCH 66/95] i2c-bcm2708: fix stupid mistake
+
+This makes it actually work.
+
+Signed-off-by: Chris Boot <bootc@bootc.net>
+---
+ drivers/i2c/busses/i2c-bcm2708.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-bcm2708.c b/drivers/i2c/busses/i2c-bcm2708.c
+index 5e9ff55..47287fb 100644
+--- a/drivers/i2c/busses/i2c-bcm2708.c
++++ b/drivers/i2c/busses/i2c-bcm2708.c
+@@ -166,6 +166,12 @@ static irqreturn_t bcm2708_i2c_interrupt(int irq, void *dev_id)
+ 	} else if (s & BSC_S_DONE) {
+ 		bi->nmsgs--;
+ 
++		/* drain the RX FIFO */
++		while (s & BSC_S_RXD) {
++			msg->buf[bi->pos++] = bcm2708_rd(bi, BSC_FIFO);
++			s = bcm2708_rd(bi, BSC_S);
++		};
++
+ 		bcm2708_bsc_reset(bi);
+ 
+ 		if (bi->nmsgs) {
+-- 
+1.7.0.4
+
