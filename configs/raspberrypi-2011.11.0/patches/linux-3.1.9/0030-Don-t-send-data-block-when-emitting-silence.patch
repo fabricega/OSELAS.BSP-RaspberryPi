@@ -1,7 +1,7 @@
 From c2c4cb25fd8d42671eeed6d96e541b62c776fe36 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 17 Apr 2012 00:33:10 +0100
-Subject: [PATCH 30/74] Don't send data block when emitting silence
+Subject: [PATCH 30/94] Don't send data block when emitting silence
 
 ---
  sound/arm/bcm2835-vchiq.c |   31 ++++++++++++++++++-------------

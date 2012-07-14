@@ -1,7 +1,7 @@
 From 6ea536e2ebdad7af8082d40623e6e2b4dd1af273 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 27 May 2012 19:24:35 +0100
-Subject: [PATCH 50/74] remove unwanted file
+Subject: [PATCH 50/94] remove unwanted file
 
 ---
  arch/arm/mach-bcm2708/power.c.rej |   10 ----------

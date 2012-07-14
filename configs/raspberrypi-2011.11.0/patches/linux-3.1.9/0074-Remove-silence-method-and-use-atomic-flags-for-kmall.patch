@@ -1,7 +1,7 @@
 From d2743760a691469cebfa3bc23cedb62c38388380 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 21 Jun 2012 01:31:08 +0100
-Subject: [PATCH 74/74] Remove silence method, and use atomic flags for kmalloc
+Subject: [PATCH 74/94] Remove silence method, and use atomic flags for kmalloc
 
 ---
  sound/arm/bcm2835-pcm.c   |   24 ------------------------

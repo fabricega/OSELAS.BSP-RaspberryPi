@@ -1,7 +1,7 @@
 From 98be24ac73ff6d8608ed858cd64e870479f67780 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Sun, 12 Feb 2012 20:27:35 +0000
-Subject: [PATCH 10/74] Add config option to enable L2 cache
+Subject: [PATCH 10/94] Add config option to enable L2 cache
 
 Signed-off-by: Dom Cobley <dc4@broadcom.com>
 ---

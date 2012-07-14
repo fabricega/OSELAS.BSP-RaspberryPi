@@ -1,7 +1,7 @@
 From a10fa263ccfe0fb14efba079343a8c6c71283a70 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 29 May 2012 00:04:15 +0100
-Subject: [PATCH 51/74] Enable PREEMPT and SCHED_AUTOGROUP
+Subject: [PATCH 51/94] Enable PREEMPT and SCHED_AUTOGROUP
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    4 ++++

@@ -1,7 +1,7 @@
 From 54afb78fc4a5fe9f14fd2dcd0bc83d84ee9d9d3b Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 26 Mar 2012 22:10:01 +0100
-Subject: [PATCH 20/74] Update to match latest vc side vchiq. Allows vchiq calls from kernel.
+Subject: [PATCH 20/94] Update to match latest vc side vchiq. Allows vchiq calls from kernel.
 
 ---
  drivers/misc/vc04_services/Makefile                |    4 +-

@@ -1,7 +1,7 @@
 From 682bc2a568462089005c32aed2a0d7a2faa59cf8 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 16 Jun 2012 22:35:38 +0100
-Subject: [PATCH 68/74] sdhci-bcm2708: raise DMA sync timeout
+Subject: [PATCH 68/94] sdhci-bcm2708: raise DMA sync timeout
 
 Commit d64b84c by accident reduced the maximum overall DMA sync
 timeout. The maximum overall timeout was reduced from 100ms to 30ms,

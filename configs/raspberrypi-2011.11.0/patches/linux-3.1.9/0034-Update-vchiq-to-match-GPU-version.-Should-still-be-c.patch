@@ -1,7 +1,7 @@
 From 76814d3dfb0cf89d2e6507d31d277ab48f47067a Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Fri, 27 Apr 2012 12:43:54 +0100
-Subject: [PATCH 34/74] Update vchiq to match GPU version. Should still be compatible
+Subject: [PATCH 34/94] Update vchiq to match GPU version. Should still be compatible
 
 ---
  .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |   19 ++++++++++----

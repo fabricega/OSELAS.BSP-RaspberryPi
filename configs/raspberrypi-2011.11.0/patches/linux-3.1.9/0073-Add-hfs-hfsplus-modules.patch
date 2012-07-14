@@ -1,7 +1,7 @@
 From cc5758b24650164cfbeb351983f4127e7b682426 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 17 Jun 2012 15:52:33 +0100
-Subject: [PATCH 73/74] Add hfs/hfsplus modules
+Subject: [PATCH 73/94] Add hfs/hfsplus modules
 
 ---
  arch/arm/configs/bcmrpi_defconfig |    3 ++-

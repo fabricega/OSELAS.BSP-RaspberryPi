@@ -1,7 +1,7 @@
 From 123aab5d8a773385442809dbb0a62592b3aa4eb9 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 30 May 2012 21:54:02 +0100
-Subject: [PATCH 53/74] Enable ipv6 due to popular demand
+Subject: [PATCH 53/94] Enable ipv6 due to popular demand
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    2 +-

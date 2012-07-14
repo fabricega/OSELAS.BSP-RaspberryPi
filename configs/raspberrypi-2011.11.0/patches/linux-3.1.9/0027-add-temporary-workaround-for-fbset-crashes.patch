@@ -1,7 +1,7 @@
 From cdbb7932058639af2114a709380fb0d86d2964b7 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 12 Apr 2012 12:16:31 +0100
-Subject: [PATCH 27/74] add temporary workaround for fbset crashes
+Subject: [PATCH 27/94] add temporary workaround for fbset crashes
 
 ---
  drivers/video/bcm2708_fb.c |    2 ++

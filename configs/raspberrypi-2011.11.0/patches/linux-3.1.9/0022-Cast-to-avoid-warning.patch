@@ -1,7 +1,7 @@
 From 413f07e7278d43986182207f01f3a22d973fbc54 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Mon, 26 Mar 2012 22:18:37 +0100
-Subject: [PATCH 22/74] Cast to avoid warning
+Subject: [PATCH 22/94] Cast to avoid warning
 
 ---
  drivers/video/bcm2708_fb.c |    4 ++--

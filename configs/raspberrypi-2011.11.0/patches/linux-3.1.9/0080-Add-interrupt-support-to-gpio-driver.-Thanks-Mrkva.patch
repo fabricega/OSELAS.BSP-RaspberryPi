@@ -1,7 +1,7 @@
 From f3b653ec9e4961fd983fa1efe833c203c1701f15 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 30 Jun 2012 11:47:45 +0100
-Subject: [PATCH 80/83] Add interrupt support to gpio driver. Thanks Mrkva
+Subject: [PATCH 80/94] Add interrupt support to gpio driver. Thanks Mrkva
 
 ---
  arch/arm/mach-bcm2708/bcm2708_gpio.c      |  264 +++++++++++++++--------------

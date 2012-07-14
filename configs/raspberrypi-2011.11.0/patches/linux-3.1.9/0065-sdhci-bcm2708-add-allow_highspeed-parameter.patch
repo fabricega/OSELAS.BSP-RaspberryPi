@@ -1,7 +1,7 @@
 From 420806e5adabd8343b362b4a1d7f64f22b394dbf Mon Sep 17 00:00:00 2001
 From: Grigori Goronzy <greg@blackbox>
 Date: Mon, 11 Jun 2012 18:57:13 +0200
-Subject: [PATCH 65/74] sdhci-bcm2708: add allow_highspeed parameter
+Subject: [PATCH 65/94] sdhci-bcm2708: add allow_highspeed parameter
 
 Add a parameter to disable high-speed mode for the few cards that
 still might have problems. High-speed mode is enabled by default.

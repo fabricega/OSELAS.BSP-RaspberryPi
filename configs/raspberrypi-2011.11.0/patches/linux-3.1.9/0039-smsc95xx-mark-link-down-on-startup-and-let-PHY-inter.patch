@@ -1,7 +1,7 @@
 From f190109d7fc555f2885706cfa76320c8fd3505bf Mon Sep 17 00:00:00 2001
 From: Paolo Pisati <paolo.pisati@canonical.com>
 Date: Mon, 23 Apr 2012 04:05:20 +0000
-Subject: [PATCH 39/74] smsc95xx: mark link down on startup and let PHY interrupt deal with carrier changes
+Subject: [PATCH 39/94] smsc95xx: mark link down on startup and let PHY interrupt deal with carrier changes
 
 Without this patch sysfs reports the cable as present
 

@@ -1,7 +1,7 @@
 From f679f0534867d64a3672108d73bed5d349728f73 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 26 Jun 2012 15:54:11 +0100
-Subject: [PATCH 78/83] Fixed issue with some keyboards giving too much data
+Subject: [PATCH 78/94] Fixed issue with some keyboards giving too much data
   resulting in overrun of the input buffer and memory
   corruption causing an OOPS. We should be checking for the
   fact that we might get more data than we want. Thanks Naren.

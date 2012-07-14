@@ -1,7 +1,7 @@
 From 07800e787edbea6f1c5d65e294b8cae85e81db76 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 26 May 2012 16:40:51 +0100
-Subject: [PATCH 49/74] Added power off message to allow kexec to work. Thanks lp0
+Subject: [PATCH 49/94] Added power off message to allow kexec to work. Thanks lp0
 
 ---
  arch/arm/mach-bcm2708/power.c     |    1 +

@@ -1,7 +1,7 @@
 From dc3612e8626c3d0d6a3876ad478651d3a760e568 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 14 Mar 2012 23:26:14 +0000
-Subject: [PATCH 15/74] Allow 24bpp for framebuffer
+Subject: [PATCH 15/94] Allow 24bpp for framebuffer
 
 ---
  drivers/video/bcm2708_fb.c |    5 +++++

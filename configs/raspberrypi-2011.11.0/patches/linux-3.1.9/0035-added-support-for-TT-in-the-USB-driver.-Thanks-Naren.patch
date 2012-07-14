@@ -1,7 +1,7 @@
 From e09244e60881148431ecd016ccc42f1fa0678556 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Mon, 30 Apr 2012 14:45:52 +0100
-Subject: [PATCH 35/74] added support for TT in the USB driver. Thanks Naren
+Subject: [PATCH 35/94] added support for TT in the USB driver. Thanks Naren
 
 ---
  drivers/usb/gadget/Kconfig                   |    8 --------

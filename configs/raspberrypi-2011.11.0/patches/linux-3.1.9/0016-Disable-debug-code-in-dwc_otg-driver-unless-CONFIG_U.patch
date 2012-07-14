@@ -1,7 +1,7 @@
 From 1439ce8ed17190a4ba91e9a43ee3fd66035dec7d Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 17 Mar 2012 23:05:37 +0000
-Subject: [PATCH 16/74] Disable debug code in dwc_otg driver unless CONFIG_USB_DEBUG is set
+Subject: [PATCH 16/94] Disable debug code in dwc_otg driver unless CONFIG_USB_DEBUG is set
 
 ---
  drivers/usb/host/dwc_common_port/Makefile |    2 ++

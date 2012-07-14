@@ -1,7 +1,7 @@
 From e2e2b74d107015d7eea371e0d7fd83288453b1e9 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Fri, 27 Apr 2012 00:33:27 +0100
-Subject: [PATCH 33/74] Whitespace tidy. Thanks Roger
+Subject: [PATCH 33/94] Whitespace tidy. Thanks Roger
 
 ---
  arch/arm/mach-bcm2708/bcm2708.c |  151 +++++++++++++++++----------------------

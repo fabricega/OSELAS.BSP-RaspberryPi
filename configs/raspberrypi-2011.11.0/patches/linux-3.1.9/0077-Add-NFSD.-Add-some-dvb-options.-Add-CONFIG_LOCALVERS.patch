@@ -1,7 +1,7 @@
 From e3a21fc997669aae744537bf69e123f88a5e69e2 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Fri, 22 Jun 2012 18:48:00 +0100
-Subject: [PATCH 77/83] Add NFSD. Add some dvb options. Add CONFIG_LOCALVERSION for cutdown
+Subject: [PATCH 77/94] Add NFSD. Add some dvb options. Add CONFIG_LOCALVERSION for cutdown
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    1 +

@@ -1,7 +1,7 @@
 From 3fc65f9f291fb19cad434968a4a0f66ab749e637 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 17 Jun 2012 00:14:54 +0100
-Subject: [PATCH 72/74] Explicitly set usb host channels to 8, as in the spec
+Subject: [PATCH 72/94] Explicitly set usb host channels to 8, as in the spec
 
 ---
  drivers/usb/host/dwc_otg/dwc_otg_core_if.h |    3 ++-

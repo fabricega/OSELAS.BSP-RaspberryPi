@@ -1,7 +1,7 @@
 From ed8c2d720954efc5a440912292ed11da2f50aaea Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 17 Jan 2012 19:20:57 +0000
-Subject: [PATCH 03/74] bcm2708 watchdog driver
+Subject: [PATCH 03/94] bcm2708 watchdog driver
 
 Signed-off-by: popcornmix <popcornmix@gmail.com>
 ---

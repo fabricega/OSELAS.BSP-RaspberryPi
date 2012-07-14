@@ -1,7 +1,7 @@
 From d64b84ca8c171596b68bf125d266c84306ac421c Mon Sep 17 00:00:00 2001
 From: Grigori Goronzy <greg@blackbox>
 Date: Mon, 4 Jun 2012 04:27:48 +0200
-Subject: [PATCH 62/74] sdhci-bcm2708: speed up DMA sync
+Subject: [PATCH 62/94] sdhci-bcm2708: speed up DMA sync
 
 Experiments show that it doesn't really take that long to sync, so we
 can reduce the poll interval slightly. Might improve performance a bit.

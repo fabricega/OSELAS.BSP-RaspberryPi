@@ -1,7 +1,7 @@
 From e36deb5b9b157f2fb3ee0e137ba947ef6e67407e Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 1 Feb 2012 21:34:17 +0000
-Subject: [PATCH 08/74] Fix some issues reported. Lower case module parameters for fb. Set board rev and serial. Requires updated start.elf.
+Subject: [PATCH 08/94] Fix some issues reported. Lower case module parameters for fb. Set board rev and serial. Requires updated start.elf.
 
 Signed-off-by: Dom Cobley <dc4@broadcom.com>
 ---

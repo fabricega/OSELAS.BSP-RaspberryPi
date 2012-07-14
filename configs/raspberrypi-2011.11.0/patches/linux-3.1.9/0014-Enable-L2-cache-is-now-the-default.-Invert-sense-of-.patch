@@ -1,7 +1,7 @@
 From 2fe771a79d07fee48af401711c8b5e80e8623610 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 7 Mar 2012 23:22:59 +0000
-Subject: [PATCH 14/74] Enable L2 cache is now the default. Invert sense of L2 flags
+Subject: [PATCH 14/94] Enable L2 cache is now the default. Invert sense of L2 flags
 
 ---
  arch/arm/mach-bcm2708/Kconfig               |    6 +++---

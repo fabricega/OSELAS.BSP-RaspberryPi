@@ -1,7 +1,7 @@
 From 0454b67d3029c98b1e525a29c0e8e4e91a86f627 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 17 Mar 2012 23:23:01 +0000
-Subject: [PATCH 17/74] Enable high resolution timers
+Subject: [PATCH 17/94] Enable high resolution timers
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    1 +

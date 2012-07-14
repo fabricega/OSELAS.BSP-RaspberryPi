@@ -1,7 +1,7 @@
 From 42119badef15de0033da6452c0d0a2eb95a59b40 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 2 May 2012 22:13:14 +0100
-Subject: [PATCH 36/74] Swap Red and Blue over in 32bpp framebuffer mode
+Subject: [PATCH 36/94] Swap Red and Blue over in 32bpp framebuffer mode
 
 ---
  drivers/video/bcm2708_fb.c |   16 ++++++++++++----

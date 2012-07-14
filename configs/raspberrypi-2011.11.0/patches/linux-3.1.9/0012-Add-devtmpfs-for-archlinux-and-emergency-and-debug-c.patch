@@ -1,7 +1,7 @@
 From 239666a432958550ae1c1466af970633bd36f610 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 7 Mar 2012 23:19:08 +0000
-Subject: [PATCH 12/74] Add devtmpfs for archlinux, and emergency and debug config
+Subject: [PATCH 12/94] Add devtmpfs for archlinux, and emergency and debug config
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig   |    2 +-

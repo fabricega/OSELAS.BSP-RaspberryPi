@@ -1,7 +1,7 @@
 From f372b79ff9ec7cee998c64905acdb620f918fc8d Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 1 Feb 2012 21:35:47 +0000
-Subject: [PATCH 09/74] Build anything reasonable as a module. Thanks to asb
+Subject: [PATCH 09/94] Build anything reasonable as a module. Thanks to asb
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig | 1579 +++++------------------------

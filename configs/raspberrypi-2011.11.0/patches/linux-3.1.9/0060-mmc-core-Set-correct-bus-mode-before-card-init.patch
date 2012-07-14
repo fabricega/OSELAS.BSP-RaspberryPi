@@ -1,7 +1,7 @@
 From f3320b75d0d51c9cca8df24369e34b664b235b7d Mon Sep 17 00:00:00 2001
 From: Stefan Nilsson XK <stefan.xk.nilsson@stericsson.com>
 Date: Thu, 15 Sep 2011 17:50:38 +0200
-Subject: [PATCH 60/74] mmc: core: Set correct bus mode before card init
+Subject: [PATCH 60/94] mmc: core: Set correct bus mode before card init
 
 Earlier all cards where initiated with bus mode set as OPENDRAIN, and then
 later switched to PUSHPULL. According to the MMC/SD/SDIO specifications

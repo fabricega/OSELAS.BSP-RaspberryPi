@@ -1,7 +1,7 @@
 From 94fbbc4e3988075abad0d3b32842b82c590324fc Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 31 May 2012 13:01:16 +0100
-Subject: [PATCH 54/74] Fix regression in debug kernel config options
+Subject: [PATCH 54/94] Fix regression in debug kernel config options
 
 ---
  arch/arm/configs/bcmrpi_defconfig |   19 ++++++++++++++-----

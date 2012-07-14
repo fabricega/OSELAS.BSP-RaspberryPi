@@ -1,7 +1,7 @@
 From ef98446236432e102d00d841cf1a6b63ed7be41f Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 15 Feb 2012 18:33:00 +0000
-Subject: [PATCH 11/74] Fix bug where vchiq fails when L2 enabled
+Subject: [PATCH 11/94] Fix bug where vchiq fails when L2 enabled
 
 Signed-off-by: Dom Cobley <dc4@broadcom.com>
 ---

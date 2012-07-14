@@ -1,7 +1,7 @@
 From 598d87246fde30287f0c423cc761e26600dd7c17 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 16 Jun 2012 22:31:55 +0100
-Subject: [PATCH 67/74] Allow emmc clock to be specified as command line parameter
+Subject: [PATCH 67/94] Allow emmc clock to be specified as command line parameter
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |    6 +++++-

@@ -1,7 +1,7 @@
 From d5ef856b4628a4531c1627dec100eeff15e8b31e Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 17 Jan 2012 19:20:11 +0000
-Subject: [PATCH 02/74] Main bcm2708 linux port
+Subject: [PATCH 02/94] Main bcm2708 linux port
 
 Signed-off-by: popcornmix <popcornmix@gmail.com>
 ---

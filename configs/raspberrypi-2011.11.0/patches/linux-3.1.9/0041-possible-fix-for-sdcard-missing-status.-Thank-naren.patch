@@ -1,7 +1,7 @@
 From 906501202a38d6d9697cc7024928ec9d93d37d8d Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 8 May 2012 23:12:13 +0100
-Subject: [PATCH 41/74] possible fix for sdcard missing status. Thank naren
+Subject: [PATCH 41/94] possible fix for sdcard missing status. Thank naren
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |    9 +++++++++

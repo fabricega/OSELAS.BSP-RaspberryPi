@@ -1,7 +1,7 @@
 From 1ccd0107253e1dd14ee78a1e3eb0ed723d8fa595 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 16 Jun 2012 23:26:28 +0100
-Subject: [PATCH 69/74] Fix bool/int error
+Subject: [PATCH 69/94] Fix bool/int error
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |    2 +-

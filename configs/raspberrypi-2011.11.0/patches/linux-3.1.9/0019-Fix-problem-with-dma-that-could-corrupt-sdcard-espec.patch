@@ -1,7 +1,7 @@
 From ecab81830648bd654317676a3419a9769522c611 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Tue, 20 Mar 2012 15:04:40 +0000
-Subject: [PATCH 19/74] Fix problem with dma that could corrupt sdcard, especially when L2 enabled
+Subject: [PATCH 19/94] Fix problem with dma that could corrupt sdcard, especially when L2 enabled
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |    6 ++++--

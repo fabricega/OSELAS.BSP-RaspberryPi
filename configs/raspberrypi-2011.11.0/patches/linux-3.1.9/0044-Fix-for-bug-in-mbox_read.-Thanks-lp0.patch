@@ -1,7 +1,7 @@
 From 4c9c54713c4b26c920f0fd73f245d415fe8e7ca0 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 16 May 2012 14:15:12 +0100
-Subject: [PATCH 44/74] Fix for bug in mbox_read. Thanks lp0
+Subject: [PATCH 44/94] Fix for bug in mbox_read. Thanks lp0
 
 ---
  arch/arm/mach-bcm2708/power.c |    2 --

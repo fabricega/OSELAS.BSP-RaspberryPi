@@ -1,7 +1,7 @@
 From e026371112e6a49dc3a5a4e0556cba8634678360 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 8 May 2012 23:14:05 +0100
-Subject: [PATCH 42/74] Fix BUG() in bcm2708_fb_set_par doesn't work if the console is currently locked. Thanks lp0
+Subject: [PATCH 42/94] Fix BUG() in bcm2708_fb_set_par doesn't work if the console is currently locked. Thanks lp0
 
 ---
  drivers/video/bcm2708_fb.c |    8 +++++++-

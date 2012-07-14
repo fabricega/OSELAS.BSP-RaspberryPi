@@ -1,7 +1,7 @@
 From 4f574f96955a5f918be460b1b9afe60ad405ba00 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 30 Jun 2012 16:07:18 +0100
-Subject: [PATCH 81/83] Add a pm_power_off function that resets us, and indicates to bootcode.bin not to reboot us. Should allow a lower power 'off' state
+Subject: [PATCH 81/94] Add a pm_power_off function that resets us, and indicates to bootcode.bin not to reboot us. Should allow a lower power 'off' state
 
 ---
  arch/arm/mach-bcm2708/bcm2708.c               |   14 ++++++++++++++

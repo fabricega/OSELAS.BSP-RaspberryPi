@@ -1,7 +1,7 @@
 From 9eaf792a2825b5b4d3b5c7f074354ed26e3f76ab Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Fri, 20 Jan 2012 18:23:29 +0000
-Subject: [PATCH 07/74] Fix headers for vchiq/vcos to be GPLv2
+Subject: [PATCH 07/94] Fix headers for vchiq/vcos to be GPLv2
 
 Signed-off-by: Dom Cobley <dc4@broadcom.com>
 ---

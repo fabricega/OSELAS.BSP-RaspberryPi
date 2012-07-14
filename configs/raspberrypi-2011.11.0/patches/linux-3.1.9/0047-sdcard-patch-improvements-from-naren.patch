@@ -1,7 +1,7 @@
 From c8854b6898599fccfa6a2cd72d8392026f3e9854 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 17 May 2012 14:44:19 +0100
-Subject: [PATCH 47/74] sdcard patch improvements from naren
+Subject: [PATCH 47/94] sdcard patch improvements from naren
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |   23 +++++++----------------

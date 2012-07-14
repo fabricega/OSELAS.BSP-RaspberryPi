@@ -1,7 +1,7 @@
 From 2f241bc36303fa94a96811efb07df6ac48a4abe8 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Fri, 27 Apr 2012 00:31:37 +0100
-Subject: [PATCH 32/74] Build modules needed for USB booting into kernel
+Subject: [PATCH 32/94] Build modules needed for USB booting into kernel
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    4 ++--

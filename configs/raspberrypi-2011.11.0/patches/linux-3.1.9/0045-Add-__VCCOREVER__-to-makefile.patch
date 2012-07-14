@@ -1,7 +1,7 @@
 From 2466e92ca68c25220681173a99154330e0e41c2c Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 16 May 2012 20:16:43 +0100
-Subject: [PATCH 45/74] Add __VCCOREVER__ to makefile
+Subject: [PATCH 45/94] Add __VCCOREVER__ to makefile
 
 ---
  sound/arm/Makefile |    2 +-

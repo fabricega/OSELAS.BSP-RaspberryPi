@@ -1,7 +1,7 @@
 From 273bb9280b62bd1c6d4488760ec57e59ac5ab4a7 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 30 May 2012 11:57:52 +0100
-Subject: [PATCH 52/74] Added support for USB webcams
+Subject: [PATCH 52/94] Added support for USB webcams
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |   52 ++++++++++++++++++++++

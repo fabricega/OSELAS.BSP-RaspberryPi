@@ -1,7 +1,7 @@
 From 953f57f66048f292aa1ea21c77ea74dfb0723bb2 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Wed, 7 Mar 2012 23:21:01 +0000
-Subject: [PATCH 13/74] Fix 32bpp framebuffer by adding alpha bits
+Subject: [PATCH 13/94] Fix 32bpp framebuffer by adding alpha bits
 
 ---
  drivers/video/bcm2708_fb.c |   65 +++++++++++++++++--------------------------

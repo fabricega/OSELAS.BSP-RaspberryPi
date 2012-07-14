@@ -1,7 +1,7 @@
 From 6b9b2f8199f98268df15e0f8acd0d6051894ed7d Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 26 Mar 2012 22:15:50 +0100
-Subject: [PATCH 21/74] First pass at alsa sound driver. Some functionality, but also some underruns
+Subject: [PATCH 21/94] First pass at alsa sound driver. Some functionality, but also some underruns
 
 ---
  arch/arm/mach-bcm2708/bcm2708.c    |   12 +

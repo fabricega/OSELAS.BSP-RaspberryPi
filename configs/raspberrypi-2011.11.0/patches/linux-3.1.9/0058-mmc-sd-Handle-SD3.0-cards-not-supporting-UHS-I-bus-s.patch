@@ -1,7 +1,7 @@
 From 8d7c5395d15160ffc26e5490167c49dff511b74f Mon Sep 17 00:00:00 2001
 From: Subhash Jadavani <subhashj@codeaurora.org>
 Date: Wed, 10 Aug 2011 11:16:01 +0530
-Subject: [PATCH 58/74] mmc: sd: Handle SD3.0 cards not supporting UHS-I bus speed mode
+Subject: [PATCH 58/94] mmc: sd: Handle SD3.0 cards not supporting UHS-I bus speed mode
 
 Here is Essential conditions to indicate Version 3.00 Card
 (SD_SPEC=2 and SD_SPEC3=1) :

@@ -1,7 +1,7 @@
 From d25ac7af2f62489d600b4ab30513bc283d770769 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 15 May 2012 15:24:40 +0100
-Subject: [PATCH 43/74] Fix for DWC OTG HCD URB Dequeue has NULL URB panic. Thanks Naren
+Subject: [PATCH 43/94] Fix for DWC OTG HCD URB Dequeue has NULL URB panic. Thanks Naren
 
 ---
  drivers/usb/host/dwc_otg/dwc_otg_hcd_linux.c |    8 +++++---

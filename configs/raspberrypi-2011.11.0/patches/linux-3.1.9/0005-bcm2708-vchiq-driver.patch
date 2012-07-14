@@ -1,7 +1,7 @@
 From a2e42fbc97cde9e851f5b036f46b8f34a5be6eb9 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 17 Jan 2012 19:22:19 +0000
-Subject: [PATCH 05/74] bcm2708 vchiq driver
+Subject: [PATCH 05/94] bcm2708 vchiq driver
 
 Signed-off-by: popcornmix <popcornmix@gmail.com>
 ---

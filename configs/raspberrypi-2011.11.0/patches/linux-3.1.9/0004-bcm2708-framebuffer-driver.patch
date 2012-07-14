@@ -1,7 +1,7 @@
 From 4593b68d5da44244266737c3c18da81666fa6d15 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 17 Jan 2012 19:21:26 +0000
-Subject: [PATCH 04/74] bcm2708 framebuffer driver
+Subject: [PATCH 04/94] bcm2708 framebuffer driver
 
 Signed-off-by: popcornmix <popcornmix@gmail.com>
 ---

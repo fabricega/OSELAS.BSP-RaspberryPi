@@ -1,7 +1,7 @@
 From a9e3f5ca6904df9f1601d07d48ba235cb6a724ba Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 17 May 2012 14:40:44 +0100
-Subject: [PATCH 46/74] Change PHYS_OFFSET to PLAT_PHYS_OFFSET
+Subject: [PATCH 46/94] Change PHYS_OFFSET to PLAT_PHYS_OFFSET
 
 ---
  arch/arm/mach-bcm2708/include/mach/memory.h |    6 +++---

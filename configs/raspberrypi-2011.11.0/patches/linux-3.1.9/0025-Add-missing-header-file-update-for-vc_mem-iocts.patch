@@ -1,7 +1,7 @@
 From 21c26132bb7da631790d0b5acc4e76f2f6bcc31e Mon Sep 17 00:00:00 2001
 From: Dom Cobley <dc4@broadcom.com>
 Date: Thu, 29 Mar 2012 21:09:45 +0100
-Subject: [PATCH 25/74] Add missing header file update for vc_mem iocts
+Subject: [PATCH 25/94] Add missing header file update for vc_mem iocts
 
 ---
  arch/arm/mach-bcm2708/include/mach/vc_mem.h |    1 +

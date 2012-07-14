@@ -1,7 +1,7 @@
 From 245cbe8bfaf7de7e45ef17fa8b4d90409da45c6b Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 6 May 2012 16:58:07 +0100
-Subject: [PATCH 37/74] Update emergency config to match latest debug one
+Subject: [PATCH 37/94] Update emergency config to match latest debug one
 
 ---
  arch/arm/configs/bcmrpi_emergency_defconfig |   75 +++++++++++++++++++++++---

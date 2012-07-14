@@ -1,7 +1,7 @@
 From 7e8ae226fe6e95954df6b0dcdde40a53dbbc1a0b Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 17 Mar 2012 23:28:22 +0000
-Subject: [PATCH 18/74] Fix for mmc timeouts when erasing multiple blocks
+Subject: [PATCH 18/94] Fix for mmc timeouts when erasing multiple blocks
 
 ---
  arch/arm/mach-bcm2708/power.c    |   10 ++--

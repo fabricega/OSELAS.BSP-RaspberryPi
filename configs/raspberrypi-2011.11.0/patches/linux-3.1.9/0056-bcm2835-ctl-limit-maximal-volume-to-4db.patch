@@ -1,7 +1,7 @@
 From 829da61c0229c0734a109339f5de308bf8205bf6 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne.fitzenreiter@ipfire.org>
 Date: Wed, 6 Jun 2012 08:06:15 +0200
-Subject: [PATCH 56/74] bcm2835-ctl: limit maximal volume to 4db.
+Subject: [PATCH 56/94] bcm2835-ctl: limit maximal volume to 4db.
 
 it makes no sense to set 23.04db as maximum volume since around 3db it start to cliping. So with 4db the alsamixer is much better to control. (86% is 0db)
 ---

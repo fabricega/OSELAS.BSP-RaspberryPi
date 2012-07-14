@@ -1,7 +1,7 @@
 From 9efb470560c1507af609524f79b12fdf2b8ba30d Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Thu, 17 May 2012 14:45:40 +0100
-Subject: [PATCH 48/74] Invert sense of sdcard access trigger (OK LED), so it is on when accessing
+Subject: [PATCH 48/94] Invert sense of sdcard access trigger (OK LED), so it is on when accessing
 
 ---
  arch/arm/mach-bcm2708/bcm2708.c |    2 +-

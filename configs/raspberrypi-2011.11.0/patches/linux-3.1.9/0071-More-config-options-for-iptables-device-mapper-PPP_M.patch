@@ -1,7 +1,7 @@
 From 3238b19ecbe0e67258013717511c8f559a88e097 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 16 Jun 2012 23:49:52 +0100
-Subject: [PATCH 71/74] More config options for iptables, device mapper, PPP_MPPE
+Subject: [PATCH 71/94] More config options for iptables, device mapper, PPP_MPPE
 
 ---
  arch/arm/configs/bcmrpi_defconfig |   38 +++++++++++++++++++++++++++++++++++-

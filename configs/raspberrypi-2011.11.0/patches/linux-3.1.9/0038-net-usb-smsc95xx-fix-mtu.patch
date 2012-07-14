@@ -1,7 +1,7 @@
 From c272678aa4e098a1c933eafe9fa8aeeeab1cdeae Mon Sep 17 00:00:00 2001
 From: Stephane Fillod <fillods@users.sf.net>
 Date: Fri, 20 Apr 2012 09:39:23 +0000
-Subject: [PATCH 38/74] net: usb: smsc95xx: fix mtu
+Subject: [PATCH 38/94] net: usb: smsc95xx: fix mtu
 
 Make smsc95xx recalculate the hard_mtu after adjusting the
 hard_header_len.

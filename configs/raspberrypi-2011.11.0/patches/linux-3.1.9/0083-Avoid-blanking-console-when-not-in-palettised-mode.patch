@@ -1,7 +1,7 @@
 From c47ee9d4a48c1f3cc53a54e096ca0f7a3961ed9f Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Mon, 2 Jul 2012 20:34:38 +0100
-Subject: [PATCH 83/83] Avoid blanking console when not in palettised mode
+Subject: [PATCH 83/94] Avoid blanking console when not in palettised mode
 
 ---
  drivers/video/bcm2708_fb.c |   24 ++++++++++++------------

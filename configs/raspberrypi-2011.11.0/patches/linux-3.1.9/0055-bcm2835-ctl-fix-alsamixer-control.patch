@@ -1,7 +1,7 @@
 From d0735c7d129d35bd91ba1c2c5b5a5201ed4a6c37 Mon Sep 17 00:00:00 2001
 From: Arne Fitzenreiter <arne.fitzenreiter@ipfire.org>
 Date: Wed, 6 Jun 2012 08:02:10 +0200
-Subject: [PATCH 55/74] bcm2835-ctl: fix alsamixer control.
+Subject: [PATCH 55/94] bcm2835-ctl: fix alsamixer control.
 
 alsamixer read the volume for the screen controller so we had to
 scale the chipvol back to db for reading.

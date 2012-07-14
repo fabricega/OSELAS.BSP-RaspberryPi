@@ -1,7 +1,7 @@
 From 703dd23221992261d9efa9922a8835e18d40664b Mon Sep 17 00:00:00 2001
 From: Gray Girling <GrayG@Broadcom.com>
 Date: Mon, 16 Apr 2012 14:00:20 +0100
-Subject: [PATCH 29/74] Replace #if 1 sections by local configuration #defines (tidy)
+Subject: [PATCH 29/94] Replace #if 1 sections by local configuration #defines (tidy)
 
 ---
  drivers/mmc/host/sdhci-bcm2708.c |   21 ++++++++++++++-------

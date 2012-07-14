@@ -1,7 +1,7 @@
 From e4f6da232f57a77388881a9c6f5fd3e6f3d2708d Mon Sep 17 00:00:00 2001
 From: Stefan Nilsson XK <stefan.xk.nilsson@stericsson.com>
 Date: Thu, 3 Nov 2011 09:44:12 +0100
-Subject: [PATCH 61/74] mmc: core: Add quirk for long data read time
+Subject: [PATCH 61/94] mmc: core: Add quirk for long data read time
 
 Adds a quirk that sets the data read timeout to a fixed value instead
 of relying on the information in the CSD. The timeout value chosen

@@ -1,7 +1,7 @@
 From 30b708f9c69a161051e9ddcab7772a35ca8b7b23 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Fri, 27 Apr 2012 00:30:15 +0100
-Subject: [PATCH 31/74] Fix (hopefully) for DWC_MEMCPY kernel panics. Thanks to Naren Sankar for finding this
+Subject: [PATCH 31/94] Fix (hopefully) for DWC_MEMCPY kernel panics. Thanks to Naren Sankar for finding this
 
 ---
  drivers/usb/host/dwc_otg/dwc_otg_hcd.c       |    4 ++++

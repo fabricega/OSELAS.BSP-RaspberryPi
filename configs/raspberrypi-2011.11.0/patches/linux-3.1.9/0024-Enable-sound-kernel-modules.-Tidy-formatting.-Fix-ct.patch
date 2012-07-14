@@ -1,7 +1,7 @@
 From bb4f37a030b62b8c08791b694bf39262665ed665 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Wed, 28 Mar 2012 23:26:18 +0100
-Subject: [PATCH 24/74] Enable sound kernel modules. Tidy formatting. Fix ctl dest setting
+Subject: [PATCH 24/94] Enable sound kernel modules. Tidy formatting. Fix ctl dest setting
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |   20 ++

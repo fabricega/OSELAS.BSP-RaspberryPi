@@ -81,4 +81,15 @@
 0081-Add-a-pm_power_off-function-that-resets-us-and-indic.patch
 0082-Store-palette-info-where-GPU-can-see-it-so-8bpp-mode.patch
 0083-Avoid-blanking-console-when-not-in-palettised-mode.patch
+0084-Add-mechanism-to-reduce-the-number-of-SOF-interrupts.patch
+0085-Updating-dwc_otg-driver-to-fix-issue-releasing-pcm-s.patch
+0086-Backport-of-Chris-Boot-s-i2c-and-spi-drivers.patch
+0087-forgotten-files.patch
+0088-Enable-I2C-and-SPI-modules-in-full-config.patch
+0089-Possible-fix-for-failure-to-boot-with-compressed-ker.patch
+0090-swap-don-t-do-discard-if-no-discard-option-added.patch
+0091-Another-try-at-fixing-compressed-kernel-booting.patch
+0092-Add-missing-UART0_CLOCK-from-last-commit.patch
+0093-Change-to-add-SCSI-tape-support-as-loadable-modules-.patch
+0094-Add-temporary-fix-for-hang-when-quitting-X.patch
 

@@ -1,7 +1,7 @@
 From 872a8ff772ded51403bd8a46f80b1bf9706b76cd Mon Sep 17 00:00:00 2001
 From: Paul Walmsley <paul@pwsan.com>
 Date: Mon, 12 Mar 2012 10:58:00 -0600
-Subject: [PATCH 59/74] mmc: use really long write timeout to deal with crappy cards
+Subject: [PATCH 59/94] mmc: use really long write timeout to deal with crappy cards
 
 mmc: use really long write timeout to deal with crappy cards
 

@@ -1,7 +1,7 @@
 From 2fb814968753d0d4a5fdf056a3a8c9eee3c41aa6 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Tue, 3 Apr 2012 18:18:10 +0100
-Subject: [PATCH 26/74] Remove most of the alsa debug messages
+Subject: [PATCH 26/94] Remove most of the alsa debug messages
 
 ---
  sound/arm/bcm2835-pcm.c   |   60 ++++++++++++++++++++++----------------------

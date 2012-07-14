@@ -1,7 +1,7 @@
 From 60267f1c629e6d8f9153a9482d6d7b9bffb6b401 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sat, 30 Jun 2012 11:40:33 +0100
-Subject: [PATCH 79/83] Add 802.1q vlan module
+Subject: [PATCH 79/94] Add 802.1q vlan module
 
 ---
  arch/arm/configs/bcmrpi_defconfig |    2 ++

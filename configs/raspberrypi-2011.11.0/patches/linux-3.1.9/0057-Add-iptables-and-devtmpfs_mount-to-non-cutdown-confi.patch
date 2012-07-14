@@ -1,7 +1,7 @@
 From 958eacf5c1353cd655e6aa8238c69d379e460670 Mon Sep 17 00:00:00 2001
 From: popcornmix <popcornmix@gmail.com>
 Date: Sun, 10 Jun 2012 13:32:02 +0100
-Subject: [PATCH 57/74] Add iptables and devtmpfs_mount to non-cutdown config. This will become default kernel
+Subject: [PATCH 57/94] Add iptables and devtmpfs_mount to non-cutdown config. This will become default kernel
 
 ---
  arch/arm/configs/bcmrpi_cutdown_defconfig |    1 +
