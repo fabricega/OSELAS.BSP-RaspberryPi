@@ -65,6 +65,7 @@ config GNUPLOT_PLOT
 
 config GNUPLOT_GD
 	bool
+	select LIBGD
 	prompt "GD support"
 	help
 	  Use the GD library.
@@ -73,6 +74,7 @@ config GNUPLOT_GD
 
 config GNUPLOT_PNG
 	bool
+	select LIBGD_PNG
 	depends on GNUPLOT_GD
 	prompt "PNG support"
 	help

@@ -1,0 +1,10 @@
+## SECTION=shell_and_console
+
+config CIFS_UTILS
+	tristate
+	prompt "cifs-utils          "
+	
+	help
+	  The cifs-utils provides a means for mounting 
+	  SMB/CIFS shares on a Linux system.
+
