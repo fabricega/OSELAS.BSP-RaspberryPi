@@ -1,0 +1,7 @@
+## SECTION=system_libraries
+
+config LIBCDIO
+	tristate
+	prompt "libcdio"
+	help
+	  FIXME

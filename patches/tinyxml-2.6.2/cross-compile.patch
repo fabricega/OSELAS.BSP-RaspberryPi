@@ -1,0 +1,57 @@
+Index: tinyxml-2.6.2/Makefile
+===================================================================
+--- tinyxml-2.6.2.orig/Makefile	2012-07-07 15:52:13.000000000 +0200
++++ tinyxml-2.6.2/Makefile	2012-07-07 15:53:39.000000000 +0200
+@@ -19,14 +19,14 @@
+ 
+ #****************************************************************************
+ 
+-CC     := gcc
+-CXX    := g++
+-LD     := g++
+-AR     := ar rc
+-RANLIB := ranlib
++CC     ?= $(CROSS_COMPILE)gcc
++CXX    ?= $(CROSS_COMPILE)g++
++LD     ?= $(CROSS_COMPILE)g++
++AR     ?= $(CROSS_COMPILE)ar
++RANLIB ?= $(CROSS_COMPILE)ranlib
+ 
+-DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
+-RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
++DEBUG_CFLAGS     += -Wall -Wno-format -g -DDEBUG
++RELEASE_CFLAGS   += -Wall -Wno-unknown-pragmas -Wno-format -O3
+ 
+ LIBS		 :=
+ 
+@@ -81,10 +81,15 @@
+ # Targets of the build
+ #****************************************************************************
+ 
+-OUTPUT := xmltest
++OUTPUT := libtinyxml.so.0
+ 
+ all: ${OUTPUT}
+ 
++install: all
++	install -m 0644 tinyxml.h $(DESTDIR)/usr/include/
++	install -m 0644 tinystr.h $(DESTDIR)/usr/include/
++	install -m 0644 libtinyxml.so.0 $(DESTDIR)/usr/lib
++	cd $(DESTDIR)/usr/lib && ln -s libtinyxml.so.0 libtinyxml.so
+ 
+ #****************************************************************************
+ # Source files
+@@ -101,9 +106,12 @@
+ # Output
+ #****************************************************************************
+ 
+-${OUTPUT}: ${OBJS}
++xmltest: ${OBJS} xmltest.o
+ 	${CXX} -o $@ ${LDFLAGS} ${OBJS} ${LIBS} ${EXTRA_LIBS}
+ 
++libtinyxml.so.0: ${OBJS}
++	$(CXX) -fPIC $(CXXFLAGS) $(LDFLAGS) -shared -o $@ -Wl,-soname,$@ ${OBJS}
++
+ #****************************************************************************
+ # common rules
+ #****************************************************************************

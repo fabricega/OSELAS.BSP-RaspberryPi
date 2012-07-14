@@ -1,0 +1,7 @@
+## SECTION=multimedia_libs
+
+config LIBSAMPLERATE
+	tristate
+	prompt "libsamplerate"
+	help
+	  Secret Rabbit Code

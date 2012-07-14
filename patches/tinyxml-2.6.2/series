@@ -1,0 +1,5 @@
+disable_xmltest.patch
+enforce-use-stl.patch
+entity.patch
+makefix.patch 
+cross-compile.patch

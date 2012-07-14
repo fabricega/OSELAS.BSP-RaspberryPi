@@ -1,0 +1,7 @@
+## SECTION=system_libraries
+
+config FRIBIDI
+	tristate
+	prompt "fribidi"
+	help
+	  FIXME

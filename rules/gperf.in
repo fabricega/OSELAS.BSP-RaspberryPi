@@ -1,0 +1,7 @@
+## SECTION=system_libraries
+
+config GPERF
+	tristate
+	prompt "gperf"
+	help
+	  GNU gperf is a perfect hash function generator.

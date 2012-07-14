@@ -1,0 +1,8 @@
+## SECTION=multimedia_libs
+
+config LIBPLIST
+	tristate
+	prompt "libplist"
+	select LIBXML2
+	help
+	  FIXME

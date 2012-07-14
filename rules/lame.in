@@ -1,0 +1,7 @@
+## SECTION=multimedia_libs
+
+config LAME
+	tristate
+	prompt "lame"
+	help
+	  LAME (Lame Aint an MP3 Encoder)
