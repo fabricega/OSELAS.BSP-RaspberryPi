@@ -298,7 +298,7 @@ FFMPEG_AUTOCONF += --enable-dts
 endif
 
 ifdef PTXCONF_FFMPEG_PP
-FFMPEG_AUTOCONF += --enable-pp
+FFMPEG_AUTOCONF += --enable-postproc
 endif
 
 ifdef PTXCONF_FFMPEG_AMR_NB
@@ -375,6 +375,15 @@ $(STATEDIR)/ffmpeg.targetinstall:
 		/usr/lib/libavcodec.so.53.61.100)
 
 	@$(call install_copy, ffmpeg, 0, 0, 0644, -, \
+		/usr/lib/libavfilter.so, n)
+	@$(call install_link, ffmpeg, \
+		libavcodec.so, \
+		/usr/lib/libavfilter.so.2)
+	@$(call install_link, ffmpeg, \
+		libavcodec.so, \
+		/usr/lib/libavfilter.so.2.61.100)
+
+	@$(call install_copy, ffmpeg, 0, 0, 0644, -, \
 		/usr/lib/libavformat.so, n)
 	@$(call install_link, ffmpeg, \
 		libavformat.so, \
@@ -415,10 +424,10 @@ ifdef PTXCONF_FFMPEG_PP
 		/usr/lib/libpostproc.so, n)
 	@$(call install_link, ffmpeg, \
 		libpostproc.so, \
-		/usr/lib/libpostproc.so.51)
+		/usr/lib/libpostproc.so.52)
 	@$(call install_link, ffmpeg, \
 		libpostproc.so, \
-		/usr/lib/libpostproc.so.51.0.0)
+		/usr/lib/libpostproc.so.52.0.100)
 endif
 
 	@$(call install_finish, ffmpeg)
