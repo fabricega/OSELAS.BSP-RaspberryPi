@@ -377,10 +377,10 @@ $(STATEDIR)/ffmpeg.targetinstall:
 	@$(call install_copy, ffmpeg, 0, 0, 0644, -, \
 		/usr/lib/libavfilter.so, n)
 	@$(call install_link, ffmpeg, \
-		libavcodec.so, \
+		libavfilter.so, \
 		/usr/lib/libavfilter.so.2)
 	@$(call install_link, ffmpeg, \
-		libavcodec.so, \
+		libavfilter.so, \
 		/usr/lib/libavfilter.so.2.61.100)
 
 	@$(call install_copy, ffmpeg, 0, 0, 0644, -, \
