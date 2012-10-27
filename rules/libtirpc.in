@@ -1,0 +1,11 @@
+## SECTION=system_libraries
+
+config LIBTIRPC
+	tristate
+	prompt "libtirpc"
+	help
+	  libtirpc package contains libraries that support programs that
+	  use the Remote Procedure Call (RPC) API. It replaces the  RPC,
+	  but  not  the  NIS  library  entries that used to be in glibc.
+	  Glibc-2.14  and  later  do  not  install  NIS  and RPC related
+	  headers by default.
