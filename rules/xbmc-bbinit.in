@@ -1,0 +1,14 @@
+## SECTION=initmethod_bbinit
+
+config XBMC_BBINIT_STARTLINK
+	string
+	depends on XBMC_STARTSCRIPT
+	prompt "xbmc"
+	default "S99xbmc"
+
+config XBMC_BBINIT_STOPLINK
+	string
+	depends on XBMC_STARTSCRIPT
+	prompt "xbmc"
+	default "K01xbmc"
+

@@ -1,0 +1,109 @@
+## SECTION=raspberry
+
+menuconfig XBMC
+	tristate
+	prompt "xbmc                          "
+	select LIBPCRE
+	select LIBPCRE_LIBPCRECPP
+	select OMXPLAYER
+	select EXPAT
+	select BOOST
+	select BOOST_DATE_TIME
+	select BOOST_FILESYSTEM
+	select BOOST_GRAPH
+	select BOOST_IOSTREAMS
+	select BOOST_PROGRAM_OPTIONS
+	select BOOST_REGEX
+	select BOOST_SERIALIZATION
+	select BOOST_SIGNALS
+	select BOOST_TEST
+	select BOOST_WAVE
+	select LIBJPEG
+	select LIBXML2
+	select READLINE
+	select MYSQL
+	select LIBASS
+	select LIBMPEG2
+	select LIBMAD
+	select LIBSAMPLERATE
+	select LIBOGG
+	select LIBVORBIS
+	select LIBMODPLUG
+	select LIBCURL
+	select FLAC
+	select OPENSSL
+	select OPENSSH
+	select BZIP2
+	select BZIP2_LIBBZ2
+	select TIFF
+	select LIBLZO
+	select LIBLZO_SHARED
+	select YAJL
+	select TINYXML
+	select FONTCONFIG
+	select FRIBIDI
+	select SQLITE
+	select SQLITE_READLINE
+	select LIBPNG
+	select LIBCDIO
+	select JASPER
+	select LIBGCRYPT
+	select LAME
+	select LIBMICROHTTPD
+	select RTMPDUMP
+	select SAMBA
+	select SAMBA_LIBCLIENT
+	select LIBPLIST
+	select UDEV
+	select UDEV_LIBUDEV
+	select PYTHON
+	select PYTHON_BZ2
+	select PYTHON_DB
+	select PYTHON_NCURSES
+	select PYTHON_EXPAT
+	select PYTHON_READLINE
+	select PYTHON_SSL
+	select PYTHON_SQLITE
+	select PYTHON_ZLIB
+	select GPERF
+	select SDL
+	select SDL_IMAGE
+	select SDL_IMAGE__BMP
+	select SDL_IMAGE__GIF
+	select SDL_IMAGE__JPG
+	select SDL_IMAGE__PNG
+	select SDL_MIXER
+	select SDL_MIXER_WAVE
+	select SDL_MIXER_OGG
+	select SDL_MIXER_FLAC
+	select SDL_MIXER_MP3
+	select FFMPEG
+	select FFMPEG_GPL
+	select FFMPEG_PP
+	help
+	  FIXME
+
+if XBMC
+
+config XBMC_VERSION
+	prompt "xbmc version             "
+	string
+	default "efef226f0ad4ea4650c1f0a6a6e16c68d04e5f2b"
+	help
+	  Enter here desired version from https://github.com/xbmc/xbmc-rbp/zipball/master/
+
+config XBMC_MD5
+	prompt "src/xbmc-(version).zip md5sum      "
+	string
+	default "a5fa9ef66a1fc34a9b9d267adc10b1e0"
+	help
+	  Enter here md5sum of downloaded src/omxplayer-version.zip
+
+comment "Installation options       ---"
+
+config XBMC_STARTSCRIPT
+	bool
+	prompt "install /etc/init.d/xbmc"
+	default y
+
+endif
