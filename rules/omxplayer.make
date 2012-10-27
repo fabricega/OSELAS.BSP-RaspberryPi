@@ -39,7 +39,9 @@ $(OMXPLAYER_SOURCE):
 # ----------------------------------------------------------------------------
 
 INCLUDES 		:= -I$(SYSROOT)/include -I$(SYSROOT)/usr/include
-OMXPLAYER_ENV		:= $(CROSS_ENV) SYSROOT=$(SYSROOT) PREFIX=$(SYSROOT) SDKSTAGE=$(SYSROOT) INCLUDES="$(INCLUDES)" HOST=$(PTXCONF_GNU_TARGET)
+OMXPLAYER_CFLAGS	:= CFLAGS="$(CROSS_CFLAGS) -pipe -O3 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp -mabi=aapcs-linux -Wno-psabi -Wa,-mno-warn-deprecated -Wno-deprecated-declarations -fomit-frame-pointer"
+OMXPLAYER_LDFLAGS	:= LDFLAGS="$(CROSS_LDFLAGS) -lpthread -lrt"
+OMXPLAYER_ENV		:= $(CROSS_ENV) $(OMXPLAYER_CFLAGS) SYSROOT=$(SYSROOT) PREFIX=$(SYSROOT) SDKSTAGE=$(SYSROOT) INCLUDES="$(INCLUDES)" HOST=$(PTXCONF_GNU_TARGET) $(OMXPLAYER_LDFLAGS)
 OMXPLAYER_PATH		:= PATH=$(CROSS_PATH)
 
 $(STATEDIR)/omxplayer.prepare:

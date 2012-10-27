@@ -1,7 +1,7 @@
-Index: omxplayer-2ae29d7/Makefile.include
+Index: omxplayer-2ae29d7db7df029badf402939b76412fed798346/Makefile.include
 ===================================================================
---- omxplayer-2ae29d7.orig/Makefile.include	2012-06-24 17:39:01.000000000 +0200
-+++ omxplayer-2ae29d7/Makefile.include	2012-06-24 20:38:20.000000000 +0200
+--- omxplayer-2ae29d7db7df029badf402939b76412fed798346.orig/Makefile.include	2012-04-29 06:48:20.000000000 +0200
++++ omxplayer-2ae29d7db7df029badf402939b76412fed798346/Makefile.include	2012-07-12 18:38:28.000000000 +0200
 @@ -1,37 +1,37 @@
 -USE_BUILDROOT=1
 -
@@ -67,14 +67,23 @@ Index: omxplayer-2ae29d7/Makefile.include
 +#CXXCP 			:= $(CXX) -E
 +#PATH 				:= $(PREFIX)/bin:$(BUILDROOT)/output/host/usr/bin:$(PATH)
  
- CFLAGS			+= -pipe -mfloat-abi=softfp -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -mfpu=vfp -Wno-psabi -mno-apcs-stack-check -O3 -mstructure-size-boundary=32 -mno-sched-prolog
+-CFLAGS			+= -pipe -mfloat-abi=softfp -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -mfpu=vfp -Wno-psabi -mno-apcs-stack-check -O3 -mstructure-size-boundary=32 -mno-sched-prolog
++CFLAGS			+= -pipe -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -Wno-psabi -mno-apcs-stack-check -O3 -mstructure-size-boundary=32 -mno-sched-prolog
  LDFLAGS			+= -L$(SDKSTAGE)/lib -L$(SDKSTAGE)/usr/lib -L$(SDKSTAGE)/opt/vc/lib/
 -INCLUDES		+= -isystem$(SDKSTAGE)/staging/usr/include -isystem$(SDKSTAGE)/staging/opt/vc/include -isystem$(SYSROOT)/usr/include
 +INCLUDES		+= -isystem$(SDKSTAGE)/staging/usr/include -isystem$(SDKSTAGE)/staging/opt/vc/include -isystem$(SYSROOT)/usr/include -isystem$(SYSROOT)/usr/include/interface/vcos/pthreads
-Index: omxplayer-2ae29d7/Makefile
+Index: omxplayer-2ae29d7db7df029badf402939b76412fed798346/Makefile
 ===================================================================
---- omxplayer-2ae29d7.orig/Makefile	2012-06-24 17:39:01.000000000 +0200
-+++ omxplayer-2ae29d7/Makefile	2012-06-24 20:39:59.000000000 +0200
+--- omxplayer-2ae29d7db7df029badf402939b76412fed798346.orig/Makefile	2012-04-29 06:48:20.000000000 +0200
++++ omxplayer-2ae29d7db7df029badf402939b76412fed798346/Makefile	2012-07-12 18:37:32.000000000 +0200
+@@ -1,6 +1,6 @@
+ include Makefile.include
+ 
+-CFLAGS+=-DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -D_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CMAKE_CONFIG -D__VIDEOCORE4__ -U_FORTIFY_SOURCE -Wall -mfpu=vfp -mfloat-abi=softfp -mno-apcs-stack-check -DHAVE_OMXLIB -DUSE_EXTERNAL_FFMPEG  -DHAVE_LIBAVCODEC_AVCODEC_H -DHAVE_LIBAVUTIL_MEM_H -DHAVE_LIBAVUTIL_AVUTIL_H -DHAVE_LIBAVFORMAT_AVFORMAT_H -DHAVE_LIBAVFILTER_AVFILTER_H -DOMX -DOMX_SKIP64BIT -ftree-vectorize -pipe -DUSE_EXTERNAL_OMX -DHAVE_PLATFORM_RASPBERRY_PI -DUSE_EXTERNAL_LIBBCM_HOST -Wno-psabi -I$(SDKSTAGE)/opt/vc/include/ 
++CFLAGS+=-DSTANDALONE -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -DTARGET_POSIX -D_LINUX -fPIC -DPIC -D_REENTRANT -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DHAVE_CMAKE_CONFIG -D__VIDEOCORE4__ -U_FORTIFY_SOURCE -Wall -mno-apcs-stack-check -DHAVE_OMXLIB -DUSE_EXTERNAL_FFMPEG  -DHAVE_LIBAVCODEC_AVCODEC_H -DHAVE_LIBAVUTIL_MEM_H -DHAVE_LIBAVUTIL_AVUTIL_H -DHAVE_LIBAVFORMAT_AVFORMAT_H -DHAVE_LIBAVFILTER_AVFILTER_H -DOMX -DOMX_SKIP64BIT -ftree-vectorize -pipe -DUSE_EXTERNAL_OMX -DHAVE_PLATFORM_RASPBERRY_PI -DUSE_EXTERNAL_LIBBCM_HOST -Wno-psabi -I$(SDKSTAGE)/opt/vc/include/ 
+ 
+ LDFLAGS+=-L./ -lc -lWFC -lGLESv2 -lEGL -lbcm_host -lopenmaxil -Lffmpeg_compiled/usr/local/lib/
+ INCLUDES+=-I./ -Ilinux -Iffmpeg_compiled/usr/local/include/
 @@ -63,3 +63,11 @@
  	cp README COPYING omxplayer-dist/usr/share/doc/
  	cp -a ffmpeg_compiled/usr/local/lib/*.so* omxplayer-dist/usr/lib/omxplayer/
