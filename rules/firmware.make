@@ -56,9 +56,28 @@ $(STATEDIR)/firmware.compile:
 
 $(STATEDIR)/firmware.install:
 	@$(call targetinfo)
-	@mkdir -p $(FIRMWARE_PKGDIR)/usr
-	@cp -a $(FIRMWARE_DIR)/opt/vc/* $(FIRMWARE_PKGDIR)/usr
-	@cp -a $(FIRMWARE_DIR)/opt/vc/* $(SYSROOT)/usr
+	@mkdir -p $(FIRMWARE_PKGDIR)/opt/vc
+	@mkdir -p $(FIRMWARE_PKGDIR)/usr/include $(FIRMWARE_PKGDIR)/usr/lib
+	@mkdir -p $(SYSROOT)/opt/vc
+	@cp -ar $(FIRMWARE_DIR)/opt/vc/* $(FIRMWARE_PKGDIR)/opt/vc/
+	@cp -ar $(FIRMWARE_DIR)/opt/vc/* $(SYSROOT)/opt/vc/
+	
+	# install headers
+	@cd $(FIRMWARE_PKGDIR)/usr/include && \
+		ls ../../opt/vc/include/ | while read inc; do \
+		ln -s ../../opt/vc/include/$$inc $$inc || true; done;
+	@cd $(SYSROOT)/usr/include && \
+		ls ../../opt/vc/include/ | while read inc; do \
+		ln -s ../../opt/vc/include/$$inc $$inc || true; done;
+	
+	# install libs
+	@cd $(FIRMWARE_PKGDIR)/usr/lib && \
+		ls ../../opt/vc/lib/ | while read lib; do \
+		ln -s ../../opt/vc/lib/$$lib $$lib || true; done;
+	@cd $(SYSROOT)/usr/lib && \
+		ls ../../opt/vc/lib/ | while read lib; do \
+		ln -s ../../opt/vc/lib/$$lib $$lib || true; done;
+
 	@$(call touch)
 
 # ----------------------------------------------------------------------------
@@ -76,8 +95,14 @@ $(STATEDIR)/firmware.targetinstall:
 
 ifdef PTXCONF_FIRMWARE_GPULIBS
 	@cd $(FIRMWARE_PKGDIR) && \
-	 find usr/lib -type f | while read file; do \
-	 $(call install_copy, firmware, 0, 0, 0644, -, /$${file}); \
+		find opt/vc/lib/ -type f -name *.so | while read file; do \
+		$(call install_copy, firmware, 0, 0, 0644, -, /$${file}, n); \
+	done;
+	@cd $(FIRMWARE_PKGDIR)/opt/vc/lib && \
+		ls *.so | while read lib; do \
+		$(call install_link, firmware, \
+		../../opt/vc/lib/$${lib}, \
+		/usr/lib/$${lib}); \
 	done;
 endif
 

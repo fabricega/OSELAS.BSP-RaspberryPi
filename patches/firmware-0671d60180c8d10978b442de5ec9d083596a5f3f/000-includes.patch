@@ -1,0 +1,364 @@
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_types.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_types.h	2012-07-10 21:22:14.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_types.h	2012-07-10 21:31:15.000000000 +0200
+@@ -25,7 +25,7 @@
+ 
+ #define VCOS_VERSION   1
+ 
+-#include "vcos_platform_types.h"
++#include "interface/vcos/pthreads/vcos_platform_types.h"
+ 
+ #if !defined(VCOSPRE_) || !defined(VCOSPOST_)
+ #error VCOSPRE_ and VCOSPOST_ not defined!
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos.h	2012-07-10 21:30:17.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos.h	2012-07-10 21:31:17.000000000 +0200
+@@ -104,7 +104,7 @@
+ 
+ #include "interface/vcos/vcos_assert.h"
+ #include "vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifndef VCOS_INIT_H
+ #include "interface/vcos/vcos_init.h"
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_atomic_flags.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_atomic_flags.h	2012-07-10 21:36:21.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_atomic_flags.h	2012-07-10 21:36:35.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_atomic_flags.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_init.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_init.h	2012-07-10 21:35:11.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_init.h	2012-07-10 21:35:31.000000000 +0200
+@@ -22,7 +22,7 @@
+ 
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_once.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_once.h	2012-07-10 21:36:45.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_once.h	2012-07-10 21:36:53.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_once.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h	2012-07-10 21:41:58.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h	2012-07-10 21:42:03.000000000 +0200
+@@ -29,7 +29,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ typedef struct VCOS_FUTEX_T
+ {
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_blockpool.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_blockpool.h	2012-07-10 21:40:34.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_blockpool.h	2012-07-10 21:40:42.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_cfg.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_cfg.h	2012-07-10 21:39:58.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_cfg.h	2012-07-10 21:40:04.000000000 +0200
+@@ -20,7 +20,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ typedef struct opaque_vcos_cfg_buf_t    *VCOS_CFG_BUF_T;
+ typedef struct opaque_vcos_cfg_entry_t  *VCOS_CFG_ENTRY_T;
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_dlfcn.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_dlfcn.h	2012-07-10 21:44:38.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_dlfcn.h	2012-07-10 21:44:44.000000000 +0200
+@@ -24,7 +24,7 @@
+ #define VCOS_DLFCN_H
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_event.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_event.h	2012-07-10 21:42:47.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_event.h	2012-07-10 21:42:53.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** 
+   * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_event_flags.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_event_flags.h	2012-07-10 21:45:30.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_event_flags.h	2012-07-10 21:45:34.000000000 +0200
+@@ -29,7 +29,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #define VCOS_EVENT_FLAGS_SUSPEND    VCOS_SUSPEND
+ #define VCOS_EVENT_FLAGS_NO_SUSPEND VCOS_NO_SUSPEND
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_isr.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_isr.h	2012-07-10 21:46:04.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_isr.h	2012-07-10 21:46:08.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+   * \file vcos_isr.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_legacy_isr.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_legacy_isr.h	2012-07-10 21:40:15.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_legacy_isr.h	2012-07-10 21:40:21.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_legacy_isr.h
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_logging.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_logging.h	2012-07-10 21:45:47.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_logging.h	2012-07-10 21:45:51.000000000 +0200
+@@ -30,7 +30,7 @@
+ #include <stdarg.h>
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h	2012-07-10 21:43:43.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h	2012-07-10 21:43:48.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mem.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_mem.h	2012-07-10 21:44:05.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mem.h	2012-07-10 21:44:09.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mempool.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_mempool.h	2012-07-10 21:37:48.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mempool.h	2012-07-10 21:37:54.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_msgqueue.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_msgqueue.h	2012-07-10 21:39:03.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_msgqueue.h	2012-07-10 21:39:07.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mutex.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_mutex.h	2012-07-10 21:38:38.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_mutex.h	2012-07-10 21:38:43.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_mutex.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_named_semaphore.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_named_semaphore.h	2012-07-10 21:43:24.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_named_semaphore.h	2012-07-10 21:43:31.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_queue.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_queue.h	2012-07-10 21:38:19.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_queue.h	2012-07-10 21:38:23.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_queue.h
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h	2012-07-10 21:43:08.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h	2012-07-10 21:43:13.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_quickslow_mutex.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h	2012-07-10 21:37:34.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h	2012-07-10 21:37:38.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_semaphore.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_semaphore.h	2012-07-10 21:45:10.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_semaphore.h	2012-07-10 21:45:16.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_semaphore.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_string.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_string.h	2012-07-10 21:39:28.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_string.h	2012-07-10 21:39:35.000000000 +0200
+@@ -35,7 +35,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __KERNEL__
+ #include <linux/string.h>
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_thread.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_thread.h	2012-07-10 21:40:53.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_thread.h	2012-07-10 21:41:00.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_thread.h
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_timer.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_timer.h	2012-07-10 21:44:55.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_timer.h	2012-07-10 21:44:59.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_timer.h
+   *
+Index: firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_tls.h
+===================================================================
+--- firmware-0671d60180c8d10978b442de5ec9d083596a5f3f.orig/opt/vc/include/interface/vcos/vcos_tls.h	2012-07-10 21:41:28.000000000 +0200
++++ firmware-0671d60180c8d10978b442de5ec9d083596a5f3f/opt/vc/include/interface/vcos/vcos_tls.h	2012-07-10 21:41:33.000000000 +0200
+@@ -28,7 +28,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ 
+ /** Create a new thread local storage data key visible to all threads in
