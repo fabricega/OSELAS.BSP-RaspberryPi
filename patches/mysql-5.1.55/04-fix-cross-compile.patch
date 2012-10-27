@@ -1,0 +1,23 @@
+Index: mysql-5.1.55/configure
+===================================================================
+--- mysql-5.1.55.orig/configure	2012-07-07 10:43:23.000000000 +0200
++++ mysql-5.1.55/configure	2012-07-07 10:44:21.000000000 +0200
+@@ -6,7 +6,7 @@
+ 
+ 
+ 
+-
++ac_cv_sys_restartable_syscalls=${ac_cv_sys_restartable_syscalls='no'}
+ 
+ 
+ 
+@@ -51116,7 +51116,8 @@
+ if test -n "$CONFIG_FILES"; then
+ 
+ 
+-ac_cr=''
++ac_cr='
++'
+ ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+   ac_cs_awk_cr='\\r'

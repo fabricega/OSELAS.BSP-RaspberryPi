@@ -10,3 +10,5 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias md='mkdir'
 alias rd='rmdir'
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/mysql/
