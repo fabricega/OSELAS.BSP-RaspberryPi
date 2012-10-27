@@ -1,3 +1,4 @@
 add-arm-mem-barrier.patch
 fix-deprecated-swp.patch
 
+003-enable-threads-gcc47.patch
