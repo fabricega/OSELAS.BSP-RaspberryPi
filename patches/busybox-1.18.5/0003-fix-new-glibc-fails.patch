@@ -1,0 +1,14 @@
+Busybox fails to build with glibc-2.16.
+
+Index: busybox-1.18.5/include/libbb.h
+===================================================================
+--- busybox-1.18.5.orig/include/libbb.h	2012-10-21 15:26:21.000000000 +0200
++++ busybox-1.18.5/include/libbb.h	2012-10-21 15:26:47.000000000 +0200
+@@ -29,6 +29,7 @@
+ #include <sys/poll.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
++#include <sys/resource.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/time.h>
