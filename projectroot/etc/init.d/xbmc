@@ -3,33 +3,48 @@
 #export XBMC_BASE=/opt/xbmc
 #export XBMC_HOME=/opt/xbmc/share/xbmc
 #export PATH=$PATH:/opt/xbmc/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 export HOME=/root
 
-XRES=1920
-YRES=1080
+export LD_LIBRARY_PATH=$XBMC_BASE/lib:/opt/vc/lib:/usr/lib/mysql:$LD_LIBRARY_PATH
 
-export LD_LIBRARY_PATH=$XBMC_BASE/lib:/opt/vc/lib:$LD_LIBRARY_PATH
+xbmc_start()
+{
+	# detect & backup screen resolution
+	RESOL=`fbset | grep mode | grep -v endmode | sed "s/\"/%/" | cut -d'%' -f2 | cut -d'-' -f1`
+	XRES=`echo $RESOL | cut -d'x' -f1`
+	YRES=`echo $RESOL | cut -d'x' -f2`
+
+	# hide console
+	echo 0 > /sys/class/vtconsole/vtcon1/bind
+	fbset -xres 1 -yres 1 -vxres 1 -vyres 1
+
+	# start xbmc
+	/usr/lib/xbmc/xbmc.bin -standalone -fs
+
+	# restore console & screen resolution when xbmc ends
+	fbset -xres ${XRES} -yres ${YRES}
+	echo 1 > /sys/class/vtconsole/vtcon1/bind
+}
+
 
 case "$1" in
-start)
-echo 'Starting xbmc'
-    echo 0 > /sys/class/vtconsole/vtcon1/bind
-    fbset -xres 1 -yres 1 -vxres 1 -vyres 1
-    /usr/lib/xbmc/xbmc.bin -standalone -fs &
-;;
-stop)
-echo 'Stopping xbmc'
-    pkill xbmc.bin
-    fbset -xres ${XRES} -yres ${YRES}
-    echo 1 > /sys/class/vtconsole/vtcon1/bind
-;;
-restart)
-$0 stop
-sleep 1
-$0 start
-;;
-*)
-echo "usage: $0 {start|stop|restart}"
+	start)
+		echo 'Starting xbmc'
+    		xbmc_start > /var/log/xbmc.log 2>&1 &
+		;;
+	stop)
+		echo 'Stopping xbmc'
+    		killall xbmc.bin
+		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	*)
+		echo "usage: $0 {start|stop|restart}"
 esac
+
 exit 0
  
