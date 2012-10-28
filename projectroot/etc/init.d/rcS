@@ -15,8 +15,13 @@ if [ ! -c /dev/console ]; then
 fi
 
 echo -n "mounting filesystems..."
-mount -a 2>/dev/null
+mount -a
 echo "done."
+
+if [ ! -d /sys/kernel ]; then
+echo error mounting sysfs
+mount -t sysfs none /sys
+fi
 
 # loadkmap < /etc/boottime.kmap
 
