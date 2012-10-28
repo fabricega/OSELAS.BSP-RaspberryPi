@@ -22,9 +22,28 @@ xbmc_start()
 	# start xbmc
 	/usr/lib/xbmc/xbmc.bin -standalone -fs
 
-	# restore console & screen resolution when xbmc ends
-	fbset -xres ${XRES} -yres ${YRES}
-	echo 1 > /sys/class/vtconsole/vtcon1/bind
+	RET=$?
+	echo $RET
+
+	case "$RET" in
+	   0)
+		# restore console & screen resolution when xbmc ends
+		fbset -xres ${XRES} -yres ${YRES}
+		echo 1 > /sys/class/vtconsole/vtcon1/bind
+		;;
+	   64)
+		poweroff
+		;;
+	   66)
+	  	reboot
+		;;
+	   *)
+		# restore console & screen resolution when xbmc ends
+		fbset -xres ${XRES} -yres ${YRES}
+		echo 1 > /sys/class/vtconsole/vtcon1/bind
+		echo "Abnormal Exit. Exited with code $RET"
+		;;
+	esac
 }
 
 
