@@ -26,50 +26,16 @@ FRIBIDI_DIR	:= $(BUILDDIR)/$(FRIBIDI)
 FRIBIDI_LICENSE	:= unknown
 
 # ----------------------------------------------------------------------------
-# Get
-# ----------------------------------------------------------------------------
-
-#$(FRIBIDI_SOURCE):
-#	@$(call targetinfo)
-#	@$(call get, FRIBIDI)
-
-# ----------------------------------------------------------------------------
 # Prepare
 # ----------------------------------------------------------------------------
-
-#FRIBIDI_CONF_ENV	:= $(CROSS_ENV)
 
 #
 # autoconf
 #
 FRIBIDI_CONF_TOOL	:= autoconf
-#FRIBIDI_CONF_OPT	:= $(CROSS_AUTOCONF_USR)
-
-#$(STATEDIR)/fribidi.prepare:
-#	@$(call targetinfo)
-#	@$(call clean, $(FRIBIDI_DIR)/config.cache)
-#	cd $(FRIBIDI_DIR) && \
-#		$(FRIBIDI_PATH) $(FRIBIDI_ENV) \
-#		./configure $(FRIBIDI_CONF_OPT)
-#	@$(call touch)
-
-# ----------------------------------------------------------------------------
-# Compile
-# ----------------------------------------------------------------------------
-
-#$(STATEDIR)/fribidi.compile:
-#	@$(call targetinfo)
-#	@$(call world/compile, FRIBIDI)
-#	@$(call touch)
-
-# ----------------------------------------------------------------------------
-# Install
-# ----------------------------------------------------------------------------
-
-#$(STATEDIR)/fribidi.install:
-#	@$(call targetinfo)
-#	@$(call world/install, FRIBIDI)
-#	@$(call touch)
+FRIBIDI_CONF_OPT	:= \
+	$(CROSS_AUTOCONF_USR) \
+	--with-glib=no
 
 # ----------------------------------------------------------------------------
 # Target-Install
