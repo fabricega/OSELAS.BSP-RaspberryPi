@@ -1,0 +1,25 @@
+From 973ebad9feb981465994f88448d2fb25d9bee941 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 30 Jun 2012 11:40:33 +0100
+Subject: [PATCH 075/183] Add 802.1q vlan module
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 47f4065..ba646b6 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -210,6 +210,8 @@ CONFIG_BRIDGE_EBT_LOG=m
+ CONFIG_BRIDGE_EBT_ULOG=m
+ CONFIG_BRIDGE_EBT_NFLOG=m
+ CONFIG_BRIDGE=m
++CONFIG_VLAN_8021Q=m
++CONFIG_VLAN_8021Q_GVRP=y
+ CONFIG_NET_PKTGEN=m
+ CONFIG_IRDA=m
+ CONFIG_IRLAN=m
+-- 
+1.7.0.4
+

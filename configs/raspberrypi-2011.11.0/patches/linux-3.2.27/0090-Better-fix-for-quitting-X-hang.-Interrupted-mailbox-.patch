@@ -1,0 +1,50 @@
+From 56c44908b2860bb551aaf532c232bcc63d4e584d Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 14 Jul 2012 18:38:58 +0100
+Subject: [PATCH 090/183] Better fix for quitting X hang. Interrupted mailbox reads are not something we can reliably recover from, so down_interruptable is not a safe call.
+
+---
+ arch/arm/mach-bcm2708/vcio.c |   12 ++++--------
+ drivers/video/bcm2708_fb.c   |    3 ---
+ 2 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/vcio.c b/arch/arm/mach-bcm2708/vcio.c
+index 799a0ac..3874051 100644
+--- a/arch/arm/mach-bcm2708/vcio.c
++++ b/arch/arm/mach-bcm2708/vcio.c
+@@ -119,14 +119,10 @@ static int mbox_read(struct vc_mailbox *mbox, unsigned chan, uint32_t *data28)
+ 	if (mbox->magic != MBOX_MAGIC)
+ 		rc = -EINVAL;
+ 	else {
+-		if (down_interruptible(&mbox->sema[chan]) == 0) {
+-			*data28 = MBOX_DATA28(mbox->msg[chan]);
+-			mbox->msg[chan] = 0;
+-			rc = 0;
+-		} else {
+-			/* The wait was interrupted */
+-			rc = -EINTR;
+-		}
++		down(&mbox->sema[chan]);
++		*data28 = MBOX_DATA28(mbox->msg[chan]);
++		mbox->msg[chan] = 0;
++		rc = 0;
+ 	}
+ 	return rc;
+ }
+diff --git a/drivers/video/bcm2708_fb.c b/drivers/video/bcm2708_fb.c
+index e7d93fb..f2c55a6 100644
+--- a/drivers/video/bcm2708_fb.c
++++ b/drivers/video/bcm2708_fb.c
+@@ -222,9 +222,6 @@ static int bcm2708_fb_set_par(struct fb_info *info)
+ 	/* inform vc about new framebuffer */
+ 	bcm_mailbox_write(MBOX_CHAN_FB, fb->dma);
+ 
+-	/* workaround occasional failure to read results. TODO: fix */
+-	msleep(10);
+-
+ 	/* wait for response */
+ 	bcm_mailbox_read(MBOX_CHAN_FB, &val);
+ 
+-- 
+1.7.0.4
+

@@ -1,0 +1,51 @@
+From fb241d04df64152a6d85d16b47ad978d8015a61c Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Mon, 15 Oct 2012 18:54:47 +0100
+Subject: [PATCH 166/183] Revert "Support dummy vc-mem ioctl used by vcdbg"
+
+This reverts commit 22cb6e26206c3e0e7bfb8e2adf86e9b10f9187a6.
+---
+ arch/arm/mach-bcm2708/include/mach/vc_mem.h |    1 -
+ arch/arm/mach-bcm2708/vc_mem.c              |   14 --------------
+ 2 files changed, 0 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/include/mach/vc_mem.h b/arch/arm/mach-bcm2708/include/mach/vc_mem.h
+index d29125b..9d41c3a 100644
+--- a/arch/arm/mach-bcm2708/include/mach/vc_mem.h
++++ b/arch/arm/mach-bcm2708/include/mach/vc_mem.h
+@@ -22,7 +22,6 @@
+ #define VC_MEM_IOC_MEM_PHYS_ADDR    _IOR( VC_MEM_IOC_MAGIC, 0, unsigned long )
+ #define VC_MEM_IOC_MEM_SIZE         _IOR( VC_MEM_IOC_MAGIC, 1, unsigned int )
+ #define VC_MEM_IOC_MEM_BASE         _IOR( VC_MEM_IOC_MAGIC, 2, unsigned int )
+-#define VC_MEM_IOC_MEM_LOAD         _IOR( VC_MEM_IOC_MAGIC, 3, unsigned int )
+ 
+ #if defined( __KERNEL__ )
+ #define VC_MEM_TO_ARM_ADDR_MASK 0x3FFFFFFF
+diff --git a/arch/arm/mach-bcm2708/vc_mem.c b/arch/arm/mach-bcm2708/vc_mem.c
+index f12cb49..5c56b31 100644
+--- a/arch/arm/mach-bcm2708/vc_mem.c
++++ b/arch/arm/mach-bcm2708/vc_mem.c
+@@ -208,20 +208,6 @@ vc_mem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 			}
+ 			break;
+ 		}
+-	case VC_MEM_IOC_MEM_LOAD:
+-		{
+-			// Get the videocore memory base
+-			vc_mem_get_base();
+-
+-			LOG_DBG("%s: VC_MEM_IOC_MEM_LOAD=%u", __func__,
+-				mm_vc_mem_base);
+-
+-			if (copy_to_user((void *) arg, &mm_vc_mem_base,
+-					 sizeof (mm_vc_mem_base)) != 0) {
+-				rc = -EFAULT;
+-			}
+-			break;
+-		}
+ 	default:
+ 		{
+ 			return -ENOTTY;
+-- 
+1.7.0.4
+

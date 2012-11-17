@@ -1,0 +1,37 @@
+From 2b039107863998de874b555a9e5af921792370e5 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Tue, 21 Aug 2012 18:57:05 +0100
+Subject: [PATCH 126/183] Revert "amba-pl011: Don't send a character during startup"
+
+This reverts commit 4a0a5565a02b84d1061bc3dccc5384b4b6829851.
+---
+ drivers/tty/serial/amba-pl011.c |    6 ------
+ 1 files changed, 0 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 1b60985..6da8cf8 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1394,11 +1394,6 @@ static int pl011_startup(struct uart_port *port)
+ 	writew(uap->vendor->ifls, uap->port.membase + UART011_IFLS);
+ 
+ 	/*
+-	 * The write to UART01x_DR causes a corrupted character to be sent
+-	 * - why is it required?
+-	 */
+-#if 0
+-	/*
+ 	 * Provoke TX FIFO interrupt into asserting.
+ 	 */
+ 	cr = UART01x_CR_UARTEN | UART011_CR_TXE | UART011_CR_LBE;
+@@ -1419,7 +1414,6 @@ static int pl011_startup(struct uart_port *port)
+ 	writew(0, uap->port.membase + UART01x_DR);
+ 	while (readw(uap->port.membase + UART01x_FR) & UART01x_FR_BUSY)
+ 		barrier();
+-#endif
+ 
+ 	cr = UART01x_CR_UARTEN | UART011_CR_RXE | UART011_CR_TXE;
+ 	writew(cr, uap->port.membase + UART011_CR);
+-- 
+1.7.0.4
+

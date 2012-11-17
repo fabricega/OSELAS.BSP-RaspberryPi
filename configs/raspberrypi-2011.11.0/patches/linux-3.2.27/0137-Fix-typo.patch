@@ -1,0 +1,22 @@
+From 906508b90bc237cd73d5c3237f20d582d44b8fa7 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 1 Sep 2012 00:31:47 +0100
+Subject: [PATCH 137/183] Fix typo
+
+---
+ arch/arm/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index eecdf50..5285fbf 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1,4 +1,4 @@
+-iconfig ARM
++config ARM
+ 	bool
+ 	default y
+ 	select HAVE_AOUT
+-- 
+1.7.0.4
+

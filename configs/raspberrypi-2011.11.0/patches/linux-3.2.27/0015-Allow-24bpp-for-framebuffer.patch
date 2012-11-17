@@ -1,0 +1,28 @@
+From bcf011fb144a3a90ed0aacc9042e7c548cb5edca Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Wed, 14 Mar 2012 23:26:14 +0000
+Subject: [PATCH 015/183] Allow 24bpp for framebuffer
+
+---
+ drivers/video/bcm2708_fb.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/video/bcm2708_fb.c b/drivers/video/bcm2708_fb.c
+index 8512ce0..f23c2d7 100644
+--- a/drivers/video/bcm2708_fb.c
++++ b/drivers/video/bcm2708_fb.c
+@@ -92,6 +92,11 @@ static int bcm2708_fb_set_bitfields(struct fb_var_screeninfo *var)
+ 		if (var->green.length != 5 && var->green.length != 6)
+ 			var->green.length = 6;
+ 		break;
++	case 24:
++		var->red.length = 8;
++		var->blue.length = 8;
++		var->green.length = 8;
++		break;
+ 	case 32:
+ 		var->red.length = 8;
+ 		var->green.length = 8;
+-- 
+1.7.0.4
+

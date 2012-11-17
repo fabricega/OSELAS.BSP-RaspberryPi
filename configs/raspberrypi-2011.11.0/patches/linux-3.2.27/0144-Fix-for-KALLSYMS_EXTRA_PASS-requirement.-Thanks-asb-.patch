@@ -1,0 +1,26 @@
+From 87d5bc10fb0876be295314213ef4478a94c0e7bb Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Tue, 11 Sep 2012 00:58:31 +0100
+Subject: [PATCH 144/183] Fix for KALLSYMS_EXTRA_PASS requirement. Thanks asb for finding this.
+
+---
+ arch/arm/kernel/vmlinux.lds.S |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/kernel/vmlinux.lds.S b/arch/arm/kernel/vmlinux.lds.S
+index 20b3041..e952a30 100644
+--- a/arch/arm/kernel/vmlinux.lds.S
++++ b/arch/arm/kernel/vmlinux.lds.S
+@@ -174,7 +174,9 @@ SECTIONS
+ 	}
+ #endif
+ 
++#ifdef CONFIG_SMP
+ 	PERCPU_SECTION(32)
++#endif
+ 
+ #ifdef CONFIG_XIP_KERNEL
+ 	__data_loc = ALIGN(4);		/* location in binary */
+-- 
+1.7.0.4
+
