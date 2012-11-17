@@ -15,14 +15,14 @@ if FIRMWARE
 config FIRMWARE_VERSION
 	prompt "firmware version              "
 	string
-	default "fc0232ac463f0618914bab9314e8e2ae27466d8c"
+	default "9f5760fcecfe5ea04d00fdb53a65d3e45378e045"
 	help
 	  Enter here desired version from https://github.com/raspberrypi/firmware
 
 config FIRMWARE_MD5
 	prompt "firmware zip md5sum           "
 	string
-	default "cca0a030158516d25e036765dae819fa"
+	default "4a06b46cfce4b598b692b9de954bc4be"
 	help
 	  Enter here md5sum of downloaded firmare-version.zip
 

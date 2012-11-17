@@ -1,0 +1,364 @@
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_types.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_types.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_types.h	2012-11-11 14:01:46.000000000 +0100
+@@ -35,7 +35,7 @@
+ #define VCOS_VERSION   1
+ 
+ #include <stddef.h>
+-#include "vcos_platform_types.h"
++#include "interface/vcos/pthreads/vcos_platform_types.h"
+ 
+ #if !defined(VCOSPRE_) || !defined(VCOSPOST_)
+ #error VCOSPRE_ and VCOSPOST_ not defined!
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos.h	2012-11-11 13:58:28.000000000 +0100
+@@ -113,7 +113,7 @@
+ 
+ #include "interface/vcos/vcos_assert.h"
+ #include "vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifndef VCOS_INIT_H
+ #include "interface/vcos/vcos_init.h"
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_atomic_flags.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_atomic_flags.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_atomic_flags.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_atomic_flags.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_init.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_init.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_init.h	2012-11-11 13:58:28.000000000 +0100
+@@ -31,7 +31,7 @@
+ 
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_once.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_once.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_once.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_once.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/pthreads/vcos_futex_mutex.h	2012-11-11 13:58:28.000000000 +0100
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ typedef struct VCOS_FUTEX_T
+ {
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_blockpool.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_blockpool.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_blockpool.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_cfg.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_cfg.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_cfg.h	2012-11-11 13:58:28.000000000 +0100
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ typedef struct opaque_vcos_cfg_buf_t    *VCOS_CFG_BUF_T;
+ typedef struct opaque_vcos_cfg_entry_t  *VCOS_CFG_ENTRY_T;
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_dlfcn.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_dlfcn.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_dlfcn.h	2012-11-11 13:58:28.000000000 +0100
+@@ -33,7 +33,7 @@
+ #define VCOS_DLFCN_H
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_event.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_event.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_event.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** 
+   * \file
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_event_flags.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_event_flags.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_event_flags.h	2012-11-11 13:58:28.000000000 +0100
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #define VCOS_EVENT_FLAGS_SUSPEND    VCOS_SUSPEND
+ #define VCOS_EVENT_FLAGS_NO_SUSPEND VCOS_NO_SUSPEND
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_isr.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_isr.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_isr.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+   * \file vcos_isr.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_legacy_isr.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_legacy_isr.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_legacy_isr.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_legacy_isr.h
+   *
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_logging.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_logging.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_logging.h	2012-11-11 14:00:58.000000000 +0100
+@@ -39,7 +39,7 @@
+ #include <stdarg.h>
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #include "vcos_logging_control.h"
+ 
+ /**
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_lowlevel_thread.h	2012-11-11 14:00:29.000000000 +0100
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /**
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mem.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_mem.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mem.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mempool.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_mempool.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mempool.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file
+   *
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_msgqueue.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_msgqueue.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_msgqueue.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mutex.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_mutex.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_mutex.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_mutex.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_named_semaphore.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_named_semaphore.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_named_semaphore.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_queue.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_queue.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_queue.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /** \file vcos_queue.h
+   *
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_quickslow_mutex.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_quickslow_mutex.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_reentrant_mutex.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_semaphore.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_semaphore.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_semaphore.h	2012-11-11 13:59:34.000000000 +0100
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /**
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_string.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_string.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_string.h	2012-11-11 13:58:28.000000000 +0100
+@@ -44,7 +44,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ #ifdef __KERNEL__
+ #include <linux/string.h>
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_thread.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_thread.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_thread.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ /**
+  * \file vcos_thread.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_timer.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_timer.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_timer.h	2012-11-11 14:00:02.000000000 +0100
+@@ -38,7 +38,7 @@
+ 
+ #include "interface/vcos/vcos_types.h"
+ #ifndef VCOS_PLATFORM_H
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ #endif
+ 
+ /** \file vcos_timer.h
+Index: firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_tls.h
+===================================================================
+--- firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045.orig/opt/vc/include/interface/vcos/vcos_tls.h	2012-11-07 16:52:56.000000000 +0100
++++ firmware-9f5760fcecfe5ea04d00fdb53a65d3e45378e045/opt/vc/include/interface/vcos/vcos_tls.h	2012-11-11 13:58:28.000000000 +0100
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ #include "interface/vcos/vcos_types.h"
+-#include "vcos_platform.h"
++#include "interface/vcos/pthreads/vcos_platform.h"
+ 
+ 
+ /** Create a new thread local storage data key visible to all threads in

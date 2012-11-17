@@ -2,7 +2,7 @@
 #
 # createSDCardRpi.sh
 # 
-# Copyright (c) 2012 - fga
+# Copyright (c) 2012 - fabricega
 #
 # Based on instructions found here:
 # - http://elinux.org/RPi_Advanced_Setup
@@ -26,11 +26,13 @@ Usage: createSDCardRpi.sh /dev/sdx	[ -h ] \n	\n
 "
 
 # Global variables
-. config.ini
+#. config.ini
 CMDLINE="dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait"
 
-PTX_BSP=~/workspace/OSELAS.BSP-FG-Raspberry-2011.11.0
-FIRMWARE_LOC=$PTX_BSP/platform-RaspberryPi/build-target/firmware-0671d60180c8d10978b442de5ec9d083596a5f3f
+SCRIPT_BASE=$(cd `dirname $0` && pwd)
+PTX_BSP=$(cd `dirname $0`/.. && pwd)
+FIRMWARE_VERSION=`grep FIRMWARE_VERSION $PTX_BSP/selected_ptxconfig | sed "s/PTXCONF_FIRMWARE_VERSION=//g" | sed "s/\"//g"`
+FIRMWARE_LOC=$PTX_BSP/platform-RaspberryPi/build-target/firmware-$FIRMWARE_VERSION
 FIRMWARE_BOOT=$FIRMWARE_LOC/boot
 #images loc: Image, rootfs
 IMAGES_SRC=$PTX_BSP/platform-RaspberryPi/images
@@ -246,6 +248,32 @@ return 0
 }
 
 
+gen_config_txt()
+{
+	echo -n "Creating config.txt ..."
+	if sudo sh -c "cat > $1/config.txt << EOF
+arm_freq=1000
+core_freq=500
+sdram_freq=500
+over_voltage=6
+
+# gpu_mem_256 GPU memory in megabyte for the 256MB Raspberry Pi. Ignored by the 512MB RP. Overrides gpu_mem. Max 192. Default not set
+gpu_mem_256=128
+
+#gpu_mem_512 GPU memory in megabyte for the 512MB Raspberry Pi. Ignored by the 256MB RP. Overrides gpu_mem. Max 448. Default not set 
+gpu_mem_512=256
+
+#framebuffer_ignore_alpha=1
+EOF"
+	then
+		echo -e "\tDone."
+	else
+		echo -e "\tFailed."
+		popd
+		exit_failed
+	fi
+}
+
 copy_bootloader()
 {
 	dev=$1
@@ -308,8 +336,10 @@ copy_bootloader()
 		exit_failed
 	fi
 
+	gen_config_txt $SD_MNT_PT
+
 	popd
-	echo -n "Uounting SD card boot partition "$dev$part"1 ... "
+	echo -n "Unmounting SD card boot partition "$dev$part"1 ... "
 	if sudo umount $SD_MNT_PT >/dev/null 2>&1; then
 		echo -e "\tDone."
 	else
@@ -379,7 +409,7 @@ copy_rootfs()
 		exit_failed
 	fi
 
-	echo -n "Uounting SD card boot partition "$dev$part"2 ... "
+	echo -n "Unmounting SD card boot partition "$dev$part"2 ... "
 	if sudo umount $SD_MNT_PT >/dev/null 2>&1; then
 		echo -e "\tDone."
 	else
@@ -420,5 +450,7 @@ if check_SD_device $DEV_SDx_SDCARD; then
 	# Check for mounted partitions, unmount when necessary
 	check_umount_all $DEV_SDx_SDCARD
 
+	echo "Syncing..."
+	sudo sync
 fi
 
