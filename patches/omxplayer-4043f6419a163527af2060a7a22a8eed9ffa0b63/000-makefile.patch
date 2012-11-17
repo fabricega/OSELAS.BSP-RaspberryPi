@@ -1,0 +1,93 @@
+Index: omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/Makefile.include
+===================================================================
+--- omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63.orig/Makefile.include	2012-10-31 06:26:30.000000000 +0100
++++ omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/Makefile.include	2012-11-16 21:07:44.000000000 +0100
+@@ -1,38 +1,38 @@
+-USE_BUILDROOT=1
+-FLOAT=hard
++#USE_BUILDROOT=1
++#FLOAT=hard
+ 
+-ifeq ($(USE_BUILDROOT), 1)
+-BUILDROOT	:=/opt/xbmc-bcm/buildroot
+-SDKSTAGE	:=$(BUILDROOT)/output/staging
+-TARGETFS	:=$(BUILDROOT)/output/target
+-TOOLCHAIN	:=$(BUILDROOT)/output/host/usr/
+-HOST			:=arm-unknown-linux-gnueabi
+-SYSROOT		:=$(BUILDROOT)/output/host/usr/arm-unknown-linux-gnueabi/sysroot
+-else
+-BUILDROOT	:=/opt/bcm-rootfs
+-SDKSTAGE	:=/opt/bcm-rootfs
+-TARGETFS	:=/opt/bcm-rootfs
+-TOOLCHAIN	:=/usr/local/bcm-gcc
+-HOST			:=bcm2708
+-SYSROOT		:=$(TOOLCHAIN)/arm-bcm2708-linux-gnueabi/sys-root
+-endif
++#ifeq ($(USE_BUILDROOT), 1)
++#BUILDROOT	:=/opt/xbmc-bcm/buildroot
++#SDKSTAGE	:=$(BUILDROOT)/output/staging
++#TARGETFS	:=$(BUILDROOT)/output/target
++#TOOLCHAIN	:=$(BUILDROOT)/output/host/usr/
++#HOST			:=arm-unknown-linux-gnueabi
++#SYSROOT		:=$(BUILDROOT)/output/host/usr/arm-unknown-linux-gnueabi/sysroot
++#else
++#BUILDROOT	:=/opt/bcm-rootfs
++#SDKSTAGE	:=/opt/bcm-rootfs
++#TARGETFS	:=/opt/bcm-rootfs
++#TOOLCHAIN	:=/usr/local/bcm-gcc
++#HOST			:=bcm2708
++#SYSROOT		:=$(TOOLCHAIN)/arm-bcm2708-linux-gnueabi/sys-root
++#endif
+ 
+-JOBS=7
++#JOBS=7
+ 
+-CFLAGS			:= -isystem$(PREFIX)/include
+-CXXFLAGS		:= $(CFLAGS)
+-CPPFLAGS		:= $(CFLAGS)
+-LDFLAGS			:= -L$(BUILDROOT)/lib
+-LD					:= $(TOOLCHAIN)/bin/$(HOST)-ld --sysroot=$(SYSROOT)
+-CC					:= $(TOOLCHAIN)/bin/$(HOST)-gcc --sysroot=$(SYSROOT)
+-CXX         := $(TOOLCHAIN)/bin/$(HOST)-g++ --sysroot=$(SYSROOT)
+-OBJDUMP			:= $(TOOLCHAIN)/bin/$(HOST)-objdump
+-RANLIB			:= $(TOOLCHAIN)/bin/$(HOST)-ranlib
+-STRIP				:= $(TOOLCHAIN)/bin/$(HOST)-strip
+-AR 					:= $(TOOLCHAIN)/bin/$(HOST)-ar
+-CXXCP 			:= $(CXX) -E
+-PATH 				:= $(PREFIX)/bin:$(BUILDROOT)/output/host/usr/bin:$(PATH)
++#CFLAGS			:= -isystem$(PREFIX)/include
++#CXXFLAGS		:= $(CFLAGS)
++#CPPFLAGS		:= $(CFLAGS)
++#LDFLAGS			:= -L$(BUILDROOT)/lib
++#LD					:= $(TOOLCHAIN)/bin/$(HOST)-ld --sysroot=$(SYSROOT)
++#CC					:= $(TOOLCHAIN)/bin/$(HOST)-gcc --sysroot=$(SYSROOT)
++#CXX         := $(TOOLCHAIN)/bin/$(HOST)-g++ --sysroot=$(SYSROOT)
++#OBJDUMP			:= $(TOOLCHAIN)/bin/$(HOST)-objdump
++#RANLIB			:= $(TOOLCHAIN)/bin/$(HOST)-ranlib
++#STRIP				:= $(TOOLCHAIN)/bin/$(HOST)-strip
++#AR 					:= $(TOOLCHAIN)/bin/$(HOST)-ar
++#CXXCP 			:= $(CXX) -E
++#PATH 				:= $(PREFIX)/bin:$(BUILDROOT)/output/host/usr/bin:$(PATH)
+ 
+-CFLAGS			+= -pipe -mfloat-abi=$(FLOAT) -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -mfpu=vfp -Wno-psabi -mno-apcs-stack-check -O3 -mstructure-size-boundary=32 -mno-sched-prolog
++CFLAGS			+= -pipe -mcpu=arm1176jzf-s -fomit-frame-pointer -mabi=aapcs-linux -mtune=arm1176jzf-s -Wno-psabi -mno-apcs-stack-check -O3 -mstructure-size-boundary=32 -mno-sched-prolog
+ LDFLAGS			+= -L$(SDKSTAGE)/lib -L$(SDKSTAGE)/usr/lib -L$(SDKSTAGE)/opt/vc/lib/
+-INCLUDES		+= -isystem$(SDKSTAGE)/usr/include -isystem$(SDKSTAGE)/opt/vc/include -isystem$(SYSROOT)/usr/include -isystem$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -isystem$(SDKSTAGE)/usr/include/freetype2
++INCLUDES		+= -isystem$(SDKSTAGE)/usr/include -isystem$(SDKSTAGE)/opt/vc/include -isystem$(SYSROOT)/usr/include -isystem$(SDKSTAGE)/opt/vc/include/interface/vcos/pthreads -isystem$(SDKSTAGE)/usr/include/freetype2  -isystem$(SYSROOT)/usr
+Index: omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/Makefile
+===================================================================
+--- omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63.orig/Makefile	2012-10-31 06:26:30.000000000 +0100
++++ omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/Makefile	2012-11-16 21:46:36.000000000 +0100
+@@ -69,3 +69,12 @@
+ 	cp README.md $(DIST)/usr/share/doc/README
+ 	cp -a ffmpeg_compiled/usr/local/lib/*.so* $(DIST)/usr/lib/omxplayer/
+ 	tar -czf omxplayer-dist.tar.gz $(DIST)
++
++install: omxplayer.bin
++	mkdir -p $(DESTDIR)/usr/lib/omxplayer
++	mkdir -p $(DESTDIR)/usr/bin
++	mkdir -p $(DESTDIR)/usr/share/doc
++	cp omxplayer omxplayer.bin $(DESTDIR)/usr/bin
++	cp COPYING $(DESTDIR)/usr/share/doc/
++	cp README.md $(DESTDIR)/usr/share/doc/README
++

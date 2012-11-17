@@ -1,0 +1,37 @@
+Index: omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/omxplayer
+===================================================================
+--- omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63.orig/omxplayer	2012-11-16 21:46:49.000000000 +0100
++++ omxplayer-4043f6419a163527af2060a7a22a8eed9ffa0b63/omxplayer	2012-11-16 21:46:55.000000000 +0100
+@@ -24,20 +24,20 @@
+   export LD_LIBRARY_PATH=$PWD/ffmpeg_compiled/usr/local/lib:/opt/vc/lib:$LD_LIBRARY_PATH
+ fi
+ 
+-XRES=1920
+-YRES=1080
++#XRES=1920
++#YRES=1080
+ 
+-XRES=1600
+-YRES=900
++#XRES=1600
++#YRES=900
+ 
+-if [ -e $FBSET ]; then
+-  echo 0 >  /sys/class/vtconsole/vtcon1/bind
+-  fbset -xres 1 -yres 1
+-fi
++#if [ -e $FBSET ]; then
++#  echo 0 >  /sys/class/vtconsole/vtcon1/bind
++#  fbset -xres 1 -yres 1
++#fi
+ 
+ $OMXPLAYER --font $FONT "$@"
+ 
+-if [ -e $FBSET ]; then
+-  fbset -xres ${XRES} -yres ${YRES}
+-  echo 1 >  /sys/class/vtconsole/vtcon1/bind
+-fi
++#if [ -e $FBSET ]; then
++#  fbset -xres ${XRES} -yres ${YRES}
++#  echo 1 >  /sys/class/vtconsole/vtcon1/bind
++#fi

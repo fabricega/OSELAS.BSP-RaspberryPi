@@ -8,6 +8,7 @@ menuconfig OMXPLAYER
 	select FFMPEG_SHARED
 	select FIRMWARE
 	select FIRMWARE_GPULIBS
+	select BOOST
 	help
 	  FIXME
 
@@ -16,14 +17,14 @@ if OMXPLAYER
 config OMXPLAYER_VERSION
 	prompt "omxplayer version             "
 	string
-	default "2ae29d7db7df029badf402939b76412fed798346"
+	default "4043f6419a163527af2060a7a22a8eed9ffa0b63"
 	help
 	  Enter here desired version from https://github.com/huceke/omxplayer
 
 config OMXPLAYER_MD5
 	prompt "src/omxplayer.zip md5sum      "
 	string
-	default ""
+	default "ab19fec1a21bc4a6761b187997353944"
 	help
 	  Enter here md5sum of downloaded src/omxplayer-version.zip
 
