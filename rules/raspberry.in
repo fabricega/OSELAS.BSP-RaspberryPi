@@ -1,0 +1,5 @@
+## SECTION=raspberry
+
+config RASPBERRY_PI
+	bool
+	default y

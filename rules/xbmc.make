@@ -25,6 +25,13 @@ ifeq ($(shell dpkg -l | grep libsdl-image | grep dev 2>/dev/null),)
     $(warning *** please install libsdl-image1.2-dev on HOST)
     $(error )
 endif
+ifdef PTXCONF_XBMC_GIT_SOURCE_MASTER
+ifeq ($(shell which swig 2>/dev/null),)
+    $(warning *** which is mandatory to build xbmc)
+    $(warning *** please install which)
+    $(error )
+endif
+endif
 endif
 
 #
@@ -34,7 +41,7 @@ XBMC_VERSION	:= $(call remove_quotes,$(PTXCONF_XBMC_VERSION))
 XBMC_MD5	:= $(call remove_quotes,$(PTXCONF_XBMC_MD5))
 XBMC		:= xbmc-$(XBMC_VERSION)
 XBMC_SUFFIX	:= zip
-XBMC_URL	:= https://github.com/xbmc/xbmc-rbp/zipball/master
+XBMC_URL	:= https://github.com/xbmc/xbmc/zipball/master
 XBMC_SOURCE	:= $(SRCDIR)/$(XBMC).$(XBMC_SUFFIX)
 XBMC_DIR	:= $(BUILDDIR)/$(XBMC)
 XBMC_LICENSE	:= GPLv2
@@ -46,8 +53,6 @@ XBMC_LICENSE	:= GPLv2
 $(XBMC_SOURCE):
 	@$(call targetinfo)
 	@$(call get, XBMC)
-#	@cd $(SRCDIR) && \
-#		wget -O $(XBMC_SOURCE) $(XBMC_URL)/$(XBMC_VERSION)
 
 # ----------------------------------------------------------------------------
 # Prepare
@@ -62,13 +67,18 @@ XBMC_TOOLCHAIN	:= $(PTXDIST_WORKSPACE)/selected_toolchain
 #
 XBMC_CONF_OPT	:= $(CROSS_AUTOCONF_USR) \
 --disable-gl --enable-gles --disable-sdl --disable-x11 --disable-xrandr --disable-openmax \
-  --disable-optical-drive --disable-dvdcss --disable-joystick --enable-debug \
+--disable-optical-drive --disable-dvdcss --disable-joystick --enable-debug \
 --disable-crystalhd --disable-vtbdecoder --disable-vaapi --disable-vdpau \
---disable-pulse --disable-projectm --with-platform=raspberry-pi --enable-optimizations \
+--disable-pulse --disable-projectm --enable-optimizations \
 --enable-external-libraries --enable-external-ffmpeg --disable-goom --disable-hal \
 --disable-airplay --disable-alsa --disable-libbluray --enable-mid --disable-nfs \
---disable-profiling --enable-rsxs --enable-rtmp --disable-vdadecoder --with-arch=arm
+--disable-profiling --enable-rsxs --enable-rtmp --disable-vdadecoder
 
+ifdef PTXCONF_RASPBERRY_PI
+XBMC_CONF_OPT	+= --with-arch=arm
+XBMC_CONF_OPT	+= --with-platform=raspberry-pi
+XBMC_CONF_OPT	+= --enable-player=omxplayer
+endif
 #	--with-platform=raspberry-pi \
 #	--disable-ccache \
 #	--disable-gl \

@@ -1,0 +1,8 @@
+## SECTION=system_libraries
+
+config TAGLIB
+	tristate
+	prompt "taglib"
+	help
+	  TagLib is a library for reading and editing the meta-data
+	  of several popular audio formats.

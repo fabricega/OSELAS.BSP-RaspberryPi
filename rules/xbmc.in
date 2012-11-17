@@ -80,6 +80,8 @@ menuconfig XBMC
 	select FFMPEG
 	select FFMPEG_GPL
 	select FFMPEG_PP
+	select TAGLIB
+	select LIBSSH
 	help
 	  FIXME
 
@@ -88,14 +90,14 @@ if XBMC
 config XBMC_VERSION
 	prompt "xbmc version             "
 	string
-	default "efef226f0ad4ea4650c1f0a6a6e16c68d04e5f2b"
+	default "25bb46a22f41dcd632886cb4f1667ff661bcf3d2"
 	help
-	  Enter here desired version from https://github.com/xbmc/xbmc-rbp/zipball/master/
+	  Enter here desired version from https://github.com/xbmc/xbmc/zipball/master/
 
 config XBMC_MD5
 	prompt "src/xbmc-(version).zip md5sum      "
 	string
-	default "a5fa9ef66a1fc34a9b9d267adc10b1e0"
+	default "3b8ba308243f42929a6c066baa340377"
 	help
 	  Enter here md5sum of downloaded src/omxplayer-version.zip
 
