@@ -9,6 +9,7 @@ menuconfig OMXPLAYER
 	select FIRMWARE
 	select FIRMWARE_GPULIBS
 	select BOOST
+	select FREETYPE
 	help
 	  FIXME
 
