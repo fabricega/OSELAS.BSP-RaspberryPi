@@ -57,8 +57,13 @@ $(XBMC_SOURCE):
 # ----------------------------------------------------------------------------
 # Prepare
 # ----------------------------------------------------------------------------
+XBMC_CFLAGS	:= $(CROSS_CFLAGS)
+XBMC_CFLAGS	+= $(CROSS_CPPFLAGS)
+XBMC_CFLAGS	+= -I$(SYSROOT)/include
+XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include
+XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include/interface/vcos
 
-XBMC_ENV	:= $(CROSS_ENV) CFLAGS="$(CROSS_CFLAGS) -I$(PTXDIST_SYSROOT_TARGET)/usr/include/interface/vcos -pipe -O3 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp -mabi=aapcs-linux -Wno-psabi -Wa,-mno-warn-deprecated -Wno-deprecated-declarations -fomit-frame-pointer"
+XBMC_ENV	:= $(CROSS_ENV) CFLAGS="$(XBMC_CFLAGS) -pipe -O3 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp -mabi=aapcs-linux -Wno-psabi -Wa,-mno-warn-deprecated -Wno-deprecated-declarations -fomit-frame-pointer" CPPFLAGS="$(XBMC_CFLAGS)" CXXFLAGS="$(XBMC_CFLAGS)"
 XBMC_PATH	:= PATH=$(CROSS_PATH):$(SYSROOT)/usr/bin
 XBMC_TOOLCHAIN	:= $(PTXDIST_WORKSPACE)/selected_toolchain
 

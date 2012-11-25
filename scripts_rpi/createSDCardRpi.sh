@@ -301,7 +301,7 @@ copy_bootloader()
 		fi
 	else
 			echo -e "\tFailed."
-			echo "Cannot find firmware boot: $FIRMWARE"
+			echo "Cannot find firmware boot: $FIRMWARE_BOOT"
 			exit_failed		
 	fi
 
