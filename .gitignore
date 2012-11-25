@@ -1,0 +1,8 @@
+configs/ptxconfig.old
+configs/raspberrypi-2012.10.0/platformconfig.old
+platform-RaspberryPi/
+selected_platformconfig
+selected_ptxconfig
+selected_toolchain
+src/
+

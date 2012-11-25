@@ -1,4 +1,4 @@
-OSELAS.BSP-FG-Raspberry-2011.11.0:
+OSELAS.BSP-RaspberryPi:
 
 derived from: OSELAS.BSP-Pengutronix-Generic-2011.11.0
 
@@ -46,9 +46,17 @@ $ ptxdist go
 
 2 - prepare BSP, then GO
 ==========================
-$ cd OSELAS.BSP-FG-Raspberry-2011.11.0:
+First, install ptxdist-2012.10.0 and its dependencies:
+$ apt-get install ...
+$ wget ptxdist-2012.10.0.tar.bz2
+$ tar -xjvf ptxdist-2012.10.0.tar.bz2
+$ ./configure
+$ sudo make install
+
+Then, configure OSELAS.BSP-RaspberryPi
+$ cd OSELAS.BSP-RaspberryPi:
 $ ptxdist select configs/ptxconfig
-$ ptxdist platform configs/raspberrypi-2011.11.0/platformconfig
+$ ptxdist platform configs/raspberrypi-2012.10.0/platformconfig
 $ ptxdist toolchain /opt/OSELAS.Toolchain-2011.11.1/arm-1176jzfs-linux-gnueabi/gcc-4.6.2-glibc-2.14.1-binutils-2.21.1a-kernel-2.6.39-sanitized/bin
 $ ptxdist go
 $ ptxdist images
