@@ -15,7 +15,7 @@ menuconfig PYTHON
 	select READLINE		if PYTHON_READLINE
 	select DB		if PYTHON_DB
 	select EXPAT		if PYTHON_EXPAT
-	select OPENSSL		if PYTHON_SSL
+	select OPENSSL		if PYTHON_HASHLIB
 	help
 	  Python is a dynamic object-oriented programming
 	  language that can be used for many kinds of
@@ -49,9 +49,6 @@ config PYTHON_DB
 	help
 	  bercleydb
 
-config PYTHON_SSL
-	bool "ssl bindings"
-
 config PYTHON_SYMLINK
 	bool
 	prompt "install symbolic link /usr/bin/python"
@@ -64,9 +61,20 @@ config PYTHON_LIBTK
 config PYTHON_IDLELIB
 	bool
 	prompt "Include idlelib packages"
+	help
+	  IDLE, an Integrated Development Environment for Python written in
+	  100% Python
 
 config PYTHON_DISTUTILS
 	bool
 	prompt "Include distutils packages"
 
+config PYTHON_HASHLIB
+	bool
+	prompt "Include hashlib package"
+
 endif
+
+menu "python Extra Modules          "
+source "generated/python.in"
+endmenu

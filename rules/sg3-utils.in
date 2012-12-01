@@ -1,0 +1,7 @@
+## SECTION=system_libraries
+
+config SG3_UTILS
+	tristate
+	prompt "sg3-utils"
+	help
+	  provides libsgutils2

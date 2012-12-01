@@ -6,3 +6,14 @@ for k in /etc/rc.d/K*; do
 		$k stop
 	fi
 done
+
+
+# Kill all processes.
+echo -n "Sending all processes the TERM signal..."
+killall5 -15
+echo "done."
+sleep 1
+echo -n "Sending all processes the KILL signal..."
+killall5 -9
+echo "done."
+

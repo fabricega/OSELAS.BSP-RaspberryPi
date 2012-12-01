@@ -1,0 +1,18 @@
+## SECTION=shell_and_console
+config PARTED
+	tristate
+	prompt "parted"
+	select GETTEXT
+	select READLINE
+	select E2FSPROGS
+	select NCURSES
+	select LVM2		if PARTED_LVM2
+	help
+	  The GNU Parted program allows you to create, destroy, resize, move,
+	  and copy hard disk partitions. Parted can be used for creating space
+	  for new operating systems, reorganizing disk usage, and copying data
+	  to new hard disks.
+
+config PARTED_LVM2
+	bool
+	default n

@@ -18,46 +18,6 @@ PACKAGES-$(PTXCONF_INITMETHOD_BBINIT) += initmethod-bbinit
 #
 INITMETHOD_BBINIT_VERSION	:= 1.0.0
 INITMETHOD_BBINIT		:= initmethod-bbinit-$(INITMETHOD_BBINIT_VERSION)
-INITMETHOD_BBINIT_DIR		:= $(BUILDDIR)/$(INITMETHOD_BBINIT)
-
-# ----------------------------------------------------------------------------
-# Get
-# ----------------------------------------------------------------------------
-
-$(INITMETHOD_BBINIT_SOURCE):
-	@$(call targetinfo)
-
-# ----------------------------------------------------------------------------
-# Extract
-# ----------------------------------------------------------------------------
-
-$(STATEDIR)/initmethod-bbinit.extract:
-	@$(call targetinfo)
-	@$(call touch)
-
-# ----------------------------------------------------------------------------
-# Prepare
-# ----------------------------------------------------------------------------
-
-$(STATEDIR)/initmethod-bbinit.prepare:
-	@$(call targetinfo)
-	@$(call touch)
-
-# ----------------------------------------------------------------------------
-# Compile
-# ----------------------------------------------------------------------------
-
-$(STATEDIR)/initmethod-bbinit.compile:
-	@$(call targetinfo)
-	@$(call touch)
-
-# ----------------------------------------------------------------------------
-# Install
-# ----------------------------------------------------------------------------
-
-$(STATEDIR)/initmethod-bbinit.install:
-	@$(call targetinfo)
-	@$(call touch)
 
 # ----------------------------------------------------------------------------
 # Target-Install
@@ -101,8 +61,10 @@ ifdef PTXCONF_INITMETHOD_BBINIT_ETC_INITD_NETWORKING
 	@$(call install_alternative, initmethod-bbinit, 0, 0, 0644, /etc/network/interfaces, n)
 	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-down.d)
 	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-up.d)
+	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-pre-down.d)
 	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-post-down.d)
 	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-pre-up.d)
+	@$(call install_copy, initmethod-bbinit, 0, 0, 0755, /etc/network/if-post-up.d)
 endif
 
 ifdef PTXCONF_INITMETHOD_BBINIT_ETC_INITD_RT_SET_BANDWIDTH

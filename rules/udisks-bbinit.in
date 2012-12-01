@@ -1,0 +1,14 @@
+## SECTION=initmethod_bbinit
+
+config UDISKS_BBINIT_STARTLINK
+	string
+	depends on UDISKS_STARTSCRIPT
+	prompt "automount start"
+	default "S50automount"
+
+config UDISKS_BBINIT_STOPLINK
+	string
+	depends on UDISKS_STARTSCRIPT
+	prompt "automount stop"
+	default "K50automount"
+

@@ -62,7 +62,7 @@ menuconfig XBMC
 	select PYTHON_NCURSES
 	select PYTHON_EXPAT
 	select PYTHON_READLINE
-	select PYTHON_SSL
+	select PYTHON_HASHLIB
 	select PYTHON_SQLITE
 	select PYTHON_ZLIB
 	select GPERF

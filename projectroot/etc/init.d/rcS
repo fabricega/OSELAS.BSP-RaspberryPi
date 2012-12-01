@@ -3,6 +3,10 @@
 # /etc/init.d/rcS
 #
 
+if [ -e /etc/mtab ]; then
+	rm /etc/mtab    
+fi                                    
+
 mount -t proc none /proc
 
 if grep -q "quiet" /proc/cmdline; then

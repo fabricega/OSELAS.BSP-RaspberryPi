@@ -12,5 +12,6 @@ console::respawn:/sbin/getty 38400 tty4
 # Stuff to do before rebooting
 ::ctrlaltdel:/sbin/reboot
 ::shutdown:/etc/init.d/rcK
-::shutdown:/bin/umount -a -r -t notmpfs
 ::shutdown:/sbin/ifdown -a
+::shutdown:/bin/umount -a -r -t notmpfs,nodevtmpfs,nodevpts,noproc,nodevfs
+

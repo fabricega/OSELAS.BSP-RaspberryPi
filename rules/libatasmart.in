@@ -1,0 +1,9 @@
+## SECTION=system_libraries
+
+config LIBATASMART
+	tristate
+	prompt "libatasmart"
+	help
+	  This library is supposed to be lean and small and thus
+          supports only a subset of the S.M.A.R.T. functionality.
+          However, it implements the relevant part of it.

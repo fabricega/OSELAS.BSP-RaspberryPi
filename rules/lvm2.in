@@ -1,0 +1,9 @@
+## SECTION=disk_and_file
+
+config LVM2
+	tristate
+	prompt "lvm2"
+	select UDEV
+	help
+	  Linux Logical Volume Manager.
+	  provides device-mapper library
