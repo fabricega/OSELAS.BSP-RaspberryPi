@@ -1,0 +1,28 @@
+diff --git a/lib/direct/os/linux/glibc/thread.c b/lib/direct/os/linux/glibc/thread.c
+index 5dbdc3b..71b2d1c 100644
+--- a/lib/direct/os/linux/glibc/thread.c
++++ b/lib/direct/os/linux/glibc/thread.c
+@@ -64,6 +64,7 @@ init_once( void )
+ {
+      /* Create the key for the TSD (thread specific data). */
+      pthread_key_create( &thread_key, NULL );
++     pthread_key_create( &thread_key, NULL );
+ }
+ 
+ /**********************************************************************************************************************/
+diff --git a/src/core/core.c b/src/core/core.c
+index c5836a2..02f441d 100644
+--- a/src/core/core.c
++++ b/src/core/core.c
+@@ -1809,7 +1809,11 @@ core_tls_destroy( void *arg )
+ void
+ Core_TLS__init( void )
+ {
++     direct_tls_register( &core_tls_key, NULL );
++     direct_tls_register( &core_tls_key, NULL );
+      direct_tls_register( &core_tls_key, core_tls_destroy );
++     direct_tls_register( &core_tls_key, NULL );
++     direct_tls_register( &core_tls_key, NULL );
+ }
+ 
+ void

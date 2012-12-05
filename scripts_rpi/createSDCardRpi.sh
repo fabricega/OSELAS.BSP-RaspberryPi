@@ -41,6 +41,9 @@ IMAGES_SRC=$PTX_BSP/platform-RaspberryPi/images
 SD_MNT_PT=/mnt/mmc
 LOOP_MNT_PT=/mnt/loop
 
+# Options
+FULL_FORMAT=
+
 # Check Parameters
 get_param()
 {
@@ -53,6 +56,9 @@ get_param()
 		-h | --help | -u | --usage )
 			echo -e $usage
 			exit 1
+			;;
+		-f )
+			FULL_FORMAT=yes
 			;;
 		sd* ) 
 			DEV_SDx_SDCARD=/dev/$PARAM
@@ -201,6 +207,11 @@ n
 p
 2
 
++1G
+n
+p
+3
+
 
 t
 1
@@ -240,6 +251,17 @@ then
 		echo "Failed."
 		exit_failed		
 	fi
+
+	if [ -n "$FULL_FORMAT" ]; then
+		echo -n "Creating ext4 file system on "$dev$part"3 ... "
+		# Create ext4 file system
+		if sudo mkfs.ext4 -L datafs "$dev""$part"3  >/dev/null 2>&1; then
+			echo -e "\tDone."
+		else
+			echo "Failed."
+			exit_failed		
+		fi		
+	fi
 else
 	exit_failed
 	return 1
@@ -252,10 +274,14 @@ gen_config_txt()
 {
 	echo -n "Creating config.txt ..."
 	if sudo sh -c "cat > $1/config.txt << EOF
-arm_freq=1000
-core_freq=500
+#arm_freq=1000
+#core_freq=500
+#sdram_freq=500
+#over_voltage=6
+
+arm_freq=900
+gpu_freq=350
 sdram_freq=500
-over_voltage=6
 
 # gpu_mem_256 GPU memory in megabyte for the 256MB Raspberry Pi. Ignored by the 512MB RP. Overrides gpu_mem. Max 192. Default not set
 gpu_mem_256=128
@@ -424,6 +450,45 @@ copy_rootfs()
 # Read command line args
 get_param
 
+copy_datafs ()
+{
+	dev=$1
+	if [ ! -e $SD_MNT_PT ]; then
+		echo -n "Creating SD card mountpoint ... "
+		# Create mounting point
+		if sudo mkdir $SD_MNT_PT; then
+			echo -e "\tDone."
+		else
+			echo -e "\tFailed."
+			echo "Cannot Create mounting point : $SD_MNT_PT"
+			exit_failed
+		fi
+	fi
+
+	# Mount SD card data partition
+	echo -n "Mounting SD card boot partition "$dev$part"3 ... "
+	if sudo mount $dev$part"3" $SD_MNT_PT; then
+		echo -e "\tDone."
+	else
+		echo -e "\tFailed."
+		exit_failed
+	fi
+
+	echo -n "creatind root folder on "$dev$part"3 ... "
+	if sudo mkdir $SD_MNT_PT/root; then echo -e "\tDone."; else echo -e "\tFailed."; fi
+	echo -n "creatind home folder on "$dev$part"3 ... "
+	if sudo mkdir $SD_MNT_PT/home; then echo -e "\tDone."; else echo -e "\tFailed."; fi
+
+	echo -n "Unmounting SD card datafs partition "$dev$part"3 ... "
+	if sudo umount $SD_MNT_PT >/dev/null 2>&1; then
+		echo -e "\tDone."
+	else
+		echo -e "\tFailed."
+		popd
+		exit_failed
+	fi
+
+}
 
 # Check device exists
 if check_SD_device $DEV_SDx_SDCARD; then
@@ -446,6 +511,10 @@ if check_SD_device $DEV_SDx_SDCARD; then
 	check_umount_all $DEV_SDx_SDCARD
 
 	copy_rootfs $DEV_SDx_SDCARD
+
+	if [ -n "$FULL_FORMAT" ]; then
+		copy_datafs $DEV_SDx_SDCARD
+	fi
 
 	# Check for mounted partitions, unmount when necessary
 	check_umount_all $DEV_SDx_SDCARD

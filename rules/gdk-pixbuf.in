@@ -1,0 +1,82 @@
+## SECTION=multimedia_gtk
+
+menuconfig GDK_PIXBUF
+	tristate
+	prompt "gdk-pixbuf                    "
+	select GLIB
+	select XORG_LIB_X11	if GDK_PIXBUF_X11
+	select LIBPNG		if GDK_PIXBUF_LOADER_PNG
+	select LIBJPEG		if GDK_PIXBUF_LOADER_JPEG
+#	select LIBTIFF		 if GDK_PIXBUF_LOADER_TIFF
+	help
+	  GTK helper library for pixel handling.
+
+if GDK_PIXBUF
+
+config GDK_PIXBUF_X11
+	bool
+	prompt "X11 support"
+
+menu "graphic loaders             "
+
+config GDK_PIXBUF_LOADER_PNG
+	bool
+	prompt "png"
+	default y
+
+config GDK_PIXBUF_LOADER_BMP
+	bool
+	prompt "bmp"
+
+config GDK_PIXBUF_LOADER_WBMP
+	bool
+	prompt "wbmp"
+
+config GDK_PIXBUF_LOADER_GIF
+	bool
+	prompt "gif"
+
+config GDK_PIXBUF_LOADER_ICO
+	bool
+	prompt "ico"
+
+config GDK_PIXBUF_LOADER_ANI
+	bool
+	prompt "ani"
+
+config GDK_PIXBUF_LOADER_JPEG
+	bool
+	prompt "jpeg"
+
+#config GDK_PIXBUF_LOADER_JPEG2000
+#	bool
+#	prompt "jpeg 2000"
+
+config GDK_PIXBUF_LOADER_PNM
+	bool
+	prompt "pnm"
+
+config GDK_PIXBUF_LOADER_RAS
+	bool
+	prompt "ras"
+
+#config GDK_PIXBUF_LOADER_TIFF
+#	bool
+#	prompt "tiff"
+
+config GDK_PIXBUF_LOADER_XPM
+	bool
+	prompt "xpm"
+
+config GDK_PIXBUF_LOADER_TGA
+	bool
+	prompt "tga"
+
+config GDK_PIXBUF_LOADER_PCX
+	bool
+	prompt "pcx"
+
+endmenu
+
+endif
+

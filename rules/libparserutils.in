@@ -1,0 +1,8 @@
+## SECTION=netsurf_libraries
+
+config LIBPARSERUTILS
+	tristate
+	prompt "libparserutils"
+	select ICONV
+	help
+	  FIXME

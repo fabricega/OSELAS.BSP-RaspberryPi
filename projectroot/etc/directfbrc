@@ -1,0 +1,12 @@
+system=fbdev
+#system=sdl
+#no-vt
+mode=1824x984
+#mode=1280x720
+#mode=1024x768
+#mode=800x600
+#depth=32
+depth=16
+pixelformat=RGB16
+#disable-module=linux_input
+#disable-module=keyboard

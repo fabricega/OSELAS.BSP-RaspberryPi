@@ -1,0 +1,20 @@
+Index: DirectFB-1.6.2/lib/direct/os/linux/glibc/log.c
+===================================================================
+--- DirectFB-1.6.2.orig/lib/direct/os/linux/glibc/log.c	2012-11-08 06:21:47.000000000 +0100
++++ DirectFB-1.6.2/lib/direct/os/linux/glibc/log.c	2012-11-08 06:23:34.000000000 +0100
+@@ -233,11 +233,14 @@
+ 
+ #ifdef EAI_ADDRFAMILY
+                case EAI_ADDRFAMILY:
++                    D_ERROR( "Direct/Log: Host found, but has no address!\n" );
++                    return DR_FAILURE;
+ #endif
++#ifdef EAI_NODATA
+                case EAI_NODATA:
+                     D_ERROR( "Direct/Log: Host found, but has no address!\n" );
+                     return DR_FAILURE;
+-                    
++#endif
+                case EAI_MEMORY:
+                     return D_OOM();
+ 

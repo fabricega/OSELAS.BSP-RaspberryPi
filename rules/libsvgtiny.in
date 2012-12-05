@@ -1,0 +1,8 @@
+## SECTION=netsurf_libraries
+
+config LIBSVGTINY
+	tristate
+	prompt "libsvgtiny"
+	select LIBXML2
+	help
+	  Libsvgtiny is an implementation of SVG Tiny.

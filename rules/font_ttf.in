@@ -1,0 +1,12 @@
+## SECTION=multimedia_xorg_font
+
+menuconfig FONT_TTF
+	depends on MENU_XORG_FONTS
+	select FREETYPE
+	bool
+	prompt "true type fonts               "
+
+if FONT_TTF
+source "generated/font_ttf.in"
+endif
+

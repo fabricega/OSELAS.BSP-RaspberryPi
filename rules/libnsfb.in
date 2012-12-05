@@ -1,0 +1,7 @@
+## SECTION=netsurf_libraries
+
+config LIBNSFB
+	tristate
+	prompt "libnsfb"
+	help
+	  LibNSFB is a framebuffer abstraction library.

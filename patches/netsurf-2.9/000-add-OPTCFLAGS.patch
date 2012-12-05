@@ -1,0 +1,97 @@
+Index: netsurf-2.9/netsurf-2.9/Makefile.defaults
+===================================================================
+--- netsurf-2.9.orig/netsurf-2.9/Makefile.defaults	2012-01-01 22:42:38.000000000 +0100
++++ netsurf-2.9/netsurf-2.9/Makefile.defaults	2012-11-18 11:48:27.000000000 +0100
+@@ -91,7 +91,7 @@
+ NETSURF_USE_LIBICONV_PLUG := YES
+ 
+ # Initial CFLAGS. Optimisation level etc. tend to be target specific.
+-CFLAGS := 
++CFLAGS := $(OPTCFLAGS)
+ 
+ # Default installation/execution prefix
+ PREFIX ?= /usr/local
+@@ -126,7 +126,7 @@
+   NETSURF_USE_DRAW_EXPORT := YES
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+ endif
+ 
+@@ -161,7 +161,7 @@
+   endif
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized  $(OPTCFLAGS)
+ 
+ endif
+ 
+@@ -211,7 +211,7 @@
+   NETSURF_USE_LIBICONV_PLUG := NO
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+ endif
+ 
+@@ -256,7 +256,7 @@
+   NETSURF_AMIGA_USE_CAIRO := YES
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+ endif
+ 
+@@ -265,7 +265,7 @@
+ # ----------------------------------------------------------------------------
+ ifeq ($(TARGET),framebuffer)
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+   # Framebuffer default surface provider.
+   # Valid values are: x, sdl, linux, vnc, able, 
+@@ -335,7 +335,7 @@
+   NETSURF_USE_HARU_PDF := NO
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+ endif
+ 
+@@ -369,7 +369,7 @@
+   NETSURF_ATARI_USE_FREETYPE := YES
+ 
+   # Optimisation levels
+-  CFLAGS += -m68000 -O2 -Wuninitialized
++  CFLAGS += -m68000 -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+   WARNFLAGS = -W -Wundef -Wpointer-arith \
+ 		-Wcast-align -Wwrite-strings -Wstrict-prototypes \
+@@ -415,7 +415,7 @@
+   SDK_VERSION := $(MACOSX_VERSION)
+ 
+   # Optimisation levels
+-  CFLAGS += -O2 -Wuninitialized 
++  CFLAGS += -O2 -Wuninitialized $(OPTCFLAGS)
+ 
+ endif
+ 
+Index: netsurf-2.9/netsurf-2.9/gtk/Makefile.target
+===================================================================
+--- netsurf-2.9.orig/netsurf-2.9/gtk/Makefile.target	2012-11-18 13:56:59.000000000 +0100
++++ netsurf-2.9/netsurf-2.9/gtk/Makefile.target	2012-11-18 13:57:06.000000000 +0100
+@@ -32,7 +32,6 @@
+ # GTK and GLIB flags to disable depricated usage
+ GTKDEPFLAGS := -DG_DISABLE_SINGLE_INCLUDES \
+ 		-DG_DISABLE_DEPRECATED \
+-	       	-DGTK_DISABLE_SINGLE_INCLUDES \
+ 	       	-DGTK_DISABLE_DEPRECATED \
+ 		-DGTK_MULTIHEAD_SAFE \
+ 		-DPANGO_DISABLE_DEPRECATED \

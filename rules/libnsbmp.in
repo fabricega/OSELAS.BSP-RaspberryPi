@@ -1,0 +1,7 @@
+## SECTION=netsurf_libraries
+
+config LIBNSBMP
+	tristate
+	prompt "libnsbmp"
+	help
+	  Libnsbmp is a decoding library for BMP and ICO image file formats.

@@ -1,0 +1,14 @@
+## SECTION=font_ttf
+
+config TTF_DEJAVU
+	tristate
+	prompt "ttf-dejavu"
+	help
+	  The DeThe DejaVu fonts are a font family based on the Vera Fonts.
+	  Its purpose is to provide a wider range of characters while
+	  maintaining the original look and feel through the process of 
+	  collaborative development (see authors), under a Free license.
+	  jaVu fonts are a font family based on the Vera Fonts. Its purpose
+	  is to provide a wider range of characters while maintaining the 
+	  original look and feel through the process of collaborative
+	  development (see authors), under a Free license. 

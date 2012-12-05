@@ -3,3 +3,4 @@
 config RASPBERRY_PI
 	bool
 	default y
+	select DIRECTFB_GFX_GLES2	if DIRECTFB

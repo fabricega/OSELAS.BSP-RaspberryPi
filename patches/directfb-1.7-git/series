@@ -1,0 +1,6 @@
+000-fix-olddef-glic.patch
+directfb_patches_disable-asm.patch
+directfb_patches_permissions-hack.patch
+directfb_patches_gles2-experimental.patch
+directfb_patches_raspberrypi-workaround.patch
+fix-fusion-compile.patch

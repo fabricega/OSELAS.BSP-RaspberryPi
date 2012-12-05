@@ -1,0 +1,8 @@
+## SECTION=netsurf_libraries
+
+config LIBROSPRITE
+	tristate
+	prompt "librosprite"
+	help
+	  LibROSprite is a library for decoding RISC OS Sprite format bitmaps, written in C.
+	  It was developed as part of the NetSurf project.

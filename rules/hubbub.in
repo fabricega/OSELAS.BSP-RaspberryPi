@@ -1,0 +1,7 @@
+## SECTION=netsurf_libraries
+
+config HUBBUB
+	tristate
+	prompt "hubbub"
+	help
+	  Hubbub is an HTML5 compliant parsing library.

@@ -1,0 +1,7 @@
+## SECTION=hosttools_noprompt
+
+config HOST_DIRECTFB
+	tristate
+	select HOST_LIBPNG
+	select HOST_FLUX	if DIRECTFB_VERSION_1_7_GIT
+	default ALLYES

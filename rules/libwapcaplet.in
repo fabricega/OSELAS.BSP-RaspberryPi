@@ -1,0 +1,7 @@
+## SECTION=netsurf_libraries
+
+config LIBWAPCAPLET
+	tristate
+	prompt "libwapcaplet"
+	help
+	  LibWapcaplet is a string internment library

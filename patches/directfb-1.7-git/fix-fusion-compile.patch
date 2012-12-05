@@ -1,0 +1,26 @@
+Index: directfb-1.7-git/lib/fusion/object.c
+===================================================================
+--- directfb-1.7-git.orig/lib/fusion/object.c	2012-11-10 09:18:59.000000000 +0100
++++ directfb-1.7-git/lib/fusion/object.c	2012-11-10 09:20:41.000000000 +0100
+@@ -196,7 +196,9 @@
+      pool->message_size = message_size;
+      pool->destructor   = destructor;
+      pool->ctx          = ctx;
++#if FUSION_BUILD_KERNEL
+      pool->secure       = fusion_config->secure_fusion;
++#endif
+ 
+      fusion_hash_create( shared->main_pool, HASH_INT, HASH_PTR, 17, &pool->objects );
+ 
+@@ -366,7 +368,11 @@
+      object->identity = identity;
+ 
+      /* Initialize the reference counter. */
++#if FUSION_BUILD_KERNEL
+      if (fusion_ref_init2( &object->ref, pool->name, pool->secure, world )) {
++#else
++     if (fusion_ref_init( &object->ref, pool->name, world )) {
++#endif
+           SHFREE( shared->main_pool, object );
+           fusion_skirmish_dismiss( &pool->lock );
+           return NULL;

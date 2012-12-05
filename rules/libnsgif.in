@@ -1,0 +1,7 @@
+## SECTION=netsurf_libraries
+
+config LIBNSGIF
+	tristate
+	prompt "libnsgif"
+	help
+	  Libnsgif is a decoding library for the GIF image file format.

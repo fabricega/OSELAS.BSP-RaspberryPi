@@ -84,6 +84,20 @@ ifneq ($(PTXCONF_ROOTFS_MEDIA10),"")
 endif
 endif
 ifdef PTXCONF_ROOTFS_MNT
+ifneq ($(PTXCONF_ROOTFS_MNT1),"")
+	@$(call install_copy, rootfs, 0, 0, 0777, /mnt/$(PTXCONF_ROOTFS_MNT1))
+endif
+ifneq ($(PTXCONF_ROOTFS_MNT2),"")
+	@$(call install_copy, rootfs, 0, 0, 0777, /mnt/$(PTXCONF_ROOTFS_MNT2))
+endif
+ifneq ($(PTXCONF_ROOTFS_MNT3),"")
+	@$(call install_copy, rootfs, 0, 0, 0777, /mnt/$(PTXCONF_ROOTFS_MNT3))
+endif
+ifneq ($(PTXCONF_ROOTFS_MNT4),"")
+	@$(call install_copy, rootfs, 0, 0, 0777, /mnt/$(PTXCONF_ROOTFS_MNT4))
+endif
+endif
+ifdef PTXCONF_ROOTFS_MNT
 	@$(call install_copy, rootfs, 0, 0, 0755, /mnt)
 endif
 ifdef PTXCONF_ROOTFS_PROC

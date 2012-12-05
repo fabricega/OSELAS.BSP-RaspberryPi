@@ -1,0 +1,15 @@
+diff --git a/configure.in b/configure.in
+index 50bc6d6..8567f02 100644
+--- a/configure.in
++++ b/configure.in
+@@ -250,8 +250,8 @@ have_kos=no
+ need_libc_r=no
+ need_libdl=yes
+ need_librt=no
+-want_ppcasm=yes
+-want_armasm=yes
++want_ppcasm=no
++want_armasm=no
+ 
+ case "$target_or_host" in
+   *-*linux*)

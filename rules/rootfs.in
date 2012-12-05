@@ -138,13 +138,43 @@ config ROOTFS_MEDIA10
 
 # ok, that's all for /media.
 
-config ROOTFS_MNT
+menuconfig ROOTFS_MNT
 	bool
-	prompt "/mnt"
+	prompt "/mnt                        "
 	default y
 	help
 	  This is a common directory to temporarely mount external media. Its
 	  always a good idea to select this entry.
+
+config ROOTFS_MNT1
+	prompt "Mountpoint 1"
+	string
+	depends on ROOTFS_MNT
+	help
+	  This string defines a mountpoint directory in /mnt
+
+config ROOTFS_MNT2
+	prompt "Mountpoint 2"
+	string
+	depends on ROOTFS_MNT && ROOTFS_MNT1!=""
+	help
+	  This string defines a mountpoint directory in /mnt
+
+config ROOTFS_MNT3
+	prompt "Mountpoint 3"
+	string
+	depends on ROOTFS_MNT && ROOTFS_MNT2!=""
+	help
+	  This string defines a mountpoint directory in /mnt
+
+config ROOTFS_MNT4
+	prompt "Mountpoint 4"
+	string
+	depends on ROOTFS_MNT && ROOTFS_MNT3!=""
+	help
+	  This string defines a mountpoint directory in /mnt
+
+# ok, that's all for /mnt.
 
 config ROOTFS_PROC
 	bool

@@ -1,0 +1,8 @@
+## SECTION=multimedia_directfb
+
+config LINUX_FUSION
+	tristate
+	prompt "linux-fusion"
+	select KERNEL
+	help
+	  FIXME

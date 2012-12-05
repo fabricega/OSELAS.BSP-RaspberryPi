@@ -1,0 +1,25 @@
+diff --git a/src/core/CoreDFB_includes.h b/src/core/CoreDFB_includes.h
+index 50d6b0c..1fc2afe 100644
+--- a/src/core/CoreDFB_includes.h
++++ b/src/core/CoreDFB_includes.h
+@@ -469,13 +469,13 @@ CoreSurface_Lookup( CoreDFB      *core,
+      if (ret)
+           return (DirectResult) ret;
+ 
+-     if (caller != FUSION_ID_MASTER &&
+-         surface->object.identity && surface->object.identity != caller &&
+-         surface->object.owner && surface->object.owner != caller)
+-     {
+-          dfb_surface_unref( surface );
+-          return DR_ACCESSDENIED;
+-     }
++//     if (caller != FUSION_ID_MASTER &&
++//         surface->object.identity && surface->object.identity != caller &&
++//         surface->object.owner && surface->object.owner != caller)
++//     {
++//          dfb_surface_unref( surface );
++//          return DR_ACCESSDENIED;
++//     }
+ 
+      *ret_surface = surface;
+ 

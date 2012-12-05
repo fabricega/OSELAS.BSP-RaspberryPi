@@ -2,8 +2,14 @@
 # /etc/fstab
 #
 
-/dev/mmcblk0p2  /               ext4    defaults                        0 0
+# non-volatile filesystems
+/dev/mmcblk0p2  /               ext4    defaults,noatime                0 0
 /dev/mmcblk0p1  /boot           vfat    defaults                        0 0
+/dev/mmcblk0p3  /mnt/datafs     ext4    defaults,noatime                0 0
+
+# bind
+/mnt/datafs/root /root		none	bind
+/mnt/datafs/home /home		none	bind
 
 # special filesystems
 proc    /proc                   proc    defaults                        0 0

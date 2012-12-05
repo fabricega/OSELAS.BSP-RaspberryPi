@@ -1,0 +1,81 @@
+## SECTION=web
+
+menuconfig NETSURF
+	tristate
+	prompt "netsurf                       "
+	select GLIBC_GCONV_UTF
+	select LIBXML2
+	select LIBCURL
+	select LIBCURL_CURL
+	select LIBCURL_COOKIES
+	select LIBCURL_FTP
+	select LIBCURL_FILE
+	select LIBCURL_SSL
+	select LIBCURL_CRYPTO_AUTH
+	select LIBPNG
+	select LIBJPEG
+	select OPENSSL
+	select FREETYPE			if NETSURF_FREETYPE
+	select FONT_TTF			if NETSURF_FREETYPE
+	select TTF_DEJAVU		if NETSURF_FREETYPE
+	select DIRECTFB
+	select DIRECTFB_LINUX_FUSION
+	select DIRECTFB_FBDEV
+	select DIRECTFB_V4L2
+	select DIRECTFB_FONT_FREETYPE	if NETSURF_FREETYPE
+	select DIRECTFB_ZLIB
+	select DIRECTFB_CONFIG_DIRECTFBRC
+	select DIRECTFB_IMAGE_GIF
+	select DIRECTFB_IMAGE_PNG
+	select DIRECTFB_IMAGE_JPEG
+	select DIRECTFB_INPUT_KEYBOARD
+	select DIRECTFB_INPUT_LINUXINPUT
+	select SDL
+	select ZLIB
+	select LIBPARSERUTILS
+	select LIBWAPCAPLET
+	select LIBCSS
+	select HUBBUB
+	select LIBNSBMP
+	select LIBNSGIF
+	select LIBNSFB
+	select LIBSVGTINY
+	select LIBROSPRITE
+	select GTK			if NETSURF_TARGET_GTKDFB
+	select GTK_TARGET_DIRECTFB	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_PNG	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_BMP	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_GIF	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_ICO	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_JPEG	if NETSURF_TARGET_GTKDFB
+	select GDK_PIXBUF_LOADER_XPM	if NETSURF_TARGET_GTKDFB
+	select LIBGLADE			if NETSURF_TARGET_GTKDFB
+	help
+	  FIXME
+
+if NETSURF
+
+choice
+	prompt "target"
+	default NETSURF_TARGET_FRAMEBUFFER
+
+	config NETSURF_TARGET_FRAMEBUFFER
+		bool
+		prompt "framebuffer (dfb)"
+
+	config NETSURF_TARGET_GTKDFB
+		bool
+		prompt "gtk (dfb)"
+
+endchoice
+
+config NETSURF_FREETYPE
+	bool
+	prompt "freetype2 support"
+	default y
+
+menu "netsurf libraries             "
+source "generated/netsurf_libraries.in"
+endmenu
+
+endif
