@@ -1,0 +1,4 @@
+perl-configure-qemu.patch
+perl-fix-Module-Build.patch
+perl-make-ext.patch
+perl-mkppport.patch

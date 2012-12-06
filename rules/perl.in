@@ -1,0 +1,7 @@
+## SECTION=scripting_languages
+
+config PERL
+	tristate
+	prompt "perl"
+	help
+	  FIXME
