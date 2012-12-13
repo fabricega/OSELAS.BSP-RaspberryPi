@@ -1,0 +1,9 @@
+## SECTION=perl_module
+
+config LIBXML_PARSER_PERL
+	tristate
+	prompt "libxml-parser-perl"
+	select EXPAT
+	depends on BROKEN
+	help
+	  FIXME

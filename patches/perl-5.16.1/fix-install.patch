@@ -1,0 +1,19 @@
+Index: perl-5.16.1/Makefile
+===================================================================
+--- perl-5.16.1.orig/Makefile	2012-12-06 14:30:04.000000000 +0100
++++ perl-5.16.1/Makefile	2012-12-06 15:05:45.000000000 +0100
+@@ -363,10 +363,10 @@
+ 	./miniperl_top installman --destdir=$(DESTDIR) $(INSTALLFLAGS)
+ 
+ install.miniperl: miniperl$X xlib/Config.pm xlib/Config_heavy.pl
+-	install -D -m 0755 miniperl $(hostbin)/$(target_name)-miniperl$X
+-	-ln -s $(target_name)-miniperl$X $(hostbin)/$(target_arch)-miniperl$X 
+-	install -D -m 0644 xlib/Config.pm $(hostprefix)/$(target_arch)/lib/perl/Config.pm
+-	install -D -m 0644 xlib/Config_heavy.pl $(hostprefix)/$(target_arch)/lib/perl/Config_heavy.pl
++	install -D -m 0755 miniperl $(DESTDIR)/usr/bin/miniperl
++	-ln -s miniperl $(hostbin)/$(target_arch)-miniperl$X 
++	install -D -m 0644 xlib/Config.pm $(DESTDIR)/usr/lib/perl/Config.pm
++	install -D -m 0644 xlib/Config_heavy.pl $(DESTDIR)/usr/lib/perl/Config_heavy.pl
+ 
+ # ---[ clean ]------------------------------------------------------------------
+ .PHONY: clean clean-obj clean-generated-files clean-subdirs clean-modules

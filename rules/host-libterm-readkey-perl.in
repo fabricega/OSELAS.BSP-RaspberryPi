@@ -1,0 +1,7 @@
+## SECTION=hosttools_noprompt
+
+config HOST_LIBTERM_READKEY_PERL
+	tristate
+	prompt "libterm-readkey-perl"
+	help
+	  FIXME

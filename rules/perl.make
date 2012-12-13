@@ -14,6 +14,42 @@
 #
 PACKAGES-$(PTXCONF_PERL) += perl
 
+ifdef PTXCONF_PERL
+colon := :
+CROSS_PERL	:= $(PTXCONF_SYSROOT_HOST)/usr/bin/miniperl
+CROSS_PERL_INCLIB := \
+	$(SYSROOT)/usr/lib/perl \
+	$(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)
+CROSS_PERL_PERL5LIB := $(subst $(space),$(colon),$(CROSS_PERL_INCLIB))
+CROSS_PERL_OPTS := \
+	$(CROSS_ENV) \
+	PERL=$(CROSS_PERL) \
+	PERL_LIB=$(SYSROOT)/usr/lib/perl \
+	PERL_ARCHLIB=$(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET) \
+	PERL_INC=$(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/CORE \
+	INSTALLPRIVLIB=/usr/lib/perl \
+	INSTALLARCHLIB=/usr/lib/perl/$(PTXCONF_GNU_TARGET) \
+	INSTALLSITELIB=/usr/lib/perl \
+	INSTALLVENDORLIB=/usr/lib/perl \
+	INSTALLSITEARCH=/usr/lib/perl
+endif
+#	$(SYSROOT)/usr/lib/perl/cnf/cpan \
+	$(SYSROOT)/usr/lib/perl/lib \
+	$(SYSROOT)/usr/lib/perl/cpan/AutoLoader/lib \
+	$(SYSROOT)/usr/lib/perl/dist/Cwd $(SYSROOT)/usr/lib/perl/dist/Cwd/lib \
+	$(SYSROOT)/usr/lib/perl/dist/ExtUtils-Command/lib \
+	$(SYSROOT)/usr/lib/perl/dist/ExtUtils-Install/lib \
+	$(SYSROOT)/usr/lib/perl/cpan/ExtUtils-MakeMaker/lib \
+	$(SYSROOT)/usr/lib/perl/dist/ExtUtils-Manifest/lib \
+	$(SYSROOT)/usr/lib/perl/cpan/File-Path/lib \
+	$(SYSROOT)/usr/lib/perl/ext/re \
+	$(SYSROOT)/usr/lib/perl/cpan/ExtUtils-Constant/lib \
+	$(SYSROOT)/usr/lib/perl/dist/ExtUtils-ParseXS/lib \
+	$(SYSROOT)/usr/lib/perl/dist/constant/lib \
+	$(SYSROOT)/usr/lib/perl/cpan/Getopt-Long/lib \
+	$(SYSROOT)/usr/lib/perl/cpan/Text-Tabs/lib \
+	$(SYSROOT)/usr/lib/perl/dist/Carp/lib
+
 #
 # Paths and names
 #
@@ -65,6 +101,8 @@ $(STATEDIR)/perl.extract:
 # ----------------------------------------------------------------------------
 # Prepare
 # ----------------------------------------------------------------------------
+PERL_MODULES := $(call remove_quotes,$(PTXCONF_PERL_MODULES))
+
 
 # Normally, --mode=cross should automatically do the two steps
 # below, but it doesn't work for some reason.
@@ -82,7 +120,7 @@ PERL_CONF_OPT = \
 	--target=$(PTXCONF_GNU_TARGET) \
 	--target-tools-prefix=$(PTXCONF_COMPILER_PREFIX) \
 	--prefix=/usr \
-	-Dld="$(CROSS_CC)" \
+	-Dld="$(CROSS_LD)" \
 	-A ccflags="$(CROSS_CPPFLAGS)" \
 	-A ldflags="$(CROSS_LDFLAGS) -lm" \
 	-A mydomain="" \
@@ -92,11 +130,22 @@ PERL_CONF_OPT = \
 	-A osvers=$(KERNEL_VERSION) \
 	-A perlamdin=root
 
-
-PERL_MODULES := constant Getopt/Std Time/Local
-
+# Modules list to be included (none means all)
+ifneq ($(call remove_quotes,$(PERL_MODULES)),)
+# Add modules requested by other packages
+ifneq ($(call remove_quotes,$(PERL_REQ_MODULES)),)
+PERL_MODULES += $(call remove_quotes,$(PERL_REQ_MODULES))
+endif
 PERL_CONF_OPT += --only-mod=$(subst $(space),$(comma),$(PERL_MODULES))
+endif
 
+ifeq ($(shell expr $(PERL_VERSION_MINOR) % 2), 1)
+PERL_CONF_OPT += -Dusedevel
+endif
+
+ifdef PTXCONF_GLOBAL_LARGE_FILE
+PERL_CONF_OPT += -Uuselargefiles
+endif
 
 $(STATEDIR)/perl.prepare:
 	@$(call targetinfo)
@@ -106,6 +155,9 @@ $(STATEDIR)/perl.prepare:
 	cd $(PERL_DIR) && \
 		$(PERL_PATH) \
 		./configure $(PERL_CONF_OPT)
+	cd $(PERL_DIR) && \
+		$(PERL_PATH) \
+		sed -i 's/UNKNOWN-/ptxdist-$(call remove_quotes,$(PTXCONF_CONFIGFILE_VERSION)) /' patchlevel.h
 	@$(call touch)
 
 # ----------------------------------------------------------------------------
@@ -126,9 +178,26 @@ $(STATEDIR)/perl.compile:
 # ----------------------------------------------------------------------------
 
 $(STATEDIR)/perl.install:
+	@$(call targetinfo)
 	cd $(PERL_DIR) && \
 		$(PERL_PATH) \
 		PERL5LIB=$(PERL_DIR)/dist/base/lib $(MAKE) DESTDIR="$(PERL_PKGDIR)" install.perl
+	cd $(PERL_DIR) && \
+		$(PERL_PATH) \
+		PERL5LIB=$(PERL_DIR)/dist/base/lib $(MAKE) DESTDIR="$(PTXCONF_SYSROOT_HOST)" install.miniperl
+	@$(call touch)
+
+$(STATEDIR)/perl.install.post:
+	@$(call targetinfo)
+	@$(call world/install.post, PERL)
+	@sed -i 's,/usr,$(call remove_quotes,$(SYSROOT))/usr,g' $(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/Config.pm
+#	sed -i "s,[\']/usr,\'$(call remove_quotes,$(SYSROOT))/usr,g" $(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/Config_heavy.pl
+#	@sed -i 's,/usr,$(call remove_quotes,$(SYSROOT))/usr,g' $(PTXCONF_SYSROOT_HOST)/usr/lib/perl/Config.pm
+#	sed -i "s,[\']/usr,\'$(call remove_quotes,$(SYSROOT))/usr,g" $(PTXCONF_SYSROOT_HOST)/usr/lib/perl/Config_heavy.pl
+
+##	@sed -i 's,/usr/lib/perl/$(call remove_quotes,$(PTXCONF_GNU_TARGET)),$(call remove_quotes,$(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)),g' $(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/Config.pm
+	@sed -i 's,/usr/lib/perl/$(call remove_quotes,$(PTXCONF_GNU_TARGET)),$(call remove_quotes,$(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)),g' $(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/Config_heavy.pl
+##	sed -i "s,[privlib.*=\'/usr/lib/perl\'],[privlib.*=\'$(call remove_quotes,$(SYSROOT)/usr/lib/perl)/usr/lib/perl\'],g" $(SYSROOT)/usr/lib/perl/$(PTXCONF_GNU_TARGET)/Config_heavy.pl
 	@$(call touch)
 
 # ----------------------------------------------------------------------------
@@ -143,16 +212,17 @@ $(STATEDIR)/perl.targetinstall:
 	@$(call install_fixup, perl,SECTION,base)
 	@$(call install_fixup, perl,AUTHOR,"fabricega")
 	@$(call install_fixup, perl,DESCRIPTION,missing)
-
+#
 	@$(call install_copy, perl, 0, 0, 0755, -, /usr/bin/perl)
-
-	@cd $(PERL_PKGDIR)/usr/lib/perl && \
-	find . -type f | while read file; do \
-		$(call install_copy, perl, 0, 0, 644, \
-		$(PERL_PKGDIR)/usr/lib/perl/$$file, \
-			/usr/lib/perl/$$file); \
-	done
-
+#	@$(call install_copy, perl, 0, 0, 0755, -, /usr/bin/perl5.16.1)
+#
+#	@cd $(PERL_PKGDIR)/usr/lib/perl && \
+#	find . -type f | while read file; do \
+#		$(call install_copy, perl, 0, 0, 644, \
+#		$(PERL_PKGDIR)/usr/lib/perl/$$file, \
+#			/usr/lib/perl/$$file); \
+#	done
+#
 	@$(call install_finish, perl)
 
 	@$(call touch)

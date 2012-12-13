@@ -1,0 +1,7 @@
+## SECTION=hosttools_noprompt
+
+config HOST_PERL
+	tristate
+	help
+	  perl - Practical Extraction and Report Language
+

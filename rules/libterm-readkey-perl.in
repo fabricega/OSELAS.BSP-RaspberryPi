@@ -1,0 +1,9 @@
+## SECTION=perl_module
+
+config LIBTERM_READKEY_PERL
+	bool
+	prompt "libterm-readkey-perl"
+	select HOST_LIBTERM_READKEY_PERL
+	help
+	  Term::ReadKey - A perl module for simple terminal control
+

@@ -1,7 +1,33 @@
 ## SECTION=scripting_languages
 
-config PERL
+menuconfig PERL
 	tristate
-	prompt "perl"
+	prompt "perl                          "
+	select HOST_PERL
 	help
-	  FIXME
+	  perl - Practical Extraction and Report Language
+
+if PERL
+
+config PERL_MODULES
+	string
+	prompt "modules"
+	default "constant Getopt/Std Time/Local"
+	help
+	  List of space-separated perl modules (without .pm) to copy to the
+	  rootfs.
+
+	  Examples: constant Getopt/Std Time/Local
+
+	  Module dependencies on external libraries are not automatic so
+	  check your needs.
+
+	  Leave empty for all modules (as far as the external libraries
+	  are available).
+
+menu "external perl modules         "
+source "generated/perl_module.in"
+endmenu
+
+endif
+

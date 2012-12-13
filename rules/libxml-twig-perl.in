@@ -1,0 +1,9 @@
+## SECTION=perl_module
+
+config LIBXML_TWIG_PERL
+	tristate
+	prompt "libxml-twig-perl"
+	select LIBXML_PARSER_PERL
+	depends on BROKEN
+	help
+	  FIXME

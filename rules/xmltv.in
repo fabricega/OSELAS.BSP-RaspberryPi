@@ -1,0 +1,13 @@
+## SECTION=applications
+
+config XMLTV
+	tristate
+	prompt "xmltv"
+	select LIBXML2
+	select PERL
+	select LIBTERM_READKEY_PERL
+	select LIBXML_PARSER_PERL
+	select LIBXML_TWIG_PERL
+	depends on BROKEN
+	help
+	  Gather television listings, process them and organize your viewing.

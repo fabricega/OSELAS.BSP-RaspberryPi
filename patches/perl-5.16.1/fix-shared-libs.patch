@@ -1,0 +1,13 @@
+Index: perl-5.16.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm
+===================================================================
+--- perl-5.16.1.orig/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2012-12-06 16:33:16.000000000 +0100
++++ perl-5.16.1/cpan/ExtUtils-MakeMaker/lib/ExtUtils/MM_Unix.pm	2012-12-06 16:33:26.000000000 +0100
+@@ -950,7 +950,7 @@
+     }
+ 
+     push @m, sprintf <<'MAKE', $ld_run_path_shell, $ldrun, $ldfrom, $libs;
+-	%s$(LD) %s $(LDDLFLAGS) %s $(OTHERLDFLAGS) -o $@ $(MYEXTLIB)	\
++	%s$(LD) -shared %s $(LDDLFLAGS) %s $(OTHERLDFLAGS) -o $@ $(MYEXTLIB)	\
+ 	  $(PERL_ARCHIVE) %s $(PERL_ARCHIVE_AFTER) $(EXPORT_LIST)	\
+ 	  $(INST_DYNAMIC_FIX)
+ MAKE
