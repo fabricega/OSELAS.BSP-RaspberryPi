@@ -1,0 +1,8 @@
+## SECTION=xbmc_addons
+
+config XBMC_ADDON_XVDR
+	tristate
+	prompt "xbmc-addon-xvdr"
+	select ZLIB
+	help
+	  This addon allows XBMC PVR to connect to the VDR server.

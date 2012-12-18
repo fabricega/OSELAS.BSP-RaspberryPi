@@ -1,0 +1,14 @@
+## SECTION=xbmc_addons
+
+comment "xbmc-pvr-addons: tvheadend isn't selected !"
+	depends on !TVHEADEND
+
+config XBMC_PVR_ADDONS
+	tristate
+	prompt "xbmc-pvr-addons"
+	depends on TVHEADEND
+	select LIBCURL
+	select MYSQL
+	select BOOST
+	help
+	  This addons allows XBMC PVR to connect to various TV/PVR backends and tuners.
