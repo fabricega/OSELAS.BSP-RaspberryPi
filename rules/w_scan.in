@@ -1,0 +1,7 @@
+## SECTION=applications
+
+config W_SCAN
+	tristate
+	prompt "w_scan"
+	help
+	  FIXME
