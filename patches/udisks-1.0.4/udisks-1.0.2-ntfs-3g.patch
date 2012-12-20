@@ -1,0 +1,13 @@
+Support ntfs-3g by default without entry in /etc/filesystems for write access. 
+Index: udisks-1.0.4/src/device.c
+===================================================================
+--- udisks-1.0.4.orig/src/device.c	2012-12-20 15:46:08.000000000 +0100
++++ udisks-1.0.4/src/device.c	2012-12-20 15:46:27.000000000 +0100
+@@ -5930,6 +5930,7 @@
+   "vfat",
+   "exfat",
+   "ntfs",
++  "ntfs-3g",
+   NULL,
+ };
+ 
