@@ -1,0 +1,14 @@
+## SECTION=initmethod_bbinit
+
+config LIRC_BBINIT_STARTLINK
+	string
+	depends on LIRC_STARTSCRIPT
+	prompt "lirc start"
+	default "S90lirc"
+
+config LIRC_BBINIT_STOPLINK
+	string
+	depends on LIRC_STARTSCRIPT
+	prompt "lirc stop"
+	default "K10lirc"
+

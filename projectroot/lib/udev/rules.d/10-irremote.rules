@@ -1,0 +1,3 @@
+KERNEL=="event*",SUBSYSTEM=="input",ATTRS{idVendor}=="073a",ATTRS{idProduct}=="2330",IMPORT{program}="input_id %p"
+KERNEL=="event*",SUBSYSTEM=="input", ATTRS{idVendor}=="073a", ATTRS{idProduct}=="2330", ENV{ID_INPUT_KEYBOARD}=="1", SYMLINK="input/irremote"
+

@@ -1,0 +1,9 @@
+lirc-0.9.0-001-git_e0ab92be.patch
+lirc-0.9.0-011-remove_asm_sytem_h.patch
+lirc-0.9.0-021-lirc_xbox.patch
+lirc-0.9.0-022-disable_lirc_i2c.patch
+lirc-0.9.0-023-ati_remote.patch
+lirc-0.9.0-024-remove_smp_lock_h.patch
+lirc-0.9.0-025-bit_le_fix.patch
+lirc-0.9.0-026-uinput_key_fix.patch
+
