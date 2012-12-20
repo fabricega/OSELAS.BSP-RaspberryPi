@@ -1,0 +1,12 @@
+## SECTION=disk_and_file
+
+config SSHFS_FUSE
+	tristate
+	prompt "sshfs-fuse"
+	select LIBC_DL
+	select GLIB
+	select FUSE
+	help
+	  SSHFS - filesystem client based on ssh. Secure  SHell  FileSystem
+	  is a file system for Linux (and other operating systems with a 
+	  FUSE implementation)

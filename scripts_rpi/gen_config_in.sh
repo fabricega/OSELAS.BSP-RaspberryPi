@@ -1,7 +1,7 @@
 #!/bin/bash
 
 package_name=$1
-package_dir=`find $PTX_SRC/platform-$PLATFORM/packages/ -type d -name "$package_name*" | grep -v ".tmp" | sed ':a;N;$!ba;s/\n/%/g' | cut -d '%' -f1`
+package_dir=`find $PTX_BSP/platform-$PLATFORM/packages/ -type d -name "$package_name*" | grep -v ".tmp" | grep -v "linux-*" | sed ':a;N;$!ba;s/\n/%/g' | cut -d '%' -f1`
 
 to_lowercase() {
 	echo "${1,,}"
