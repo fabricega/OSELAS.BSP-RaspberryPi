@@ -1,0 +1,36 @@
+Index: xbmc-baaa51c9fd786da6a3323bf6c01bc292e41a0985/system/keymaps/keyboard.xml
+===================================================================
+--- xbmc-baaa51c9fd786da6a3323bf6c01bc292e41a0985.orig/system/keymaps/keyboard.xml	2012-12-21 10:42:46.000000000 +0100
++++ xbmc-baaa51c9fd786da6a3323bf6c01bc292e41a0985/system/keymaps/keyboard.xml	2012-12-21 15:56:56.000000000 +0100
+@@ -37,6 +37,31 @@
+ <keymap>
+   <global>
+     <keyboard>
++      <key id="127055">Notification(folder,keypressed)</key> <!-- Folders -->
++      <key id="389328">FullScreen</key> <!-- Fullscreen -->
++      <key id="389169">ActivateWindow(MyMusic)</key> <!-- Green -->
++      <key id="389186">ActivateWindow(MyVideos)</key> <!-- Orange -->
++      <key id="389187">ActivateWindow(MyPictures)</key> <!-- Blue -->
++      <key id="389243">ActivateWindow(Home)</key> <!-- Yellow -->
++      <key id="61615">VolumeUp</key> <!-- Vol+ -->
++      <key id="61597">VolumeDown</key> <!-- Vol- -->
++      <key id="61596">mute</key> <!-- Mute -->
++      <key id="454665">Notification(DoubleWindow,keypressed)</key> <!-- Double Window -->
++      <key id="61508">UpdateLibrary(video)</key> <!--Desktop-->
++      <key id="61662">Powerdown</key> <!--Power-->
++      <key id="323731">Shutdown</key> <!--Close-->
++      <key id="61626">BigStepForward</key>
++      <key id="61627">BigStepBack</key>
++      <key id="61484">Notification(1,keypressed)</key> <!-- 1 -->
++      <key id="61505">Notification(2,keypressed)</key>
++      <key id="61508">Notification(3,keypressed)</key>
++      <key id="61511">Notification(4,keypressed)</key>
++      <key id="61514">Notification(5,keypressed)</key>
++      <key id="61517">Notification(6,keypressed)</key>
++      <key id="61520">Notification(7,keypressed)</key>
++      <key id="61524">Notification(8,keypressed)</key>
++      <key id="61527">Notification(9,keypressed)</key>
++      <key id="61472">Notification(0,keypressed)</key>
+       <p>Play</p>
+       <q>Queue</q>
+       <f>FastForward</f>
