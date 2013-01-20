@@ -293,6 +293,14 @@ gpu_mem_512=256
 EOF"
 	then
 		echo -e "\tDone."
+		echo -n "Adding licence Keys from $SCRIPT_BASE/license.txt..."
+		if [ -e $SCRIPT_BASE/licence.txt ]; then
+			if sudo sh -c "cat $SCRIPT_BASE/licence.txt >> $1/config.txt"; then
+				echo -e "\tDone."
+			else
+				echo -e "\tFailed."
+			fi
+		fi
 	else
 		echo -e "\tFailed."
 		popd
