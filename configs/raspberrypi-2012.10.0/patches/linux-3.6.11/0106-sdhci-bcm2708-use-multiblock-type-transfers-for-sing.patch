@@ -1,0 +1,57 @@
+From e1ccc3278eca0194295904aa5caa73420b09713e Mon Sep 17 00:00:00 2001
+From: Grigori Goronzy <greg@blackbox>
+Date: Tue, 31 Jul 2012 23:18:12 +0200
+Subject: [PATCH 106/205] sdhci-bcm2708: use multiblock-type transfers for single blocks
+
+There are issues with both single block reads (missed completion)
+and writes (data loss in some cases!). Just don't do single block
+transfers anymore, and treat them like multiblock transfers. This
+adds a quirk for this and uses it.
+---
+ drivers/mmc/card/block.c         |    2 +-
+ drivers/mmc/host/sdhci-bcm2708.c |    3 +++
+ include/linux/mmc/host.h         |    1 +
+ 3 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
+index 172a768..538cec6 100644
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@ -1135,7 +1135,7 @@ static void mmc_blk_rw_rq_prep(struct mmc_queue_req *mqrq,
+ 			brq->data.blocks = 1;
+ 	}
+ 
+-	if (brq->data.blocks > 1 || do_rel_wr) {
++	if (brq->data.blocks > 1 || do_rel_wr || card->host->caps2 & MMC_CAP2_FORCE_MULTIBLOCK) {
+ 		/* SPI multiblock writes terminate using a special
+ 		 * token, not a STOP_TRANSMISSION request.
+ 		 */
+diff --git a/drivers/mmc/host/sdhci-bcm2708.c b/drivers/mmc/host/sdhci-bcm2708.c
+index 882ae42..ad44fbe 100644
+--- a/drivers/mmc/host/sdhci-bcm2708.c
++++ b/drivers/mmc/host/sdhci-bcm2708.c
+@@ -1392,6 +1392,9 @@ static int __devinit sdhci_bcm2708_probe(struct platform_device *pdev)
+ 
+     if (allow_highspeed)
+         host->mmc->caps |= MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED;
++
++    /* single block writes cause data loss with some SD cards! */
++    host->mmc->caps2 |= MMC_CAP2_FORCE_MULTIBLOCK;
+ #endif
+ 
+ 	ret = sdhci_add_host(host);
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index f578a71..3824f2d 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -257,6 +257,7 @@ struct mmc_host {
+ #define MMC_CAP2_HC_ERASE_SZ	(1 << 9)	/* High-capacity erase size */
+ #define MMC_CAP2_CD_ACTIVE_HIGH	(1 << 10)	/* Card-detect signal active high */
+ #define MMC_CAP2_RO_ACTIVE_HIGH	(1 << 11)	/* Write-protect signal active high */
++#define MMC_CAP2_FORCE_MULTIBLOCK (1 << 12)	/* Always use multiblock transfers */
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 	unsigned int        power_notify_type;
+-- 
+1.7.0.4
+

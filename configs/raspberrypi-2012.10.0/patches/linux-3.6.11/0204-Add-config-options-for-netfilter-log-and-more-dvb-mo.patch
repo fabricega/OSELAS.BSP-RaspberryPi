@@ -1,0 +1,47 @@
+From 44a00b02a67d1e94e44ea9654d71fa0351dbcbb9 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sun, 13 Jan 2013 15:58:09 +0000
+Subject: [PATCH 204/205] Add config options for netfilter log and more dvb modules
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 477b78b..c66ba6b 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -117,8 +117,10 @@ CONFIG_NETFILTER_XT_TARGET_CLASSIFY=m
+ CONFIG_NETFILTER_XT_TARGET_CONNMARK=m
+ CONFIG_NETFILTER_XT_TARGET_CT=m
+ CONFIG_NETFILTER_XT_TARGET_DSCP=m
++CONFIG_NETFILTER_XT_TARGET_HMARK=m
+ CONFIG_NETFILTER_XT_TARGET_IDLETIMER=m
+ CONFIG_NETFILTER_XT_TARGET_LED=m
++CONFIG_NETFILTER_XT_TARGET_LOG=m
+ CONFIG_NETFILTER_XT_TARGET_MARK=m
+ CONFIG_NETFILTER_XT_TARGET_NFLOG=m
+ CONFIG_NETFILTER_XT_TARGET_NFQUEUE=m
+@@ -627,6 +629,8 @@ CONFIG_DVB_USB_IT913X=m
+ CONFIG_DVB_USB_MXL111SF=m
+ CONFIG_DVB_USB_RTL28XXU=m
+ CONFIG_DVB_USB_AF9035=m
++CONFIG_SMS_SIANO_MDTV=m
++CONFIG_SMS_USB_DRV=m
+ # CONFIG_DVB_STB0899 is not set
+ # CONFIG_DVB_STB6100 is not set
+ # CONFIG_DVB_STV090x is not set
+@@ -667,10 +671,6 @@ CONFIG_DVB_USB_AF9035=m
+ # CONFIG_DVB_TDA1004X is not set
+ # CONFIG_DVB_NXT6000 is not set
+ # CONFIG_DVB_MT352 is not set
+-# CONFIG_DVB_DIB7000M is not set
+-# CONFIG_DVB_DIB7000P is not set
+-# CONFIG_DVB_DIB9000 is not set
+-# CONFIG_DVB_TDA10048 is not set
+ # CONFIG_DVB_HD29L2 is not set
+ # CONFIG_DVB_STV0367 is not set
+ # CONFIG_DVB_CXD2820R is not set
+-- 
+1.7.0.4
+

@@ -1,0 +1,48 @@
+From aa270a538632cbd8bee974d16b83f2beef55cefd Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Thu, 27 Dec 2012 23:38:27 +0000
+Subject: [PATCH 199/205] Make CMA kernel messages quieter when not fatal
+
+---
+ drivers/char/broadcom/vc_cma/vc_cma.c              |    4 ++--
+ .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/broadcom/vc_cma/vc_cma.c b/drivers/char/broadcom/vc_cma/vc_cma.c
+index 32dc832..926b609 100644
+--- a/drivers/char/broadcom/vc_cma/vc_cma.c
++++ b/drivers/char/broadcom/vc_cma/vc_cma.c
+@@ -156,7 +156,7 @@ static bool send_worker_msg(VCHIQ_HEADER_T * msg);
+ static int __init early_vc_cma_mem(char *p)
+ {
+ 	unsigned int new_size;
+-	printk(KERN_ERR "early_vc_cma_mem(%s)", p);
++	printk(KERN_NOTICE "early_vc_cma_mem(%s)", p);
+ 	vc_cma_size = memparse(p, &p);
+ 	vc_cma_initial = vc_cma_size;
+ 	if (*p == '/')
+@@ -175,7 +175,7 @@ static int __init early_vc_cma_mem(char *p)
+ 	vc_cma_base = (vc_cma_base + VC_CMA_CHUNK_SIZE - 1)
+ 	    & ~(VC_CMA_CHUNK_SIZE - 1);
+ 
+-	printk(KERN_ERR " -> initial %x, size %x, base %x", vc_cma_initial,
++	printk(KERN_NOTICE " -> initial %x, size %x, base %x", vc_cma_initial,
+ 	       vc_cma_size, (unsigned int)vc_cma_base);
+ 
+ 	return 0;
+diff --git a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 2a46d29..7298d85 100644
+--- a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -1445,7 +1445,7 @@ vchiq_get_state(void)
+ 	if (g_state.remote == NULL)
+ 		printk(KERN_ERR "%s: g_state.remote == NULL\n", __func__);
+ 	else if (g_state.remote->initialised != 1)
+-		printk(KERN_ERR "%s: g_state.remote->initialised != 1 (%d)\n",
++		printk(KERN_NOTICE "%s: g_state.remote->initialised != 1 (%d)\n",
+ 			__func__, g_state.remote->initialised);
+ 
+ 	return ((g_state.remote != NULL) &&
+-- 
+1.7.0.4
+

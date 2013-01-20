@@ -1,0 +1,53 @@
+From cdd04bfc552a0e86bab6b69e301b493340b98d70 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Wed, 29 Aug 2012 21:54:01 +0100
+Subject: [PATCH 132/205] Fix for vmalloc failure with modprobe and cutdown kernel
+
+---
+ kernel/module.c |   29 ++++++++++++++++-------------
+ 1 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index 4edbd9c..c17caf2 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2675,20 +2675,23 @@ static int move_module(struct module *mod, struct load_info *info)
+ 	memset(ptr, 0, mod->core_size);
+ 	mod->module_core = ptr;
+ 
+-	ptr = module_alloc_update_bounds(mod->init_size);
+-	/*
+-	 * The pointer to this block is stored in the module structure
+-	 * which is inside the block. This block doesn't need to be
+-	 * scanned as it contains data and code that will be freed
+-	 * after the module is initialized.
+-	 */
+-	kmemleak_ignore(ptr);
+-	if (!ptr && mod->init_size) {
+-		module_free(mod, mod->module_core);
+-		return -ENOMEM;
++	if (mod->init_size) {
++		ptr = module_alloc_update_bounds(mod->init_size);
++		/*
++		 * The pointer to this block is stored in the module structure
++		 * which is inside the block. This block doesn't need to be
++		 * scanned as it contains data and code that will be freed
++		 * after the module is initialized.
++		 */
++		kmemleak_ignore(ptr);
++		if (!ptr && mod->init_size) {
++			module_free(mod, mod->module_core);
++			return -ENOMEM;
++		}
++		memset(ptr, 0, mod->init_size);
++		mod->module_init = ptr;
+ 	}
+-	memset(ptr, 0, mod->init_size);
+-	mod->module_init = ptr;
++	else mod->module_init = NULL;
+ 
+ 	/* Transfer each section which specifies SHF_ALLOC */
+ 	pr_debug("final section addresses:\n");
+-- 
+1.7.0.4
+

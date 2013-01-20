@@ -1,0 +1,101 @@
+From d38f8008db4a05e1f5c508022c08816cc0c21d21 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sun, 21 Oct 2012 19:35:39 +0100
+Subject: [PATCH 161/205] Add vc_cma driver to enable use of CMA
+
+---
+ arch/arm/mach-bcm2708/bcm2708.c |   18 ++++++++++++++++++
+ drivers/char/Kconfig            |    2 ++
+ drivers/char/Makefile           |    3 +++
+ drivers/misc/Makefile           |    3 +--
+ 4 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 02cb556..a3fd1e7 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -60,6 +60,11 @@
+ #include "armctrl.h"
+ #include "clock.h"
+ 
++#ifdef CONFIG_BCM_VC_CMA
++#include <linux/broadcom/vc_cma.h>
++#endif
++
++
+ /* Effectively we have an IOMMU (ARM<->VideoCore map) that is set up to
+  * give us IO access only to 64Mbytes of physical memory (26 bits).  We could
+  * represent this window by setting our dmamasks to 26 bits but, in fact
+@@ -673,6 +678,9 @@ void __init bcm2708_init(void)
+ {
+ 	int i;
+ 
++#if defined(CONFIG_BCM_VC_CMA)
++	vc_cma_early_init();
++#endif
+ 	printk("bcm2708.uart_clock = %d\n", uart_clock);
+ 	pm_power_off = bcm2708_power_off;
+ 
+@@ -900,7 +908,16 @@ void __init bcm2708_init_early(void)
+ 	 * context. Increase size of atomic coherent pool to make sure such
+ 	 * the allocations won't fail.
+ 	 */
++#if !defined(CONFIG_BCM_VC_CMA)
+ 	init_dma_coherent_pool_size(SZ_2M);
++#endif
++}
++
++static void __init board_reserve(void)
++{
++#if defined(CONFIG_BCM_VC_CMA)
++	vc_cma_reserve();
++#endif
+ }
+ 
+ MACHINE_START(BCM2708, "BCM2708")
+@@ -910,6 +927,7 @@ MACHINE_START(BCM2708, "BCM2708")
+ 	.timer =&bcm2708_timer,
+ 	.init_machine = bcm2708_init,
+ 	.init_early = bcm2708_init_early,
++	.reserve = board_reserve,
+ MACHINE_END
+ 
+ module_param(boardrev, uint, 0644);
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index ea6f632..fa42532 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -585,6 +585,8 @@ config DEVPORT
+ 
+ source "drivers/s390/char/Kconfig"
+ 
++source "drivers/char/broadcom/Kconfig"
++
+ config MSM_SMD_PKT
+ 	bool "Enable device interface for some SMD packet ports"
+ 	default n
+diff --git a/drivers/char/Makefile b/drivers/char/Makefile
+index d0b27a3..0b3f87a 100644
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@ -63,3 +63,6 @@ obj-$(CONFIG_JS_RTC)		+= js-rtc.o
+ js-rtc-y = rtc.o
+ 
+ obj-$(CONFIG_TILE_SROM)		+= tile-srom.o
++
++obj-$(CONFIG_BRCM_CHAR_DRIVERS) += broadcom/
++
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index aeeb47e..dc9072b 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -50,5 +50,4 @@ obj-y				+= carma/
+ obj-$(CONFIG_USB_SWITCH_FSA9480) += fsa9480.o
+ obj-$(CONFIG_ALTERA_STAPL)	+=altera-stapl/
+ obj-$(CONFIG_INTEL_MEI)		+= mei/
+-obj-y				+= vc04_services/
+-
++obj-$(CONFIG_BCM2708_VCHIQ)	+= vc04_services/
+-- 
+1.7.0.4
+

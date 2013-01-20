@@ -1,0 +1,25 @@
+From 3c1dbe19b96020a1daafbc08160b9f96de6de5ea Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Mon, 26 Nov 2012 21:40:34 +0000
+Subject: [PATCH 185/205] Leave missing_status enabled for now.
+
+---
+ drivers/mmc/host/sdhci-bcm2708.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-bcm2708.c b/drivers/mmc/host/sdhci-bcm2708.c
+index 5b6ae2f..c3c71a4 100644
+--- a/drivers/mmc/host/sdhci-bcm2708.c
++++ b/drivers/mmc/host/sdhci-bcm2708.c
+@@ -136,7 +136,7 @@ static inline unsigned long int since_ns(hptime_t t)
+ static bool allow_highspeed = 1;
+ static int emmc_clock_freq = BCM2708_EMMC_CLOCK_FREQ;
+ static bool sync_after_dma = 1;
+-static bool missing_status = 0;
++static bool missing_status = 1;
+ static bool spurious_crc_acmd51 = 0;
+ bool enable_llm = 1;
+ 
+-- 
+1.7.0.4
+

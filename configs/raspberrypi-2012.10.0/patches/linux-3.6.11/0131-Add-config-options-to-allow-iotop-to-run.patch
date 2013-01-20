@@ -1,0 +1,27 @@
+From 7131c0789f97624d707fb5c2896d349a02b8f903 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Wed, 29 Aug 2012 21:46:25 +0100
+Subject: [PATCH 131/205] Add config options to allow iotop to run
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index b740a7a..7963f70 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -5,6 +5,10 @@ CONFIG_POSIX_MQUEUE=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_BSD_PROCESS_ACCT_V3=y
+ CONFIG_FHANDLE=y
++CONFIG_TASKSTATS=y
++CONFIG_TASK_DELAY_ACCT=y
++CONFIG_TASK_XACCT=y
++CONFIG_TASK_IO_ACCOUNTING=y
+ CONFIG_AUDIT=y
+ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+-- 
+1.7.0.4
+

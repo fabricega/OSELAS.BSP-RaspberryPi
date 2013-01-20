@@ -1,0 +1,24 @@
+From 5fe0247c8d24df4a15589f01809368a2f938935b Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Thu, 8 Nov 2012 00:00:18 +0000
+Subject: [PATCH 177/205] Enable building of lirc-rpi
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 2069eb0..12e6d92 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -40,6 +40,7 @@ CONFIG_MAC_PARTITION=y
+ CONFIG_EFI_PARTITION=y
+ CONFIG_CFQ_GROUP_IOSCHED=y
+ CONFIG_ARCH_BCM2708=y
++CONFIG_BCM2708_DMAER=m
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_UACCESS_WITH_MEMCPY=y
+-- 
+1.7.0.4
+

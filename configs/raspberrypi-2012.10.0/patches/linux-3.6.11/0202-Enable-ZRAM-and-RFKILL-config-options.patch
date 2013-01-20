@@ -1,0 +1,43 @@
+From c09a2b2af0a4a0894faf93da83e7817c669d2bac Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Mon, 7 Jan 2013 21:36:19 +0000
+Subject: [PATCH 202/205] Enable ZRAM and RFKILL config options
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 4eb9edb..477b78b 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -42,6 +42,8 @@ CONFIG_ARCH_BCM2708=y
+ CONFIG_BCM2708_DMAER=m
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
++CONFIG_CLEANCACHE=y
++CONFIG_FRONTSWAP=y
+ CONFIG_UACCESS_WITH_MEMCPY=y
+ CONFIG_SECCOMP=y
+ CONFIG_CC_STACKPROTECTOR=y
+@@ -330,6 +332,8 @@ CONFIG_MAC80211=m
+ CONFIG_MAC80211_RC_PID=y
+ CONFIG_MAC80211_MESH=y
+ CONFIG_WIMAX=m
++CONFIG_RFKILL=m
++CONFIG_RFKILL_INPUT=y
+ CONFIG_NET_9P=m
+ CONFIG_NFC=m
+ CONFIG_NFC_PN533=m
+@@ -917,6 +921,8 @@ CONFIG_STAGING=y
+ CONFIG_W35UND=m
+ CONFIG_PRISM2_USB=m
+ CONFIG_R8712U=m
++CONFIG_ZRAM=m
++CONFIG_ZSMALLOC=m
+ CONFIG_STAGING_MEDIA=y
+ CONFIG_LIRC_STAGING=y
+ CONFIG_LIRC_IGORPLUGUSB=m
+-- 
+1.7.0.4
+

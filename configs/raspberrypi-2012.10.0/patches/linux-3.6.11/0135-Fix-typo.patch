@@ -1,0 +1,22 @@
+From 3e05d6c3b81ad406d9926f4d916d19eda48402b5 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 1 Sep 2012 00:31:47 +0100
+Subject: [PATCH 135/205] Fix typo
+
+---
+ arch/arm/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index c06a2c1..af2ab8f 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1,4 +1,4 @@
+-iconfig ARM
++config ARM
+ 	bool
+ 	default y
+ 	select ARCH_HAVE_CUSTOM_GPIO_H
+-- 
+1.7.0.4
+

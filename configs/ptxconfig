@@ -417,8 +417,8 @@ PTXCONF_FIRMWARE=y
 #
 # revision                   ---
 #
-PTXCONF_FIRMWARE_VERSION="9f5760fcecfe5ea04d00fdb53a65d3e45378e045"
-PTXCONF_FIRMWARE_MD5="4a06b46cfce4b598b692b9de954bc4be"
+PTXCONF_FIRMWARE_VERSION="ce9dbf9cd8a5d9346b563dbcbfe1ea79f72cc912"
+PTXCONF_FIRMWARE_MD5="51e24876f315f1f16513c61b4c30f97d"
 
 #
 # libraries                  ---

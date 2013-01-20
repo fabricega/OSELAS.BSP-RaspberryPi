@@ -1,0 +1,27 @@
+From 924e75416cab627caf9987a75acdc364ec90eefc Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sun, 25 Nov 2012 14:53:14 +0000
+Subject: [PATCH 181/205] Avoid undefined symbol in radio-shark.ko
+
+---
+ sound/pci/Kconfig |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/Kconfig b/sound/pci/Kconfig
+index ff3af6e..f99fa25 100644
+--- a/sound/pci/Kconfig
++++ b/sound/pci/Kconfig
+@@ -2,8 +2,8 @@
+ 
+ config SND_TEA575X
+ 	tristate
+-	depends on SND_FM801_TEA575X_BOOL || SND_ES1968_RADIO || RADIO_SF16FMR2 || RADIO_MAXIRADIO
+-	default SND_FM801 || SND_ES1968 || RADIO_SF16FMR2 || RADIO_MAXIRADIO
++	depends on SND_FM801_TEA575X_BOOL || SND_ES1968_RADIO || RADIO_SF16FMR2 || RADIO_MAXIRADIO || RADIO_SHARK
++	default SND_FM801 || SND_ES1968 || RADIO_SF16FMR2 || RADIO_MAXIRADIO || RADIO_SHARK
+ 
+ menuconfig SND_PCI
+ 	bool "PCI sound devices"
+-- 
+1.7.0.4
+

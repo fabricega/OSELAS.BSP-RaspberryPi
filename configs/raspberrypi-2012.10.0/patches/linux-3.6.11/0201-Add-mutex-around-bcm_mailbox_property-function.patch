@@ -1,0 +1,42 @@
+From ef0b3d3bd1264752e50d6b0a33439ef825c53d30 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Mon, 7 Jan 2013 21:34:59 +0000
+Subject: [PATCH 201/205] Add mutex around bcm_mailbox_property function
+
+---
+ arch/arm/mach-bcm2708/vcio.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/vcio.c b/arch/arm/mach-bcm2708/vcio.c
+index 09b78b5..599eb63 100644
+--- a/arch/arm/mach-bcm2708/vcio.c
++++ b/arch/arm/mach-bcm2708/vcio.c
+@@ -245,7 +245,7 @@ static int mbox_copy_to_user(void *dst, const void *src, int size)
+ 	}
+ }
+ 
+-
++static DEFINE_MUTEX(mailbox_lock);
+ extern int bcm_mailbox_property(void *data, int size)
+ {
+ 	uint32_t success;
+@@ -253,6 +253,7 @@ extern int bcm_mailbox_property(void *data, int size)
+ 	void *mem_kern;					/* the memory address accessed from driver */
+ 	int s = 0;
+ 
++        mutex_lock(&mailbox_lock);
+ 	/* allocate some memory for the messages communicating with GPU */
+ 	mem_kern = dma_alloc_coherent(NULL, PAGE_ALIGN(size), &mem_bus, GFP_ATOMIC);
+ 	if (mem_kern) {
+@@ -276,6 +277,8 @@ extern int bcm_mailbox_property(void *data, int size)
+ 	}
+ 	if (s != 0)
+ 		printk(KERN_ERR DRIVER_NAME ": %s failed (%d)\n", __func__, s);
++
++        mutex_unlock(&mailbox_lock);
+ 	return s;
+ }
+ EXPORT_SYMBOL_GPL(bcm_mailbox_property);
+-- 
+1.7.0.4
+

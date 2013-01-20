@@ -1,0 +1,2474 @@
+From a2386d318bf17570cd3b6aa1e4246c4e624a7145 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 13 Oct 2012 22:44:27 +0100
+Subject: [PATCH 160/205] Fix up issues with rebase
+
+---
+ arch/arm/lib/Makefile                              |    3 +-
+ arch/arm/mach-bcm2708/Kconfig                      |    2 +
+ arch/arm/mach-bcm2708/armctrl.c                    |  191 +-----
+ arch/arm/mach-bcm2708/bcm2708.c                    |   94 ++-
+ arch/arm/mach-bcm2708/delay.S                      |    6 +-
+ arch/arm/mach-bcm2708/include/mach/memory.h        |    7 -
+ arch/arm/tools/mach-types                          |    1 +
+ .../vc04_services/interface/vchiq_arm/vchiq_core.c |  193 +----
+ .../interface/vchiq_arm/vchiq_kern_lib.c           |  185 ++++-
+ drivers/mmc/host/Kconfig                           |    8 -
+ drivers/mmc/host/Makefile                          |    1 -
+ drivers/mmc/host/bcm2708_mci.c                     |  889 --------------------
+ drivers/mmc/host/bcm2708_mci.h                     |  101 ---
+ drivers/mmc/host/sdhci-bcm2708.c                   |  131 +---
+ drivers/mmc/host/sdhci.c                           |   44 -
+ drivers/mmc/host/sdhci.h                           |    5 -
+ drivers/thermal/bcm2835-thermal.c                  |    2 +-
+ drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c       |    4 +-
+ sound/arm/Kconfig                                  |    2 +-
+ 19 files changed, 278 insertions(+), 1591 deletions(-)
+ delete mode 100644 drivers/mmc/host/bcm2708_mci.c
+ delete mode 100644 drivers/mmc/host/bcm2708_mci.h
+
+diff --git a/arch/arm/lib/Makefile b/arch/arm/lib/Makefile
+index 0ade0ac..af72969 100644
+--- a/arch/arm/lib/Makefile
++++ b/arch/arm/lib/Makefile
+@@ -6,9 +6,8 @@
+ 
+ lib-y		:= backtrace.o changebit.o csumipv6.o csumpartial.o   \
+ 		   csumpartialcopy.o csumpartialcopyuser.o clearbit.o \
+-		   delay.o findbit.o memchr.o memcpy.o		      \
++		   delay.o delay-loop.o findbit.o memchr.o memcpy.o   \
+ 		   memmove.o memset.o memzero.o setbit.o              \
+-		   strncpy_from_user.o strnlen_user.o                 \
+ 		   strchr.o strrchr.o                                 \
+ 		   testchangebit.o testclearbit.o testsetbit.o        \
+ 		   ashldi3.o ashrdi3.o lshrdi3.o muldi3.o             \
+diff --git a/arch/arm/mach-bcm2708/Kconfig b/arch/arm/mach-bcm2708/Kconfig
+index 5593167..63bb76c 100644
+--- a/arch/arm/mach-bcm2708/Kconfig
++++ b/arch/arm/mach-bcm2708/Kconfig
+@@ -3,6 +3,8 @@ menu "Broadcom BCM2708 Implementations"
+ 
+ config MACH_BCM2708
+ 	bool "Broadcom BCM2708 Development Platform"
++	select NEED_MACH_MEMORY_H
++	select NEED_MACH_IO_H
+ 	select CPU_V6
+ 	help
+ 	  Include support for the Broadcom(R) BCM2708 platform.
+diff --git a/arch/arm/mach-bcm2708/armctrl.c b/arch/arm/mach-bcm2708/armctrl.c
+index cdaa761..f22fbba 100644
+--- a/arch/arm/mach-bcm2708/armctrl.c
++++ b/arch/arm/mach-bcm2708/armctrl.c
+@@ -21,11 +21,7 @@
+ #include <linux/list.h>
+ #include <linux/io.h>
+ #include <linux/version.h>
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,39)
+ #include <linux/syscore_ops.h>
+-#else
+-#include <linux/sysdev.h>
+-#endif
+ #include <linux/interrupt.h>
+ 
+ #include <asm/mach/irq.h>
+@@ -47,11 +43,7 @@ static unsigned int remap_irqs[(INTERRUPT_ARASANSDIO + 1) - INTERRUPT_JPEG] = {
+ 	INTERRUPT_VC_ARASANSDIO
+ };
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ static void armctrl_mask_irq(struct irq_data *d)
+-#else
+-static void armctrl_mask_irq(unsigned int irq)
+-#endif
+ {
+ 	static const unsigned int disables[4] = {
+ 		IO_ADDRESS(ARM_IRQ_DIBL1),
+@@ -66,20 +58,12 @@ static void armctrl_mask_irq(unsigned int irq)
+ 	}
+ 	else
+ 	{
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ 		unsigned int data = (unsigned int)irq_get_chip_data(d->irq);
+-#else
+-		unsigned int data = (unsigned int)get_irq_chip_data(irq);
+-#endif
+ 		writel(1 << (data & 0x1f), __io(disables[(data >> 5) & 0x3]));
+ 	}
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ static void armctrl_unmask_irq(struct irq_data *d)
+-#else
+-static void armctrl_unmask_irq(unsigned int irq)
+-#endif
+ {
+ 	static const unsigned int enables[4] = {
+ 		IO_ADDRESS(ARM_IRQ_ENBL1),
+@@ -95,11 +79,7 @@ static void armctrl_unmask_irq(unsigned int irq)
+ 	}
+ 	else
+ 	{
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ 	  unsigned int data = (unsigned int)irq_get_chip_data(d->irq);
+-#else
+-	  unsigned int data = (unsigned int)get_irq_chip_data(irq);
+-#endif
+ 	  writel(1 << (data & 0x1f), __io(enables[(data >> 5) & 0x3]));
+ 	}
+ }
+@@ -120,12 +100,7 @@ static void armctrl_unmask_irq(unsigned int irq)
+  * @soft_int: Save for VIC_INT_SOFT.
+  * @protect: Save for VIC_PROTECT.
+  */
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-struct armctrl_device {
+-	struct sys_device sysdev;
+-#else
+ 	struct armctrl_info {
+-#endif
+ 		void __iomem *base;
+ 		int irq;
+ 		u32 resume_sources;
+@@ -134,75 +109,8 @@ struct armctrl_device {
+ 		u32 int_enable;
+ 		u32 soft_int;
+ 		u32 protect;
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-};
+-#else
+ 	} armctrl;
+-#endif
+-
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-
+-static struct armctrl_device armctrl_devices[1];
+-
+-static inline struct armctrl_device *to_vic(struct sys_device *sys)
+-{
+-	return container_of(sys, struct armctrl_device, sysdev);
+-}
+-
+-static int armctrl_id;
+-
+-static int armctrl_class_resume(struct sys_device *dev)
+-{
+-#if 0  // FIXME
+-	struct armctrl_device *armctrl = to_vic(dev);
+-	void __iomem *base = armctrl->base;
+-
+-	printk(KERN_DEBUG "%s: resuming armctrl at %p\n", __func__, base);
+ 
+-	writel(armctrl->int_select, base + VIC_INT_SELECT);
+-	writel(armctrl->protect, base + VIC_PROTECT);
+-
+-	/* set the enabled ints and then clear the non-enabled */
+-	writel(armctrl->int_enable, base + VIC_INT_ENABLE);
+-	writel(~armctrl->int_enable, base + VIC_INT_ENABLE_CLEAR);
+-
+-	/* and the same for the soft-int register */
+-
+-	writel(armctrl->soft_int, base + VIC_INT_SOFT);
+-	writel(~armctrl->soft_int, base + VIC_INT_SOFT_CLEAR);
+-#endif
+-	return 0;
+-}
+-
+-static int armctrl_class_suspend(struct sys_device *dev, pm_message_t state)
+-{
+-#if 0				// FIXME
+-	struct armctrl_device *armctrl = to_vic(dev);
+-	void __iomem *base = armctrl->base;
+-
+-	printk(KERN_DEBUG "%s: suspending armctrl at %p\n", __func__, base);
+-
+-	armctrl->int_select = readl(base + VIC_INT_SELECT);
+-	armctrl->int_enable = readl(base + VIC_INT_ENABLE);
+-	armctrl->soft_int = readl(base + VIC_INT_SOFT);
+-	armctrl->protect = readl(base + VIC_PROTECT);
+-
+-	/* set the interrupts (if any) that are used for
+-	 * resuming the system */
+-
+-	writel(armctrl->resume_irqs, base + VIC_INT_ENABLE);
+-	writel(~armctrl->resume_irqs, base + VIC_INT_ENABLE_CLEAR);
+-#endif
+-	return 0;
+-}
+-
+-struct sysdev_class armctrl_class = {
+-	.name = "armctrl",
+-	.suspend = armctrl_class_suspend,
+-	.resume = armctrl_class_resume,
+-};
+-
+-#endif // < 2.6.39
+ 
+ static int armctrl_suspend(void)
+ {
+@@ -229,98 +137,16 @@ static void armctrl_resume(void)
+ static void __init armctrl_pm_register(void __iomem * base, unsigned int irq,
+ 				       u32 resume_sources)
+ {
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-	struct armctrl_device *v;
+-
+-	if (armctrl_id >= ARRAY_SIZE(armctrl_devices))
+-		printk(KERN_ERR
+-		       "%s: too few VICs, increase CONFIG_ARM_VIC_NR\n",
+-		       __func__);
+-	else {
+-		v = &armctrl_devices[armctrl_id];
+-		v->base = base;
+-		v->resume_sources = resume_sources;
+-		v->irq = irq;
+-		armctrl_id++;
+-	}
+-#else
+ 	armctrl.base = base;
+ 	armctrl.resume_sources = resume_sources;
+ 	armctrl.irq = irq;
+-#endif
+ }
+ 
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-
+-/**
+- * armctrl_pm_init - initicall to register VIC pm
+- *
+- * This is called via late_initcall() to register
+- * the resources for the VICs due to the early
+- * nature of the VIC's registration.
+-*/
+-static int __init armctrl_pm_init(void)
+-{
+-	struct armctrl_device *dev = armctrl_devices;
+-	int err;
+-	int id;
+-
+-	if (armctrl_id == 0)
+-		return 0;
+-
+-	err = sysdev_class_register(&armctrl_class);
+-	if (err) {
+-		printk(KERN_ERR "%s: cannot register class\n", __func__);
+-		return err;
+-	}
+-
+-	for (id = 0; id < armctrl_id; id++, dev++) {
+-		dev->sysdev.id = id;
+-		dev->sysdev.cls = &armctrl_class;
+-
+-		err = sysdev_register(&dev->sysdev);
+-		if (err) {
+-			printk(KERN_ERR "%s: failed to register device\n",
+-			       __func__);
+-			return err;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-late_initcall(armctrl_pm_init);
+-
+-#endif // VERSION check
+-
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ static int armctrl_set_wake(struct irq_data *d, unsigned int on)
+-#else
+-static int armctrl_set_wake(unsigned int irq, unsigned int on)
+-#endif
+ {
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-	struct armctrl_device *armctrl = &armctrl_devices[0];
+-#endif
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ 	unsigned int off = d->irq & 31;
+-#else
+-	unsigned int off = irq & 31;
+-#endif
+ 	u32 bit = 1 << off;
+ 
+-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,39)
+-	if (!armctrl)
+-		return -EINVAL;
+-
+-	if (!(bit & armctrl->resume_sources))
+-		return -EINVAL;
+-
+-	if (on)
+-		armctrl->resume_irqs |= bit;
+-	else
+-		armctrl->resume_irqs &= ~bit;
+-#else
+ 	if (!(bit & armctrl.resume_sources))
+ 		return -EINVAL;
+ 
+@@ -328,7 +154,6 @@ static int armctrl_set_wake(unsigned int irq, unsigned int on)
+ 		armctrl.resume_irqs |= bit;
+ 	else
+ 		armctrl.resume_irqs &= ~bit;
+-#endif
+ 
+ 	return 0;
+ }
+@@ -343,7 +168,6 @@ static inline void armctrl_pm_register(void __iomem *base, unsigned int irq,
+ #define armctrl_set_wake NULL
+ #endif /* CONFIG_PM */
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,39)
+ 
+ static struct syscore_ops armctrl_syscore_ops = {
+ 	.suspend = armctrl_suspend,
+@@ -365,21 +189,13 @@ static int __init armctrl_syscore_init(void)
+ 
+ late_initcall(armctrl_syscore_init);
+ 
+-#endif
+ 
+ static struct irq_chip armctrl_chip = {
+ 	.name = "ARMCTRL",
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ 	.irq_ack = armctrl_mask_irq,
+ 	.irq_mask = armctrl_mask_irq,
+ 	.irq_unmask = armctrl_unmask_irq,
+ 	.irq_set_wake = armctrl_set_wake,
+-#else
+-	.ack = armctrl_mask_irq,
+-	.mask = armctrl_mask_irq,
+-	.unmask = armctrl_unmask_irq,
+-	.set_wake = armctrl_set_wake,
+-#endif
+ };
+ 
+ /**
+@@ -399,18 +215,13 @@ int __init armctrl_init(void __iomem * base, unsigned int irq_start,
+ 		if (irq >= INTERRUPT_JPEG && irq <= INTERRUPT_ARASANSDIO)
+ 			data = remap_irqs[irq - INTERRUPT_JPEG];
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+ 		irq_set_chip(irq, &armctrl_chip);
+ 		irq_set_chip_data(irq, (void *)data);
+ 		irq_set_handler(irq, handle_level_irq);
+-#else
+-		set_irq_chip(irq, &armctrl_chip);
+-		set_irq_chip_data(irq, (void *)data);
+-		set_irq_handler(irq, handle_level_irq);
+-#endif
+ 		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE | IRQF_DISABLED);
+ 	}
+ 
+ 	armctrl_pm_register(base, irq_start, resume_sources);
++	init_FIQ(FIQ_START);
+ 	return 0;
+ }
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 93fb75d..02cb556 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -54,6 +54,8 @@
+ #include <mach/vcio.h>
+ #include <mach/system.h>
+ 
++#include <linux/delay.h>
++
+ #include "bcm2708.h"
+ #include "armctrl.h"
+ #include "clock.h"
+@@ -73,8 +75,6 @@
+ // use GPIO 4 for the one-wire GPIO pin, if enabled
+ #define W1_GPIO 4
+ 
+-static DEFINE_CLOCK_DATA(cd);
+-
+ /* command line parameters */
+ static unsigned boardrev, serial;
+ static unsigned uart_clock;
+@@ -149,30 +149,43 @@ void __init bcm2708_map_io(void)
+ /* The STC is a free running counter that increments at the rate of 1MHz */
+ #define STC_FREQ_HZ 1000000
+ 
+-/*
+- * Constants generated by clocks_calc_mult_shift(m, s, 1MHz, NSEC_PER_SEC, 60).
+- * This gives a resolution of about 1us and a wrap period of about 1h11min.
+- */
+-#define SC_MULT		4194304000u
+-#define SC_SHIFT	22
+-
+-static cycle_t stc_read_cycles(struct clocksource *cs)
++static inline uint32_t timer_read(void)
+ {
+ 	/* STC: a free running counter that increments at the rate of 1MHz */
+-	return (cycle_t) readl(__io_address(ST_BASE + 0x04));
++	return readl(__io_address(ST_BASE + 0x04));
++}
++
++int read_current_timer(unsigned long *timer_val)
++{
++	*timer_val = timer_read();
++	return 0;
++}
++
++#ifdef CONFIG_ARM_ARCH_TIMER
++EXPORT_SYMBOL(read_current_timer);
++#endif
++
++static u32 notrace bcm2708_read_sched_clock(void)
++{
++	return timer_read();
++}
++
++static cycle_t clksrc_read(struct clocksource *cs)
++{
++	return timer_read();
+ }
+ 
+ static struct clocksource clocksource_stc = {
+ 	.name = "stc",
+ 	.rating = 300,
+-	.read = stc_read_cycles,
++	.read = clksrc_read,
+ 	.mask = CLOCKSOURCE_MASK(32),
+ 	.flags = CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+ 
+ unsigned long frc_clock_ticks32(void)
+ {
+-	return (unsigned long)stc_read_cycles(&clocksource_stc);
++	return timer_read();
+ }
+ 
+ static void __init bcm2708_clocksource_init(void)
+@@ -183,18 +196,6 @@ static void __init bcm2708_clocksource_init(void)
+ 	}
+ }
+ 
+-unsigned long long sched_clock(void)
+-{
+-	u32 cyc = clocksource_stc.read(&clocksource_stc);
+-	return cyc_to_fixed_sched_clock(&cd, cyc, clocksource_stc.mask,
+-			SC_MULT, SC_SHIFT);
+-}
+-
+-static void notrace bcm2708_update_sched_clock(void)
+-{
+-	u32 cyc = clocksource_stc.read(&clocksource_stc);
+-	update_sched_clock(&cd, cyc, clocksource_stc.mask);
+-}
+ 
+ /*
+  * These are fixed clocks.
+@@ -247,7 +248,7 @@ static struct clk_lookup lookups[] = {
+ 	 }
+ };
+ 
+-#define UART0_IRQ	{ IRQ_UART, NO_IRQ }
++#define UART0_IRQ	{ IRQ_UART, 0 /*NO_IRQ*/ }
+ #define UART0_DMA	{ 15, 14 }
+ 
+ AMBA_DEVICE(uart0, "dev:f1", UART0, NULL);
+@@ -580,6 +581,7 @@ static struct platform_device bcm2708_spi_device = {
+ 	.resource = bcm2708_spi_resources,
+ };
+ 
++#ifdef CONFIG_SPI
+ static struct spi_board_info bcm2708_spi_devices[] = {
+ 	{
+ 		.modalias = "spidev",
+@@ -595,6 +597,7 @@ static struct spi_board_info bcm2708_spi_devices[] = {
+ 		.mode = SPI_MODE_0,
+ 	}
+ };
++#endif
+ 
+ static struct resource bcm2708_bsc0_resources[] = {
+ 	{
+@@ -700,6 +703,7 @@ void __init bcm2708_init(void)
+ 	bcm_register_device(&bcm2708_usb_device);
+ 	bcm_register_device(&bcm2708_uart1_device);
+ 	bcm_register_device(&bcm2708_powerman_device);
++
+ #ifdef CONFIG_MMC_SDHCI_BCM2708
+ 	bcm_register_device(&bcm2708_emmc_device);
+ #endif
+@@ -805,8 +809,7 @@ static void __init bcm2708_timer_init(void)
+ 	 */
+ 	setup_irq(IRQ_TIMER3, &bcm2708_timer_irq);
+ 
+-	init_fixed_sched_clock(&cd, bcm2708_update_sched_clock, 32,
+-		STC_FREQ_HZ, SC_MULT, SC_SHIFT);
++	setup_sched_clock(bcm2708_read_sched_clock, 32, STC_FREQ_HZ);
+ 
+ 	timer0_clockevent.mult =
+ 	    div_sc(STC_FREQ_HZ, NSEC_PER_SEC, timer0_clockevent.shift);
+@@ -858,36 +861,55 @@ static inline void bcm2708_init_led(void)
+ }
+ #endif
+ 
+-
+ /* The assembly versions in delay.S don't account for core freq changing in cpufreq driver */
+ /* Use 1MHz system timer for busy waiting */
+-void __udelay(unsigned long usecs)
++void bcm2708_udelay(unsigned long usecs)
+ {
+-	unsigned long start = readl(__io_address(ST_BASE + 0x04));
++	unsigned long start = timer_read();
+ 	unsigned long now;
+ 	do {
+-		now = readl(__io_address(ST_BASE + 0x04));
++		now = timer_read();
+ 	} while ((long)(now - start) <= usecs);
+ }
+ 
+ 
+-void __const_udelay(unsigned long scaled_usecs)
++void bcm2708_const_udelay(unsigned long scaled_usecs)
+ {
+ 	/* want /107374, this is about 3% bigger. We know usecs is less than 2000, so shouldn't overflow */
+ 	const unsigned long usecs = scaled_usecs * 10 >> 20;
+-	unsigned long start = readl(__io_address(ST_BASE + 0x04));
++	unsigned long start = timer_read();
+ 	unsigned long now;
+ 	do {
+-		now = readl(__io_address(ST_BASE + 0x04));
++		now = timer_read();
+ 	} while ((long)(now - start) <= usecs);
+ }
+ 
++extern void bcm2708_delay(unsigned long cycles);
++
++struct arm_delay_ops arm_delay_ops = {
++	.delay		= bcm2708_delay,
++	.const_udelay	= bcm2708_const_udelay,
++	.udelay		= bcm2708_udelay,
++};
++
++
++void __init bcm2708_init_early(void)
++{
++	/*
++	 * Some devices allocate their coherent buffers from atomic
++	 * context. Increase size of atomic coherent pool to make sure such
++	 * the allocations won't fail.
++	 */
++	init_dma_coherent_pool_size(SZ_2M);
++}
++
+ MACHINE_START(BCM2708, "BCM2708")
+     /* Maintainer: Broadcom Europe Ltd. */
+ 	.map_io = bcm2708_map_io,
+ 	.init_irq = bcm2708_init_irq,
+ 	.timer =&bcm2708_timer,
+-	.init_machine =bcm2708_init,
++	.init_machine = bcm2708_init,
++	.init_early = bcm2708_init_early,
+ MACHINE_END
+ 
+ module_param(boardrev, uint, 0644);
+diff --git a/arch/arm/mach-bcm2708/delay.S b/arch/arm/mach-bcm2708/delay.S
+index 4256d29..91754d6 100644
+--- a/arch/arm/mach-bcm2708/delay.S
++++ b/arch/arm/mach-bcm2708/delay.S
+@@ -13,8 +13,8 @@
+ 
+ 		.text
+ @ Delay routine
+-ENTRY(__delay)
++ENTRY(bcm2708_delay)
+ 		subs	r0, r0, #1
+-		bhi	__delay
++		bhi	bcm2708_delay
+ 		mov	pc, lr
+-ENDPROC(__delay)
++ENDPROC(bcm2708_delay)
+diff --git a/arch/arm/mach-bcm2708/include/mach/memory.h b/arch/arm/mach-bcm2708/include/mach/memory.h
+index 5d47513..521540d 100644
+--- a/arch/arm/mach-bcm2708/include/mach/memory.h
++++ b/arch/arm/mach-bcm2708/include/mach/memory.h
+@@ -54,11 +54,4 @@
+ #define __pfn_to_bus(x)     (__pfn_to_phys(x) + (BUS_OFFSET - PLAT_PHYS_OFFSET))
+ #define __bus_to_pfn(x)     __phys_to_pfn((x) - (BUS_OFFSET - PLAT_PHYS_OFFSET))
+ 
+-/*
+- * Consistent DMA area set to 2M. Framebuffer now allocated on host
+- */
+-
+-
+-#define CONSISTENT_DMA_SIZE 0x00200000
+-
+ #endif
+diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
+index 2997e56..c166a40 100644
+--- a/arch/arm/tools/mach-types
++++ b/arch/arm/tools/mach-types
+@@ -519,6 +519,7 @@ torbreck		MACH_TORBRECK		TORBRECK		3090
+ prima2_evb		MACH_PRIMA2_EVB		PRIMA2_EVB		3103
+ paz00			MACH_PAZ00		PAZ00			3128
+ acmenetusfoxg20		MACH_ACMENETUSFOXG20	ACMENETUSFOXG20		3129
++bcm2708			MACH_BCM2708		BCM2708			3138
+ ag5evm			MACH_AG5EVM		AG5EVM			3189
+ tsunagi			MACH_TSUNAGI		TSUNAGI			3197
+ ics_if_voip		MACH_ICS_IF_VOIP	ICS_IF_VOIP		3206
+diff --git a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_core.c
+index b8675d8..0dc312b 100644
+--- a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -1448,8 +1448,6 @@ fail_open:
+ 		NULL, 0, 0, 0) == VCHIQ_RETRY)
+ 		goto bail_not_ready;
+ 
+-	unlock_service(service);
+-
+ 	return 1;
+ 
+ bail_not_ready:
+@@ -1649,7 +1647,14 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 				&& (service->srvstate ==
+ 				VCHIQ_SRVSTATE_OPEN)) {
+ 				VCHIQ_BULK_T *bulk;
+-				int resolved;
++				int resolved = 0;
++
++				DEBUG_TRACE(PARSE_LINE);
++				if (mutex_lock_interruptible(
++					&service->bulk_mutex) != 0) {
++					DEBUG_TRACE(PARSE_LINE);
++					goto bail_not_ready;
++				}
+ 
+ 				WARN_ON(!(queue->remote_insert < queue->remove +
+ 					VCHIQ_NUM_SERVICE_BULKS));
+@@ -1670,18 +1675,12 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 
+ 				queue->remote_insert++;
+ 
+-				if (state->conn_state !=
+-					VCHIQ_CONNSTATE_CONNECTED)
+-					break;
+-
+-				DEBUG_TRACE(PARSE_LINE);
+-				if (mutex_lock_interruptible(
+-					&service->bulk_mutex) != 0) {
++				if (state->conn_state ==
++					VCHIQ_CONNSTATE_CONNECTED) {
+ 					DEBUG_TRACE(PARSE_LINE);
+-					goto bail_not_ready;
++					resolved = resolve_bulks(service, queue);
+ 				}
+-				DEBUG_TRACE(PARSE_LINE);
+-				resolved = resolve_bulks(service, queue);
++
+ 				mutex_unlock(&service->bulk_mutex);
+ 				if (resolved)
+ 					notify_bulks(service, queue,
+@@ -1700,14 +1699,23 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 				queue = (type == VCHIQ_MSG_BULK_RX_DONE) ?
+ 					&service->bulk_rx : &service->bulk_tx;
+ 
++				DEBUG_TRACE(PARSE_LINE);
++				if (mutex_lock_interruptible(
++					&service->bulk_mutex) != 0) {
++					DEBUG_TRACE(PARSE_LINE);
++					goto bail_not_ready;
++				}
+ 				if ((int)(queue->remote_insert -
+ 					queue->local_insert) >= 0) {
+ 					vchiq_log_error(vchiq_core_log_level,
+ 						"%d: prs %s@%x (%d->%d) "
+-						"unexpected",
++						"unexpected (ri=%d,li=%d)",
+ 						state->id, msg_type_str(type),
+ 						(unsigned int)header,
+-						remoteport, localport);
++						remoteport, localport,
++						queue->remote_insert,
++						queue->local_insert);
++					mutex_unlock(&service->bulk_mutex);
+ 					break;
+ 				}
+ 
+@@ -1735,12 +1743,6 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 					queue->remote_insert, queue->process);
+ 
+ 				DEBUG_TRACE(PARSE_LINE);
+-				if (mutex_lock_interruptible(
+-					&service->bulk_mutex) != 0) {
+-					DEBUG_TRACE(PARSE_LINE);
+-					goto bail_not_ready;
+-				}
+-				DEBUG_TRACE(PARSE_LINE);
+ 				WARN_ON(queue->process == queue->local_insert);
+ 				vchiq_complete_bulk(bulk);
+ 				queue->process++;
+@@ -2971,7 +2973,6 @@ vchiq_remove_service(VCHIQ_SERVICE_HANDLE_T handle)
+ 	return status;
+ }
+ 
+-
+ /* This function may be called by kernel threads or user threads.
+  * User threads may receive VCHIQ_RETRY to indicate that a signal has been
+  * received and the call should be retried after being returned to user
+@@ -3120,154 +3121,6 @@ error_exit:
+ }
+ 
+ VCHIQ_STATUS_T
+-vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle,
+-	const void *data, int size, void *userdata)
+-{
+-	return vchiq_bulk_transfer(handle,
+-		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+-		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data, int size,
+-	void *userdata)
+-{
+-	return vchiq_bulk_transfer(handle,
+-		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+-		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_queue_bulk_transmit_handle(VCHIQ_SERVICE_HANDLE_T handle,
+-	VCHI_MEM_HANDLE_T memhandle, const void *offset, int size,
+-	void *userdata)
+-{
+-	return vchiq_bulk_transfer(handle,
+-		memhandle, (void *)offset, size, userdata,
+-		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_queue_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T handle,
+-	VCHI_MEM_HANDLE_T memhandle, void *offset, int size,
+-	void *userdata)
+-{
+-	return vchiq_bulk_transfer(handle,
+-		memhandle, offset, size, userdata,
+-		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data, int size,
+-	void *userdata, VCHIQ_BULK_MODE_T mode)
+-{
+-	struct bulk_waiter bulk_waiter;
+-	VCHIQ_STATUS_T status;
+-
+-	switch (mode) {
+-	case VCHIQ_BULK_MODE_NOCALLBACK:
+-	case VCHIQ_BULK_MODE_CALLBACK:
+-		break;
+-	case VCHIQ_BULK_MODE_BLOCKING:
+-		userdata = &bulk_waiter;
+-		break;
+-	default:
+-		return VCHIQ_ERROR;
+-	}
+-
+-	status = vchiq_bulk_transfer(handle,
+-		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
+-		mode, VCHIQ_BULK_TRANSMIT);
+-
+-	/* This call is for kernel thread use and should not be interrupted */
+-	// dc4: remove as it does happen: BUG_ON(status == VCHIQ_RETRY);
+-	return status;
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data, int size,
+-	void *userdata, VCHIQ_BULK_MODE_T mode)
+-{
+-	struct bulk_waiter bulk_waiter;
+-	VCHIQ_STATUS_T status;
+-
+-	switch (mode) {
+-	case VCHIQ_BULK_MODE_NOCALLBACK:
+-	case VCHIQ_BULK_MODE_CALLBACK:
+-		break;
+-	case VCHIQ_BULK_MODE_BLOCKING:
+-		userdata = &bulk_waiter;
+-		break;
+-	default:
+-		return VCHIQ_ERROR;
+-	}
+-
+-	status = vchiq_bulk_transfer(handle,
+-		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
+-		mode, VCHIQ_BULK_RECEIVE);
+-
+-	/* This call is for kernel thread use and should not be interrupted */
+-	BUG_ON(status == VCHIQ_RETRY);
+-	return status;
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_bulk_transmit_handle(VCHIQ_SERVICE_HANDLE_T handle,
+-	VCHI_MEM_HANDLE_T memhandle, const void *offset, int size,
+-	void *userdata, VCHIQ_BULK_MODE_T mode)
+-{
+-	struct bulk_waiter bulk_waiter;
+-	VCHIQ_STATUS_T status;
+-
+-	switch (mode) {
+-	case VCHIQ_BULK_MODE_NOCALLBACK:
+-	case VCHIQ_BULK_MODE_CALLBACK:
+-		break;
+-	case VCHIQ_BULK_MODE_BLOCKING:
+-		userdata = &bulk_waiter;
+-		break;
+-	default:
+-		return VCHIQ_ERROR;
+-	}
+-
+-	status = vchiq_bulk_transfer(handle,
+-		memhandle, (void *)offset, size, userdata,
+-		mode, VCHIQ_BULK_TRANSMIT);
+-
+-	/* This call is for kernel thread use and should not be interrupted */
+-	BUG_ON(status == VCHIQ_RETRY);
+-	return status;
+-}
+-
+-VCHIQ_STATUS_T
+-vchiq_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T handle,
+-	VCHI_MEM_HANDLE_T memhandle, void *offset, int size, void *userdata,
+-	VCHIQ_BULK_MODE_T mode)
+-{
+-	struct bulk_waiter bulk_waiter;
+-	VCHIQ_STATUS_T status;
+-
+-	switch (mode) {
+-	case VCHIQ_BULK_MODE_NOCALLBACK:
+-	case VCHIQ_BULK_MODE_CALLBACK:
+-		break;
+-	case VCHIQ_BULK_MODE_BLOCKING:
+-		userdata = &bulk_waiter;
+-		break;
+-	default:
+-		return VCHIQ_ERROR;
+-	}
+-
+-	status = vchiq_bulk_transfer(handle,
+-		memhandle, offset, size, userdata,
+-		mode, VCHIQ_BULK_RECEIVE);
+-
+-	/* This call is for kernel thread use and should not be interrupted */
+-	BUG_ON(status == VCHIQ_RETRY);
+-	return status;
+-}
+-
+-VCHIQ_STATUS_T
+ vchiq_queue_message(VCHIQ_SERVICE_HANDLE_T handle,
+ 	const VCHIQ_ELEMENT_T *elements, int count)
+ {
+diff --git a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
+index 2855873..be1a063 100644
+--- a/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
++++ b/drivers/misc/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c
+@@ -25,12 +25,25 @@
+ 
+ /* ---- Private Constants and Types -------------------------------------- */
+ 
++struct bulk_waiter_node {
++	struct bulk_waiter bulk_waiter;
++	int pid;
++	struct list_head list;
++};
++
+ struct vchiq_instance_struct {
+ 	VCHIQ_STATE_T *state;
+ 
+ 	int connected;
++
++	struct list_head bulk_waiter_list;
++	struct mutex bulk_waiter_list_mutex;
+ };
+ 
++static VCHIQ_STATUS_T
++vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
++	int size, VCHIQ_BULK_DIR_T dir);
++
+ /****************************************************************************
+ *
+ *   vchiq_initialise
+@@ -61,6 +74,8 @@ VCHIQ_STATUS_T vchiq_initialise(VCHIQ_INSTANCE_T *instanceOut)
+ 
+ 	instance->connected = 0;
+ 	instance->state = state;
++	mutex_init(&instance->bulk_waiter_list_mutex);
++	INIT_LIST_HEAD(&instance->bulk_waiter_list);
+ 
+ 	*instanceOut = instance;
+ 
+@@ -96,8 +111,23 @@ VCHIQ_STATUS_T vchiq_shutdown(VCHIQ_INSTANCE_T instance)
+ 
+ 	mutex_unlock(&state->mutex);
+ 
+-	if (status == VCHIQ_SUCCESS)
++	if (status == VCHIQ_SUCCESS) {
++		struct list_head *pos, *next;
++		list_for_each_safe(pos, next,
++				&instance->bulk_waiter_list) {
++			struct bulk_waiter_node *waiter;
++			waiter = list_entry(pos,
++					struct bulk_waiter_node,
++					list);
++			list_del(pos);
++			vchiq_log_info(vchiq_arm_log_level,
++					"bulk_waiter - cleaned up %x "
++					"for pid %d",
++					(unsigned int)waiter, waiter->pid);
++			kfree(waiter);
++		}
+ 		kfree(instance);
++	}
+ 
+ 	vchiq_log_trace(vchiq_core_log_level,
+ 		"%s(%p): returning %d", __func__, instance, status);
+@@ -239,3 +269,156 @@ failed:
+ 	return status;
+ }
+ EXPORT_SYMBOL(vchiq_open_service);
++
++VCHIQ_STATUS_T
++vchiq_queue_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle,
++	const void *data, int size, void *userdata)
++{
++	return vchiq_bulk_transfer(handle,
++		VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
++		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_TRANSMIT);
++}
++EXPORT_SYMBOL(vchiq_queue_bulk_transmit);
++
++VCHIQ_STATUS_T
++vchiq_queue_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data, int size,
++	void *userdata)
++{
++	return vchiq_bulk_transfer(handle,
++		VCHI_MEM_HANDLE_INVALID, data, size, userdata,
++		VCHIQ_BULK_MODE_CALLBACK, VCHIQ_BULK_RECEIVE);
++}
++EXPORT_SYMBOL(vchiq_queue_bulk_receive);
++
++VCHIQ_STATUS_T
++vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data, int size,
++	void *userdata, VCHIQ_BULK_MODE_T mode)
++{
++	VCHIQ_STATUS_T status;
++
++	switch (mode) {
++	case VCHIQ_BULK_MODE_NOCALLBACK:
++	case VCHIQ_BULK_MODE_CALLBACK:
++		status = vchiq_bulk_transfer(handle,
++			VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
++			mode, VCHIQ_BULK_TRANSMIT);
++		break;
++	case VCHIQ_BULK_MODE_BLOCKING:
++		status = vchiq_blocking_bulk_transfer(handle,
++			(void *)data, size, VCHIQ_BULK_TRANSMIT);
++		break;
++	default:
++		return VCHIQ_ERROR;
++	}
++
++	return status;
++}
++EXPORT_SYMBOL(vchiq_bulk_transmit);
++
++VCHIQ_STATUS_T
++vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data, int size,
++	void *userdata, VCHIQ_BULK_MODE_T mode)
++{
++	VCHIQ_STATUS_T status;
++
++	switch (mode) {
++	case VCHIQ_BULK_MODE_NOCALLBACK:
++	case VCHIQ_BULK_MODE_CALLBACK:
++		status = vchiq_bulk_transfer(handle,
++			VCHI_MEM_HANDLE_INVALID, data, size, userdata,
++			mode, VCHIQ_BULK_RECEIVE);
++		break;
++	case VCHIQ_BULK_MODE_BLOCKING:
++		status = vchiq_blocking_bulk_transfer(handle,
++			(void *)data, size, VCHIQ_BULK_RECEIVE);
++		break;
++	default:
++		return VCHIQ_ERROR;
++	}
++
++	return status;
++}
++EXPORT_SYMBOL(vchiq_bulk_receive);
++
++static VCHIQ_STATUS_T
++vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
++	int size, VCHIQ_BULK_DIR_T dir)
++{
++	VCHIQ_INSTANCE_T instance;
++	VCHIQ_SERVICE_T *service;
++	VCHIQ_STATUS_T status;
++	struct bulk_waiter_node *waiter = NULL;
++	struct list_head *pos;
++
++	service = find_service_by_handle(handle);
++	if (!service)
++		return VCHIQ_ERROR;
++
++	instance = service->instance;
++
++	unlock_service(service);
++
++	mutex_lock(&instance->bulk_waiter_list_mutex);
++	list_for_each(pos, &instance->bulk_waiter_list) {
++		if (list_entry(pos, struct bulk_waiter_node,
++				list)->pid == current->pid) {
++			waiter = list_entry(pos,
++				struct bulk_waiter_node,
++				list);
++			list_del(pos);
++			break;
++		}
++	}
++	mutex_unlock(&instance->bulk_waiter_list_mutex);
++
++	if (waiter) {
++		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
++		if (bulk) {
++			/* This thread has an outstanding bulk transfer. */
++			if ((bulk->data != data) ||
++				(bulk->size != size)) {
++				/* This is not a retry of the previous one.
++				** Cancel the signal when the transfer
++				** completes. */
++				spin_lock(&bulk_waiter_spinlock);
++				bulk->userdata = NULL;
++				spin_unlock(&bulk_waiter_spinlock);
++			}
++		}
++	}
++
++	if (!waiter) {
++		waiter = kzalloc(sizeof(struct bulk_waiter_node), GFP_KERNEL);
++		if (!waiter) {
++			vchiq_log_error(vchiq_core_log_level,
++				"%s - out of memory", __func__);
++			return VCHIQ_ERROR;
++		}
++	}
++
++	status = vchiq_bulk_transfer(handle, VCHI_MEM_HANDLE_INVALID,
++		data, size, &waiter->bulk_waiter, VCHIQ_BULK_MODE_BLOCKING,
++		dir);
++	if ((status != VCHIQ_RETRY) || fatal_signal_pending(current) ||
++		!waiter->bulk_waiter.bulk) {
++		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
++		if (bulk) {
++			/* Cancel the signal when the transfer
++			 ** completes. */
++			spin_lock(&bulk_waiter_spinlock);
++			bulk->userdata = NULL;
++			spin_unlock(&bulk_waiter_spinlock);
++		}
++		kfree(waiter);
++	} else {
++		waiter->pid = current->pid;
++		mutex_lock(&instance->bulk_waiter_list_mutex);
++		list_add(&waiter->list, &instance->bulk_waiter_list);
++		mutex_unlock(&instance->bulk_waiter_list_mutex);
++		vchiq_log_info(vchiq_arm_log_level,
++				"saved bulk_waiter %x for pid %d",
++				(unsigned int)waiter, current->pid);
++	}
++
++	return status;
++}
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 5f7bde5..812fea6 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -320,14 +320,6 @@ config MMC_ATMELMCI
+ 	  If unsure, say N.
+ 
+ endchoice
+-config MMC_BCM2708
+-	tristate "BCM2708 Multimedia Card Interface support"
+-	help
+-	  This selects the BCM2708 Multimedia Card Interface driver. If
+-	  you have a BCM2708 platform with a Multimedia Card
+-	  slot, say Y or M here.
+-
+-	  If unsure, say N.
+ 
+ config MMC_ATMELMCI_DMA
+ 	bool "Atmel MCI DMA support"
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 79fe195..511710e 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -37,7 +37,6 @@ tmio_mmc_core-$(subst m,y,$(CONFIG_MMC_SDHI))	+= tmio_mmc_dma.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+-obj-$(CONFIG_MMC_BCM2708)       += bcm2708_mci.o
+ obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
+ obj-$(CONFIG_MMC_DW)		+= dw_mmc.o
+ obj-$(CONFIG_MMC_DW_PLTFM)	+= dw_mmc-pltfm.o
+diff --git a/drivers/mmc/host/bcm2708_mci.c b/drivers/mmc/host/bcm2708_mci.c
+deleted file mode 100644
+index 3c7de96..0000000
+--- a/drivers/mmc/host/bcm2708_mci.c
++++ /dev/null
+@@ -1,889 +0,0 @@
+-/*
+- *  linux/drivers/mmc/host/bcm2708_mci.c - Broadcom BCM2708 MCI driver
+- *
+- *  Copyright (C) 2010 Broadcom, All Rights Reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/slab.h>
+-#include <linux/module.h>
+-#include <linux/moduleparam.h>
+-#include <linux/init.h>
+-#include <linux/ioport.h>
+-#include <linux/device.h>
+-#include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/err.h>
+-#include <linux/highmem.h>
+-#include <linux/log2.h>
+-#include <linux/mmc/host.h>
+-#include <linux/mmc/mmc.h>
+-#include <linux/mmc/sd.h>
+-#include <linux/platform_device.h>
+-#include <linux/clk.h>
+-#include <linux/scatterlist.h>
+-#include <linux/dma-mapping.h>
+-
+-#include <asm/cacheflush.h>
+-#include <asm/div64.h>
+-#include <asm/io.h>
+-#include <asm/sizes.h>
+-//#include <asm/mach/mmc.h>
+-
+-#include <mach/gpio.h>
+-
+-#include "bcm2708_mci.h"
+-
+-#define DRIVER_NAME "bcm2708_mci"
+-
+-//#define PIO_DEBUG
+-#ifdef PIO_DEBUG
+-#define DBG(host,fmt,args...)	\
+-	printk(KERN_ERR"%s: %s: " fmt, mmc_hostname(host->mmc), __func__ , args)
+-#else
+-#define DBG(host,fmt,args...)	\
+-	pr_debug("%s: %s: " fmt, mmc_hostname(host->mmc), __func__ , args)
+-#endif
+-
+-#define USE_DMA
+-#define USE_DMA_IRQ
+-
+-#ifdef USE_DMA
+-#define SDHOST_DMA_CHANNEL 5
+-#endif
+-
+-#define BCM2708_DMA_ACTIVE	(1 << 0)
+-#define BCM2708_DMA_INT		(1 << 2)
+-
+-#define BCM2708_DMA_INT_EN	(1 << 0)
+-#define BCM2708_DMA_D_INC	(1 << 4)
+-#define BCM2708_DMA_D_WIDTH	(1 << 5)
+-#define BCM2708_DMA_D_DREQ	(1 << 6)
+-#define BCM2708_DMA_S_INC	(1 << 8)
+-#define BCM2708_DMA_S_WIDTH	(1 << 9)
+-#define BCM2708_DMA_S_DREQ	(1 << 10)
+-
+-#define	BCM2708_DMA_PER_MAP(x)	((x) << 16)
+-
+-#define BCM2708_DMA_DREQ_SDHOST	13
+-
+-#define BCM2708_DMA_CS		0x00
+-#define BCM2708_DMA_ADDR	0x04
+-
+-static void dump_sd_regs(void * mmc_base );
+-static int bcm2708_mci_reset(struct bcm2708_mci_host *host);
+-
+-static void do_command(void __iomem *base, u32 c, u32 a)
+-{
+-	u32 cmdsts = 0;
+-	writel(a, base + BCM2708_MCI_ARGUMENT);
+-	writel(c | BCM2708_MCI_ENABLE, base + BCM2708_MCI_COMMAND);
+-
+-	/* check for error and command done */
+-	cmdsts = readl(base + BCM2708_MCI_COMMAND);
+-	while ((cmdsts & BCM2708_MCI_ENABLE) && (!(cmdsts & BCM2708_MCI_FAIL_FLAG)))
+-		cmdsts = readl(base + BCM2708_MCI_COMMAND);
+-	if (cmdsts & BCM2708_MCI_FAIL_FLAG) {
+-		printk(KERN_DEBUG"%s: Command %d failed with arg %d\n", __func__, c, a);
+-		dump_sd_regs(base);
+-	}
+-}
+-
+-//static void discard_words(void __iomem *base, int words)
+-//{
+-//	int i;
+-//	for (i = 0; i < words; i++) {
+-//		while (!(readl(base + BCM2708_MCI_STATUS) & BCM2708_MCI_DATAFLAG));
+-//		readl(base + BCM2708_MCI_DATA);
+-//	}
+-//}
+-
+-#define CACHE_LINE_MASK 31
+-
+-static int suitable_for_dma(struct scatterlist *sg_ptr, int sg_len)
+-{
+-	int i;
+-
+-	for (i = 0; i < sg_len; i++) {
+-		if (sg_ptr[i].offset & CACHE_LINE_MASK || sg_ptr[i].length & CACHE_LINE_MASK)
+-			return 0;
+-	}
+-
+-	return 1;
+-}
+-
+-static void wait_for_complete(struct bcm2708_mci_host *host,
+-			      void __iomem *mmc_base)
+-{
+-#ifdef USE_SDHOST_IRQ
+-#error not implemented yet
+-#else
+-	while ((readl(mmc_base + BCM2708_MCI_STATUS) &
+-		(BCM2708_MCI_HSTS_BUSY | BCM2708_MCI_HSTS_BLOCK)) == 0)
+-		continue;
+-
+-	writel(BCM2708_MCI_HSTS_BUSY | BCM2708_MCI_HSTS_BLOCK,
+-	       mmc_base + BCM2708_MCI_STATUS);
+-#endif
+-}
+-
+-static void dump_sd_regs(void * mmc_base )
+-{
+-	printk(KERN_DEBUG"Registers:\n");
+-	printk(KERN_DEBUG"SDCMD:0x%x\n", readl(mmc_base + BCM2708_MCI_COMMAND));
+-	printk(KERN_DEBUG"SDARG:0x%x\n", readl(mmc_base + BCM2708_MCI_ARGUMENT));
+-	printk(KERN_DEBUG"SDTOUT:0x%x\n", readl(mmc_base + BCM2708_MCI_TIMEOUT));
+-	printk(KERN_DEBUG"SDCDIV:0x%x\n", readl(mmc_base + BCM2708_MCI_CLKDIV));
+-	printk(KERN_DEBUG"SDRSP0:0x%x\n", readl(mmc_base + BCM2708_MCI_RESPONSE0));
+-	printk(KERN_DEBUG"SDRSP1:0x%x\n", readl(mmc_base + BCM2708_MCI_RESPONSE1));
+-	printk(KERN_DEBUG"SDRSP2:0x%x\n", readl(mmc_base + BCM2708_MCI_RESPONSE2));
+-	printk(KERN_DEBUG"SDRSP3:0x%x\n", readl(mmc_base + BCM2708_MCI_RESPONSE3));
+-	printk(KERN_DEBUG"SDHSTS:0x%x\n", readl(mmc_base + BCM2708_MCI_STATUS));
+-	printk(KERN_DEBUG"SDPO:0x%x\n", readl(mmc_base + BCM2708_MCI_VDD));
+-	printk(KERN_DEBUG"SDEDM:0x%x\n", readl(mmc_base + BCM2708_MCI_EDM));
+-	printk(KERN_DEBUG"SDHCFG:0x%x\n", readl(mmc_base + BCM2708_MCI_HOSTCONFIG));
+-	printk(KERN_DEBUG"SDHBCT:0x%x\n", readl(mmc_base + BCM2708_MCI_HBCT));
+-	//printk(KERN_ERR"SDDATA:0x%x\n", readl(mmc_base + BCM2708_MCI_DATA));
+-	printk(KERN_DEBUG"SDHBLC:0x%x\n", readl(mmc_base + BCM2708_MCI_HBLC));
+-}
+-
+-
+-static void
+-bcm2708_mci_start_command(struct bcm2708_mci_host *host, struct mmc_command *cmd, struct mmc_data *data)
+-{
+-	void __iomem *mmc_base = host->mmc_base;
+-	void __iomem *dma_base = host->dma_base;
+-	u32 status;
+-	u32 c;
+-	int redo = 0;
+-
+-	DBG(host, "op %02x arg %08x flags %08x\n",
+-	    cmd->opcode, cmd->arg, cmd->flags);
+-
+-back:
+-
+-	/*
+-	 * clear the controller status register
+-	 */
+-
+-	writel(-1, mmc_base + BCM2708_MCI_STATUS);
+-
+-	/*
+-	 * build the command register write, incorporating no
+-         * response, long response, busy, read and write flags
+-	 */
+-
+-	c = cmd->opcode;
+-	if (cmd->flags & MMC_RSP_PRESENT) {
+-		if (cmd->flags & MMC_RSP_136)
+-			c |= BCM2708_MCI_LONGRESP;
+-	} else
+-		c |= BCM2708_MCI_NORESP;
+-	if (cmd->flags & MMC_RSP_BUSY)
+-		c |= BCM2708_MCI_BUSY;
+-
+-	if (data) {
+-		if (data->flags & MMC_DATA_READ)
+-			c |= BCM2708_MCI_READ;
+-		else
+-			c |= BCM2708_MCI_WRITE;
+-
+-		DBG(host, "BYTECOUT %d BLOCKCOUNT %d .. ",readl(mmc_base + BCM2708_MCI_HBCT), readl(mmc_base + BCM2708_MCI_HBLC));
+-		DBG(host, "set blocksize to %d\n", data->blksz);
+-		DBG(host, "set blockcnt to %d\n", data->blocks);
+-		writel( data->blksz, mmc_base + BCM2708_MCI_HBCT);
+-		writel(data->blocks, mmc_base + BCM2708_MCI_HBLC);
+-	}
+-
+-	/*
+-         * run the command and wait for it to complete
+-	 */
+-
+-	DBG(host, "executing command=%d\n", cmd->opcode);
+-
+-	do_command(mmc_base, c, cmd->arg);
+-
+-	DBG(host, "done cmd=%d\n", cmd->opcode);
+-
+-	if (c & BCM2708_MCI_BUSY) {
+-
+-		DBG(host, "waiting for command(%d) to complete\n", cmd->opcode);
+-		wait_for_complete(host, mmc_base);
+-		DBG(host, "done waiting for command(%d)\n", cmd->opcode);
+-	}
+-
+-	/*
+-	 * retrieve the response and error (if any)
+-	 */
+-
+-	status = readl(mmc_base + BCM2708_MCI_STATUS);
+-
+-	if (cmd->flags & MMC_RSP_136) {
+-		cmd->resp[3] = readl(mmc_base + BCM2708_MCI_RESPONSE0);
+-		cmd->resp[2] = readl(mmc_base + BCM2708_MCI_RESPONSE1);
+-		cmd->resp[1] = readl(mmc_base + BCM2708_MCI_RESPONSE2);
+-		cmd->resp[0] = readl(mmc_base + BCM2708_MCI_RESPONSE3);
+-	} else {
+-		cmd->resp[0] = readl(mmc_base + BCM2708_MCI_RESPONSE0);
+-	}
+-
+-	if (status & BCM2708_MCI_CMDTIMEOUT) {
+-		printk(KERN_DEBUG "mmc driver saw timeout with opcode = %d, data = 0x%08x, timeout = %d", cmd->opcode, (unsigned int)data, readl(mmc_base + BCM2708_MCI_TIMEOUT));
+-		if (data)
+-			printk(KERN_DEBUG " data->sg_len = %d\n", data->sg_len);
+-		else
+-			printk(KERN_DEBUG "\n");
+-		if (!redo) {
+-			printk(KERN_DEBUG "redo\n");
+-			redo = 1;
+-			goto back;
+-		} else
+-			cmd->error = -ETIMEDOUT;
+-	}
+-
+-	/*
+-	 * pump data if necessary
+-	 */
+-
+-	if (data) {
+-		unsigned int sg_len = data->sg_len;
+-		struct scatterlist *sg_ptr = data->sg;
+-
+-		data->bytes_xfered = 0;
+-
+-#ifdef USE_DMA
+-		if (suitable_for_dma(sg_ptr, sg_len)) {
+-			int i, count = dma_map_sg(&host->dev->dev, sg_ptr, sg_len, data->flags & MMC_DATA_READ ? DMA_FROM_DEVICE : DMA_TO_DEVICE);
+-
+-			for (i = 0; i < count; i++) {
+-				BCM2708_DMA_CB_T *cb = &host->cb_base[i];
+-
+-				if (data->flags & MMC_DATA_READ) {
+-					cb->info = BCM2708_DMA_PER_MAP(BCM2708_DMA_DREQ_SDHOST)|BCM2708_DMA_S_DREQ|BCM2708_DMA_D_WIDTH|BCM2708_DMA_D_INC;
+-					cb->src = 0x7e202040;
+-					cb->dst = sg_dma_address(&sg_ptr[i]);
+-				} else {
+-					cb->info = BCM2708_DMA_PER_MAP(BCM2708_DMA_DREQ_SDHOST)|BCM2708_DMA_S_WIDTH|BCM2708_DMA_S_INC|BCM2708_DMA_D_DREQ;
+-					cb->src = sg_dma_address(&sg_ptr[i]);
+-					cb->dst = 0x7e202040;
+-				}
+- 
+-				cb->length = sg_dma_len(&sg_ptr[i]);
+-				cb->stride = 0;
+-
+-				if (i == count - 1) {
+-#ifdef USE_DMA_IRQ
+-					cb->info |= BCM2708_DMA_INT_EN;
+-#endif
+-					cb->next = 0;
+-				} else 
+-					cb->next = host->cb_handle + (i + 1) * sizeof(BCM2708_DMA_CB_T);
+-
+-				cb->pad[0] = 0;
+-				cb->pad[1] = 0;
+-
+-				data->bytes_xfered += sg_ptr[i].length;
+-			}
+-
+-			dsb();	// data barrier operation
+-
+-			writel(host->cb_handle, dma_base + BCM2708_DMA_ADDR);
+-			writel(BCM2708_DMA_ACTIVE, dma_base + BCM2708_DMA_CS);
+-
+-#ifdef USE_DMA_IRQ
+-			down(&host->sem);
+-#else
+-			while ((readl(dma_base + BCM2708_DMA_CS) & BCM2708_DMA_ACTIVE));
+-#endif
+-			dma_unmap_sg(&host->dev->dev, sg_ptr, sg_len, data->flags & MMC_DATA_READ ? DMA_FROM_DEVICE : DMA_TO_DEVICE);
+-		} else
+-#endif
+-		while (sg_len) {
+-			unsigned long flags;
+-			char *buffer;
+-			u32 *ptr, *lim;
+-
+-			DBG(host, "sg_len=%d sg_ptr=%p len=%d\n", sg_len, sg_ptr, sg_ptr->length);
+-
+-			/*
+-			 * map the current scatter buffer
+-			 */
+-
+-			buffer = bcm2708_mci_kmap_atomic(sg_ptr, &flags);
+-
+-			/*
+-			 * pump the data
+-			 */
+-
+-			ptr = (u32 *)(buffer);
+-			lim = (u32 *)(buffer + sg_ptr->length);
+-
+-			while (ptr < lim)
+-			{
+-#ifdef PIO_DEBUG
+-				unsigned int wait_count = 1;
+-#endif
+-				while (!(readl(mmc_base + BCM2708_MCI_STATUS) & BCM2708_MCI_DATAFLAG)) 
+-				{
+-#ifdef PIO_DEBUG
+-					wait_count++;
+-					if ( 0 == (wait_count % 20000) ) {
+-
+-						printk(KERN_ERR"Timeout waiting for data flag\n");
+-						dump_sd_regs(mmc_base);
+-					}
+-#endif
+-				}
+-
+-				if (data->flags & MMC_DATA_READ)
+-					*ptr++ = readl(mmc_base + BCM2708_MCI_DATA);
+-				else
+-				{
+-#ifdef PIO_DEBUG
+-					uint32_t fifo_bytes, fifo_wait_count = 1;
+-
+-					fifo_bytes = readl(mmc_base + BCM2708_MCI_EDM);
+-					fifo_bytes = (fifo_bytes >> 4)  & 0xf;
+-
+-					while(fifo_bytes > 3)
+-					{
+-						fifo_wait_count++;
+-						if ( 0 == (fifo_wait_count % 20000) ) {
+-							printk(KERN_ERR"waiting for fifo_bytes < 3\n");
+-							dump_sd_regs(mmc_base);
+-						}
+-
+-						fifo_bytes = readl(mmc_base + BCM2708_MCI_EDM);
+-						fifo_bytes = (fifo_bytes >> 4)  & 0xf;
+-					}
+-
+-					BUG_ON(fifo_bytes > 3);
+-#endif
+-					writel(*ptr++, mmc_base + BCM2708_MCI_DATA);
+-				}
+-			}
+-
+-			DBG(host, "done reading/writing %d bytes from mmc\n", sg_ptr->length);
+-
+-
+-			/*
+-			 * unmap the buffer
+-			 */
+-
+-			bcm2708_mci_kunmap_atomic(buffer, &flags);
+-
+-			/*
+-			 * if we were reading, and we have completed this
+-			 * page, ensure that the data cache is coherent
+-			 */
+-
+-			if (data->flags & MMC_DATA_READ)
+-				flush_dcache_page(sg_page(sg_ptr));
+-
+-			data->bytes_xfered += sg_ptr->length;
+-
+-			sg_ptr++;
+-			sg_len--; 
+-		}
+-
+-//		if (host->is_acmd && cmd->opcode == SD_APP_SEND_SCR)
+-//			discard_words(mmc_base, 126);
+-//		if (host->is_acmd && cmd->opcode == SD_APP_SEND_NUM_WR_BLKS) 
+-//			discard_words(mmc_base, 127);
+-//		if (!host->is_acmd && cmd->opcode == SD_SWITCH)
+-//			discard_words(mmc_base, 112);
+-
+-		if (data->stop) {
+-
+-			DBG(host, "sending stop command %p\n", data->stop);
+-			bcm2708_mci_start_command(host, data->stop, 0);
+-
+-			while ((readl(mmc_base + BCM2708_MCI_STATUS) &
+-					 BCM2708_MCI_DATAFLAG))
+-			{
+-				DBG(host, "error data flag still set read=%d bytes\n", sg_ptr->length);
+-				printk(KERN_ERR"SDDATA:0x%x\n", readl(mmc_base + BCM2708_MCI_DATA));
+-				dump_sd_regs(mmc_base);
+-			}
+-		}
+-	}
+-	/*
+-	 * remember if we're an application command
+-	 */
+-	host->is_acmd = cmd->opcode == MMC_APP_CMD;
+-}
+-
+-static void bcm2708_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+-{
+-	struct bcm2708_mci_host *host = mmc_priv(mmc);
+-
+-	if (mrq->data && !is_power_of_2(mrq->data->blksz)) {
+-		printk(KERN_ERR "%s: Unsupported block size (%d bytes)\n",
+-			mmc_hostname(mmc), mrq->data->blksz);
+-		mrq->cmd->error = -EINVAL;
+-		mmc_request_done(mmc, mrq);
+-		return;
+-	}
+-
+-	bcm2708_mci_start_command(host, mrq->cmd, mrq->data);
+-
+-	mmc_request_done(host->mmc, mrq);
+-}
+-
+-static void bcm2708_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+-{
+-
+-	struct bcm2708_mci_host *host = mmc_priv(mmc);
+-	void *mmc_base = host->mmc_base;
+-
+-
+-	printk(KERN_DEBUG"%s: Want to set clock: %d width: %d\n", mmc_hostname(mmc),
+-			ios->clock, ios->bus_width);
+-
+-	if (ios->clock == 25000000 || ios->clock == 26000000) {
+-		printk(KERN_DEBUG"%s setting clock div to 10 (8+2)\n", mmc_hostname(mmc));
+-		writel(0x8, mmc_base + BCM2708_MCI_CLKDIV);
+-	} else if (ios->clock == 50000000 || ios->clock == 52000000) {
+-		printk(KERN_DEBUG"%s setting clock div to 5 (3+2)\n", mmc_hostname(mmc));
+-		writel(0x3, mmc_base + BCM2708_MCI_CLKDIV);
+-	} else {
+-		// On init or unknown clock, we set the clock really low
+-		printk(KERN_DEBUG"%s Setting clock div to 0x4e0\n", mmc_hostname(mmc));
+-		writel(0x4e0, mmc_base + BCM2708_MCI_CLKDIV);
+-	}
+-
+-	if (ios->bus_width) {
+-		uint32_t hcfg;
+-		hcfg = readl(mmc_base + BCM2708_MCI_HOSTCONFIG);
+-		printk(KERN_DEBUG"%s setting bus width to %d\n", mmc_hostname(mmc), ios->bus_width);
+-
+-		hcfg &= BCM2708_MCI_HOSTCONFIG_WIDEEXT_CLR;
+-		hcfg |= (ios->bus_width == MMC_BUS_WIDTH_4) ? BCM2708_MCI_HOSTCONFIG_WIDEEXT_4BIT : 0;
+-
+-		writel(hcfg, mmc_base + BCM2708_MCI_HOSTCONFIG);
+-	}
+-}
+-
+-static int bcm2708_mci_get_cd(struct mmc_host *mmc)
+-{
+-	int present = -ENOSYS;
+-
+-	struct bcm2708_mci_host *host = mmc_priv(mmc);
+-	void *gpio_base = host->gpio_base;
+-
+-	present = readl( (gpio_base + GP_LEV0) );
+-	
+-	if ((present & (1<<29))==(1<<29))
+-		present = 0;
+-	else
+-		present = 1;
+-
+-	printk(KERN_DEBUG"***sdcard present***=%d\n", present);
+-
+-	// FIXME - For now force SD card present for 2835DK 
+-	present = 1;
+-	return present;
+-}
+-
+-/*
+- * Handle completion of command and data transfers.
+- */
+-
+-//static irqreturn_t bcm2708_mci_command_irq(int irq, void *dev_id)
+-//{
+-//	struct bcm2708_mci_host *host = dev_id;
+-//
+-//	writel(BCM2708_DMA_INT, host->dma_base + BCM2708_DMA_CS);
+-//
+-//	printk(KERN_ERR "irq\n");
+-//
+-//	return IRQ_RETVAL(0);
+-//}
+-
+-static irqreturn_t bcm2708_mci_sddet_irq(int irq, void *dev_id)
+-{
+-	struct bcm2708_mci_host *host = dev_id;
+-	irqreturn_t handled = IRQ_NONE;
+-	int present;
+-
+-	present = bcm2708_mci_get_cd(host->mmc);
+-
+-	if (present!=host->present)
+-	{
+-		host->present = present;
+-		printk(KERN_DEBUG "SDDET IRQ: sdcard present: %d\n",present);
+-		bcm2708_mci_reset(host);
+-		mmc_detect_change(host->mmc, msecs_to_jiffies(500));
+-	}
+-
+-	return IRQ_RETVAL(handled);
+-}
+-
+-#ifdef USE_DMA_IRQ
+-static irqreturn_t bcm2708_mci_data_irq(int irq, void *dev_id)
+-{
+-	struct bcm2708_mci_host *host = dev_id;
+-        irqreturn_t handled = IRQ_NONE;
+-
+-	if (0 != (BCM2708_DMA_INT & readl(host->dma_base + BCM2708_DMA_CS))) {
+-		writel(BCM2708_DMA_INT, host->dma_base + BCM2708_DMA_CS);
+-		dsb();
+-		handled = IRQ_HANDLED;
+-		up(&host->sem);
+-	} else {
+-		printk(KERN_ERR"bcm2708_mci irq check failed !!\n");
+-	}
+-
+-	return IRQ_RETVAL(handled);
+-}
+-#endif
+-
+-static const struct mmc_host_ops bcm2708_mci_ops = {
+-	.request	= bcm2708_mci_request,
+-	.set_ios	= bcm2708_mci_set_ios,
+-	.get_cd		= bcm2708_mci_get_cd,
+-};
+-
+-static int bcm2708_mci_reset(struct bcm2708_mci_host *host)
+-{
+-
+-	void *mmc_base = host->mmc_base;
+-
+-	// pin muxing/gpios is done by vcloader
+-
+-	printk(KERN_DEBUG"%s:Resetting BCM2708 MCI Controller.\n", __func__ );
+-
+-	writel(0, mmc_base + BCM2708_MCI_COMMAND);
+-	writel(0, mmc_base + BCM2708_MCI_ARGUMENT);
+-	writel(0x00F00000, mmc_base + BCM2708_MCI_TIMEOUT);
+-	writel(0, mmc_base + BCM2708_MCI_CLKDIV);
+-	writel(0, mmc_base + BCM2708_MCI_STATUS);
+-	writel(0, mmc_base + BCM2708_MCI_VDD);
+-	writel(0, mmc_base + BCM2708_MCI_HOSTCONFIG);
+-	writel(0, mmc_base + BCM2708_MCI_HBCT);
+-	writel(0, mmc_base + BCM2708_MCI_HBLC);
+-
+-	writel( BCM2708_MCI_HOSTCONFIG_SLOW_CARD | BCM2708_MCI_HOSTCONFIG_BUSY_IRPT_EN |
+-			BCM2708_MCI_HOSTCONFIG_BLOCK_IRPT_EN | BCM2708_MCI_HOSTCONFIG_WIDE_INT_BUS,
+-			mmc_base + BCM2708_MCI_HOSTCONFIG);
+-
+-	// On A0 silicon it has been observed that the following must hold
+-	// WRITE_THRESHOLD<=5 and READ_THRESHOLD<=WRITE_THRESHOLD+1
+-	// with the chip running at 150MHz (with the interface running @ 150/22 = 6.8 MHz)
+-	// the second requirement suggests that the verilog does not properly separate the read / write FIFOs
+-	// On V3XDS Read=2 & Write=6
+-
+-#define READ_THRESHOLD  3
+-#define WRITE_THRESHOLD 3
+-#if 1 // !!! This is still required, without it we get CRC16 errors in data.
+-	{
+-		uint32_t temp;
+-		temp = readl(mmc_base + BCM2708_MCI_EDM);
+-		temp &= ~((0x1F<<14) | (0x1F<<9));
+-		temp  |= (WRITE_THRESHOLD << 9) | (READ_THRESHOLD << 14);
+-		writel(temp, mmc_base + BCM2708_MCI_EDM);
+-	}
+-#endif
+-
+-	// Power on delay
+-	mdelay(10);
+-	writel(BCM2708_MCI_VDD_ENABLE, mmc_base + BCM2708_MCI_VDD);
+-	mdelay(10);
+-
+-	return 0;
+-}
+-
+-
+-static int __devinit bcm2708_mci_probe(struct platform_device *pdev)
+-{
+-	struct mmc_host *mmc;
+-	struct bcm2708_mci_host *host;
+-	struct resource *mmc_res;
+-	struct resource *dma_res;
+-	struct resource *gpio_res;
+-	struct resource *dat_res;
+-	struct resource *sddet_res;
+-	int ret;
+-
+-	mmc = mmc_alloc_host(sizeof(struct bcm2708_mci_host), &pdev->dev);
+-	if (!mmc) {
+-		ret = -ENOMEM;
+-		dev_dbg(&pdev->dev, "couldn't allocate mmc host\n");
+-		goto fail0;
+-	}
+-
+-	host = mmc_priv(mmc);
+-	host->mmc = mmc;
+-
+-	host->dev = pdev;
+-
+-	sema_init(&host->sem, 0);
+-
+-#ifdef USE_DMA
+-	host->cb_base = dma_alloc_writecombine(&pdev->dev, SZ_4K, &host->cb_handle, GFP_KERNEL);
+-	if (!host->cb_base) {
+-		ret = -ENOMEM;
+-		dev_dbg(&pdev->dev, "couldn't allocate dma base\n");
+-		goto fail1;
+-	}
+-#endif
+-
+-	mmc_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mmc_res) {
+-		ret = -ENXIO;
+-		dev_dbg(&pdev->dev, "couldn't allocate mmc memory resource 0\n");
+-		goto fail2;
+-	}
+-
+-	if (!request_mem_region(mmc_res->start, mmc_res->end - mmc_res->start + 1, DRIVER_NAME)) {
+-		ret = -EBUSY;
+-		goto fail2;
+-	}
+-
+-	dma_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!dma_res) {
+-		ret = -ENXIO;
+-		dev_dbg(&pdev->dev, "couldn't allocate dma memory resource 1\n");
+-		goto fail3;
+-	}
+-
+-	/*
+-	 * Map I/O regions
+-	 */
+-
+-	host->mmc_base = ioremap(mmc_res->start, resource_size(mmc_res));
+-	if (!host->mmc_base) {
+-		ret = -ENOMEM;
+-		goto fail3;
+-	}
+-
+-	gpio_res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	if (!gpio_res) {
+-		ret = -ENXIO;
+-		dev_dbg(&pdev->dev, "couldn't allocate gpio resource\n");
+-		goto fail4;
+-	}
+-
+-	/*
+-	 * Map I/O regions
+-	 */
+-
+-	host->gpio_base = ioremap(gpio_res->start, resource_size(gpio_res));
+-	if (!host->gpio_base) {
+-		ret = -ENOMEM;
+-		goto fail4;
+-	}
+-
+-#ifdef USE_DMA
+-	host->dma_base = __io_address(dma_res->start);
+-
+-	if (!host->dma_base) {
+-		ret = -ENOMEM;
+-		goto fail5;
+-	}
+-
+-	// USE DMA5 channel
+-	host->dma_base = (void __iomem *)((char *) host->dma_base + (SDHOST_DMA_CHANNEL * 0x100));
+-
+-	dev_dbg(&pdev->dev, "%s: using dma channel %d for sdhost\n", __func__, SDHOST_DMA_CHANNEL);
+-
+-	/*
+-	 * Grab interrupts.
+-	 */
+-#ifdef USE_DMA_IRQ
+-	dat_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!dat_res) {
+-		ret = -ENXIO;
+-		dev_dbg(&pdev->dev, "couldn't allocate irq for dma\n");
+-		goto fail5;
+-	}
+-
+-	ret = request_irq(dat_res->start, bcm2708_mci_data_irq, 0, DRIVER_NAME " (dat)", host);
+-	if (ret) {
+-		goto fail5;
+-	}
+-	dev_dbg(&pdev->dev, "%s: using dma interrupt number %d for sdhost\n", __func__, dat_res->start);
+-
+-#endif
+-#endif
+-
+-	host->present = bcm2708_mci_get_cd(host->mmc);
+-
+-	sddet_res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+-	if (!sddet_res) {
+-		ret = -ENXIO;
+-		dev_dbg(&pdev->dev, "couldn't allocate irq for sd detect\n");
+-		goto fail6;
+-	}
+-
+-	ret = request_irq(sddet_res->start, bcm2708_mci_sddet_irq, 0, DRIVER_NAME " (cmd)", host);
+-	if (ret) {
+-		goto fail6;
+-	}
+-
+-	host->is_acmd = 0;
+-
+-	mmc->ops = &bcm2708_mci_ops;
+-	mmc->f_min = 200000;
+-	mmc->f_max = 52000000;
+-	mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+-
+-	/*
+-	 * We can do SGIO
+-	 */
+-	mmc->max_segs = NR_SG;
+-
+-	/*
+-	 * Since we only have a 16-bit data length register, we must
+-	 * ensure that we don't exceed 2^16-1 bytes in a single request.
+-	 */
+-	mmc->max_req_size = 65535;
+-
+-	/*
+-	 * Set the maximum segment size.  Since we aren't doing DMA
+-	 * (yet) we are only limited by the data length register.
+-	 */
+-	mmc->max_seg_size = mmc->max_req_size;
+-
+-	/*
+-	 * Block size can be up to 2048 bytes, but must be a power of two.
+-	 */
+-	mmc->max_blk_size = 2048;
+-
+-	/*
+-	 * No limit on the number of blocks transferred.
+-	 */
+-	mmc->max_blk_count = mmc->max_req_size;
+-
+-	/*
+-	 * We support 4-bit data (at least on the DB)
+-	 */
+-
+-	mmc->caps |= (MMC_CAP_4_BIT_DATA | MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED) ;
+-
+-	bcm2708_mci_reset(host);
+-
+-	mmc_add_host(mmc);
+-
+-	printk(KERN_INFO "%s: BCM2708 SD host at 0x%08llx 0x%08llx\n",
+-		mmc_hostname(mmc),
+-		(unsigned long long)mmc_res->start, (unsigned long long)dma_res->start);
+-
+-	return 0;
+-
+-fail6:
+-#ifdef USE_DMA_IRQ
+-	free_irq(dat_res->start, host);
+-#endif
+-fail5:
+-	iounmap(host->gpio_base);
+-fail4:
+-	iounmap(host->mmc_base);
+-fail3:
+-	release_mem_region(mmc_res->start, mmc_res->end - mmc_res->start + 1);
+-fail2:
+-	dma_free_writecombine(&pdev->dev, SZ_4K, host->cb_base, host->cb_handle);
+-fail1:
+-	mmc_free_host(mmc);
+-fail0:
+-	dev_err(&pdev->dev, "probe failed, err %d\n", ret);
+-	return ret;
+-}
+-
+-static int __devexit bcm2708_mci_remove(struct platform_device *pdev)
+-{
+-	struct mmc_host *mmc = platform_get_drvdata(pdev);
+-
+-	if (mmc) {
+-		struct bcm2708_mci_host *host = mmc_priv(mmc);
+-		struct resource *res;
+-		struct resource *res2;
+-
+-		mmc_remove_host(mmc);
+-#ifdef USE_DMA
+-#ifdef USE_DMA_IRQ
+-		res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-		free_irq(res->start, host);
+-#endif
+-#endif
+-
+-		res2 = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+-		free_irq(res2->start, host);
+-
+-		iounmap(host->mmc_base);
+-		iounmap(host->gpio_base);
+-		iounmap(host->dma_base);
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		release_mem_region(res->start, resource_size(res));
+-#ifdef USE_DMA
+-		dma_free_writecombine(&pdev->dev, SZ_4K, host->cb_base, host->cb_handle);
+-#endif
+-
+-		mmc_free_host(mmc);
+-		platform_set_drvdata(pdev, NULL);
+-
+-		return 0;
+-	} else
+-		return -1;
+-}
+-
+-#ifdef CONFIG_PM
+-static int bcm2708_mci_suspend(struct platform_device *dev, pm_message_t state)
+-{
+-	struct mmc_host *mmc = platform_get_drvdata(dev);
+-	int ret = 0;
+-
+-	if (mmc) {
+-		ret = mmc_suspend_host(mmc);
+-	}
+-
+-	return ret;
+-}
+-
+-static int bcm2708_mci_resume(struct platform_device *dev)
+-{
+-	struct mmc_host *mmc = platform_get_drvdata(dev);
+-	int ret = 0;
+-
+-	if (mmc) {
+-		ret = mmc_resume_host(mmc);
+-	}
+-
+-	return ret;
+-}
+-#else
+-#define bcm2708_mci_suspend	NULL
+-#define bcm2708_mci_resume	NULL
+-#endif
+-
+-static struct platform_driver bcm2708_mci_driver = {
+-	.probe		= bcm2708_mci_probe,
+-	.remove		= bcm2708_mci_remove,
+-	.suspend	= bcm2708_mci_suspend,
+-	.resume		= bcm2708_mci_resume,
+-	.driver		= {
+-		.name	= DRIVER_NAME,
+-		.owner  = THIS_MODULE,
+-	},
+-};
+-
+-static int __init bcm2708_mci_init(void)
+-{
+-	return platform_driver_register(&bcm2708_mci_driver);
+-}
+-
+-static void __exit bcm2708_mci_exit(void)
+-{
+-	platform_driver_unregister(&bcm2708_mci_driver);
+-}
+-
+-module_init(bcm2708_mci_init);
+-module_exit(bcm2708_mci_exit);
+-
+-MODULE_DESCRIPTION("BCM2708 Multimedia Card Interface driver");
+-MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:bcm2708_mci");
+diff --git a/drivers/mmc/host/bcm2708_mci.h b/drivers/mmc/host/bcm2708_mci.h
+deleted file mode 100644
+index b2851d9..0000000
+--- a/drivers/mmc/host/bcm2708_mci.h
++++ /dev/null
+@@ -1,101 +0,0 @@
+-/*
+- *  linux/drivers/mmc/host/bcm2708_mci.c - Broadcom BCM2708 MCI driver
+- *
+- *  Copyright (C) 2010 Broadcom, All Rights Reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-struct clk;
+-
+-#define BCM2708_MCI_COMMAND	0x00
+-
+-#define BCM2708_MCI_READ     	(1 << 6)
+-#define BCM2708_MCI_WRITE    	(1 << 7)
+-#define BCM2708_MCI_LONGRESP 	(1 << 9)
+-#define BCM2708_MCI_NORESP   	(1 << 10)
+-#define BCM2708_MCI_BUSY     	(1 << 11)
+-#define BCM2708_MCI_FAIL_FLAG	(1 << 14)
+-#define BCM2708_MCI_ENABLE   	(1 << 15)
+-
+-#define BCM2708_MCI_ARGUMENT	0x04
+-
+-#define BCM2708_MCI_TIMEOUT	0x08
+-#define BCM2708_MCI_CLKDIV	0x0c
+-
+-
+-#define BCM2708_MCI_RESPONSE0	0x10
+-#define BCM2708_MCI_RESPONSE1	0x14
+-#define BCM2708_MCI_RESPONSE2	0x18
+-#define BCM2708_MCI_RESPONSE3	0x1c
+-
+-#define BCM2708_MCI_STATUS	0x20
+-
+-#define BCM2708_MCI_VDD	0x30
+-#define BCM2708_MCI_VDD_ENABLE	(1 << 0)
+-
+-#define BCM2708_MCI_EDM	0x34
+-
+-#define BCM2708_MCI_HOSTCONFIG	0x38
+-
+-#define BCM2708_MCI_HOSTCONFIG_WIDE_INT_BUS 0x2
+-#define BCM2708_MCI_HOSTCONFIG_WIDEEXT_4BIT 0x4
+-#define BCM2708_MCI_HOSTCONFIG_SLOW_CARD 0x8
+-#define BCM2708_MCI_HOSTCONFIG_BLOCK_IRPT_EN (1<<8)
+-#define BCM2708_MCI_HOSTCONFIG_BUSY_IRPT_EN (1<<10)
+-#define BCM2708_MCI_HOSTCONFIG_WIDEEXT_CLR 0xFFFFFFFB
+-
+-
+-#define BCM2708_MCI_DATAFLAG	(1 << 0)
+-#define BCM2708_MCI_CMDTIMEOUT	(1 << 6)
+-#define BCM2708_MCI_HSTS_BLOCK	(1 << 9)	/**< block flag in status reg */
+-#define BCM2708_MCI_HSTS_BUSY	(1 << 10)	/**< Busy flag in status reg */
+-
+-#define BCM2708_MCI_HBCT	0x3c
+-#define BCM2708_MCI_DATA	0x40
+-#define BCM2708_MCI_HBLC	0x50
+-
+-#define NR_SG		16
+-
+-typedef struct bulk_data_struct
+-{
+-   unsigned long info;
+-   unsigned long src;
+-   unsigned long dst;
+-   unsigned long length;
+-   unsigned long stride;
+-   unsigned long next;
+-   unsigned long pad[2];
+-} BCM2708_DMA_CB_T;
+-
+-struct bcm2708_mci_host {
+-	struct platform_device	*dev;
+-
+-	void __iomem		*mmc_base;
+-	void __iomem		*dma_base;
+-	void __iomem		*gpio_base;
+-
+-	BCM2708_DMA_CB_T	*cb_base;
+-	dma_addr_t		cb_handle;
+-
+-	struct mmc_host		*mmc;
+-
+-	struct semaphore 	sem;
+-
+-	int is_acmd;
+-	int present;
+-};
+-
+-static inline char *bcm2708_mci_kmap_atomic(struct scatterlist *sg, unsigned long *flags)
+-{
+-//	local_irq_save(*flags);
+-	return kmap_atomic(sg_page(sg), KM_BIO_SRC_IRQ) + sg->offset;
+-}
+-
+-static inline void bcm2708_mci_kunmap_atomic(void *buffer, unsigned long *flags)
+-{
+-	kunmap_atomic(buffer, KM_BIO_SRC_IRQ);
+-//	local_irq_restore(*flags);
+-}
+diff --git a/drivers/mmc/host/sdhci-bcm2708.c b/drivers/mmc/host/sdhci-bcm2708.c
+index 80e4228..c6f943e 100644
+--- a/drivers/mmc/host/sdhci-bcm2708.c
++++ b/drivers/mmc/host/sdhci-bcm2708.c
+@@ -33,7 +33,6 @@
+ #include <linux/io.h>
+ #include <linux/dma-mapping.h>
+ #include <mach/dma.h>
+-#include <mach/power.h>
+ 
+ #include "sdhci.h"
+ 
+@@ -75,10 +74,6 @@
+ /* Mhz clock that the EMMC core is running at. Should match the platform clockman settings */
+ #define BCM2708_EMMC_CLOCK_FREQ 50000000
+ 
+-#define POWER_OFF 0
+-#define POWER_LAZY_OFF 1
+-#define POWER_ON  2
+-
+ #define REG_EXRDFIFO_EN     0x80
+ #define REG_EXRDFIFO_CFG    0x84
+ 
+@@ -386,10 +381,6 @@ struct sdhci_bcm2708_priv {
+ 	/* tracking scatter gather progress */
+ 	unsigned		sg_ix;	   /* scatter gather list index */
+ 	unsigned		sg_done;   /* bytes in current sg_ix done */
+-	/* power management */
+-	BCM_POWER_HANDLE_T	power_handle;
+-	unsigned char		power_state; /* enable/disable power state */
+-	unsigned char		power_mode;  /* last set power mode */
+ #ifdef CONFIG_MMC_SDHCI_BCM2708_DMA
+ 	unsigned char		dma_wanted;  /* DMA transfer requested */
+ 	unsigned char		dma_waits;   /* wait states in DMAs */
+@@ -1043,7 +1034,6 @@ static ssize_t attr_status_show(struct device *_dev,
+ 
+ 	if (host) {
+ 		struct sdhci_bcm2708_priv *host_priv = SDHCI_HOST_PRIV(host);
+-		int power_state = host_priv->power_state;
+ 		return sprintf(buf,
+ 			       "present: yes\n"
+ 			       "power: %s\n"
+@@ -1053,10 +1043,7 @@ static ssize_t attr_status_show(struct device *_dev,
+ #else
+ 			       "dma: unconfigured\n",
+ #endif
+-			       power_state == POWER_ON? "on":
+-			       power_state == POWER_OFF? "off":
+-			       power_state == POWER_LAZY_OFF? "lazy-off":
+-			       "<unknown>",
++			       "always on",
+ 			       host->clock
+ #ifdef CONFIG_MMC_SDHCI_BCM2708_DMA
+ 			       , (host->flags & SDHCI_USE_PLATDMA)? "on": "off"
+@@ -1105,110 +1092,6 @@ static int sdhci_bcm2708_resume(struct platform_device *dev)
+ #endif
+ 
+ 
+-/* Click forwards one step towards fully on */
+-static int sdhci_bcm2708_enable(struct sdhci_host *host)
+-{
+-	int rc;
+-	struct sdhci_bcm2708_priv *host_priv = SDHCI_HOST_PRIV(host);
+-
+-	if (host_priv->power_state == POWER_OFF) {
+-		/* warning: may schedule - don't call in irq mode */
+-		rc = bcm_power_request(host_priv->power_handle,
+-				       BCM_POWER_SDCARD);
+-
+-		if (rc == 0) {
+-			mmc_power_restore_host(host->mmc);
+-			host_priv->power_state = POWER_ON;
+-		} else if (rc != -EINTR)
+-			printk(KERN_ERR "%s: mmc power up request failed - "
+-			       "rc %d\n",
+-			       mmc_hostname(host->mmc), rc);
+-	} else {
+-		host_priv->power_state = POWER_ON;
+-		rc = 0;
+-	}
+-
+-	return rc;
+-}
+-
+-/* Click backwards one step towards fully off */
+-static int sdhci_bcm2708_disable(struct sdhci_host *host, int lazy)
+-{
+-	int rc;
+-	struct sdhci_bcm2708_priv *host_priv = SDHCI_HOST_PRIV(host);
+-
+-	if ((host_priv->power_state == POWER_ON) && lazy) {
+-		host_priv->power_state = POWER_LAZY_OFF;
+-		return BCM2708_SDHCI_SLEEP_TIMEOUT;
+-	}
+-
+-	/* warning: may schedule - don't call in irq mode */
+-	rc = bcm_power_request(host_priv->power_handle, BCM_POWER_NONE);
+-
+-	if (rc == 0)
+-		host_priv->power_state = POWER_OFF;
+-	else if (rc != -EINTR)
+-		printk(KERN_ERR "%s: mmc power down request failed - rc %d\n",
+-		       mmc_hostname(host->mmc), rc);
+-
+-	return rc;
+-}
+-
+-static int sdhci_bcm2708_set_plat_power(struct sdhci_host *host,
+-					int power_mode)
+-{
+-	struct sdhci_bcm2708_priv *host_priv = SDHCI_HOST_PRIV(host);
+-	int rc;
+-
+-	do {
+-		rc = mmc_host_enable(host->mmc);
+-	} while (-EINTR == rc);
+-
+-	if (rc == 0) do {
+-		if (rc == 0 && power_mode != host_priv->power_mode)
+-		{
+-			switch (power_mode)
+-			{
+-			case MMC_POWER_OFF:
+-				rc = bcm_power_request(host_priv->power_handle,
+-						       BCM_POWER_NONE);
+-				break;
+-
+-			case MMC_POWER_UP:
+-				rc = bcm_power_request(host_priv->power_handle,
+-						       BCM_POWER_SDCARD);
+-				/*
+-				 * We need an extra 10ms delay of 10ms before we
+-				 * can apply clock after applying power
+-				 */
+-				if (rc == 0)
+-				    mdelay(10);
+-				break;
+-
+-			case MMC_POWER_ON:
+-				mdelay(10);
+-				/* do_send_init_stream = 1; */
+-				break;
+-			}
+-
+-			if (rc == 0)
+-			    host_priv->power_mode = power_mode;
+-		}
+-	} while (-EINTR == rc);
+-
+-	if (rc == 0) do {
+-		if (rc == 0) {
+-			if (power_mode == MMC_POWER_OFF)
+-				rc = mmc_host_disable(host->mmc);
+-			else
+-				rc = mmc_host_lazy_disable(host->mmc);
+-		}
+-
+-	} while (-EINTR == rc);
+-
+-	return rc;
+-}
+-
+ /*****************************************************************************\
+  *                                                                           *
+  * Device quirk functions. Implemented as local ops because the flags        *
+@@ -1259,10 +1142,6 @@ static struct sdhci_ops sdhci_bcm2708_ops = {
+ #endif
+ 	.get_max_clock = sdhci_bcm2708_get_max_clock,
+ 
+-	.enable = sdhci_bcm2708_enable,
+-	.disable = sdhci_bcm2708_disable,
+-	.set_plat_power = sdhci_bcm2708_set_plat_power,
+-
+ #ifdef CONFIG_MMC_SDHCI_BCM2708_DMA
+ 	// Platform DMA operations
+ 	.pdma_able  = sdhci_bcm2708_platdma_dmaable,
+@@ -1350,11 +1229,6 @@ static int __devinit sdhci_bcm2708_probe(struct platform_device *pdev)
+ 
+ 	host_priv = SDHCI_HOST_PRIV(host);
+ 
+-	host_priv->power_state = POWER_ON;
+-	ret = bcm_power_open(&host_priv->power_handle);
+-	if (ret != 0)
+-		goto err_power;
+-
+ #ifdef CONFIG_MMC_SDHCI_BCM2708_DMA
+ 	host_priv->dma_wanted = 0;
+ #ifdef CHECK_DMA_USE
+@@ -1436,8 +1310,6 @@ err_add_dma:
+ 			      host_priv->cb_handle);
+ err_alloc_cb:
+ #endif
+-	bcm_power_close(host_priv->power_handle);
+-err_power:
+ 	iounmap(host->ioaddr);
+ err_remap:
+ 	release_mem_region(iomem->start, resource_size(iomem));
+@@ -1470,7 +1342,6 @@ static int __devexit sdhci_bcm2708_remove(struct platform_device *pdev)
+ 	dma_free_writecombine(&pdev->dev, SZ_4K, host_priv->cb_base,
+ 			      host_priv->cb_handle);
+ #endif
+-	bcm_power_close(host_priv->power_handle);
+ 	sdhci_remove_host(host, dead);
+ 	iounmap(host->ioaddr);
+ 	release_mem_region(iomem->start, resource_size(iomem));
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 06b901b..ce98dcb 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1351,35 +1351,6 @@ static int sdhci_set_power(struct sdhci_host *host, unsigned short power)
+ 	return power;
+ }
+ 
+-/* Power on or off the circuitary supporting the register set */
+-static int sdhci_set_plat_power(struct sdhci_host *host, int power_mode)
+-{
+-	if (host->ops->set_plat_power)
+-		return host->ops->set_plat_power(host, power_mode);
+-	else
+-		return 0;
+-}
+-
+-/* Click forwards one step towards fully on */
+-static int sdhci_enable(struct mmc_host *mmc)
+-{
+-	struct sdhci_host *host;
+-
+-	host = mmc_priv(mmc);
+-
+-	return host->ops->enable? host->ops->enable(host): 0;
+-}
+-
+-/* Click backwards one step towards fully off */
+-static int sdhci_disable(struct mmc_host *mmc, int lazy)
+-{
+-	struct sdhci_host *host;
+-
+-	host = mmc_priv(mmc);
+-
+-	return host->ops->disable? host->ops->disable(host, lazy): 0;
+-}
+-
+ /*****************************************************************************\
+  *                                                                           *
+  * MMC callbacks                                                             *
+@@ -1466,7 +1437,6 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+ 	unsigned long flags;
+ 	int vdd_bit = -1;
+ 	u8 ctrl;
+-	int rc;
+ 
+ 	sdhci_spin_lock_irqsave(host, &flags);
+ 
+@@ -1627,12 +1597,6 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+ 
+ 	mmiowb();
+ 	sdhci_spin_unlock_irqrestore(host, flags);
+-
+-	if (ios->power_mode == MMC_POWER_OFF) {
+-		do 
+-			rc = sdhci_set_plat_power(host, ios->power_mode);
+-		while (rc == -EINTR);
+-	}
+ }
+ 
+ static void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+@@ -2098,8 +2062,6 @@ static const struct mmc_host_ops sdhci_ops = {
+ 	.start_signal_voltage_switch	= sdhci_start_signal_voltage_switch,
+ 	.execute_tuning			= sdhci_execute_tuning,
+ 	.enable_preset_value		= sdhci_enable_preset_value,
+-	.enable		= sdhci_enable,
+-	.disable	= sdhci_disable,
+ };
+ 
+ /*****************************************************************************\
+@@ -2635,12 +2597,6 @@ int sdhci_resume_host(struct sdhci_host *host)
+ {
+ 	int ret;
+ 
+-	if (host->vmmc) {
+-		int ret = regulator_enable(host->vmmc);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA | 
+ 			   SDHCI_USE_PLATDMA)) {
+ 		if (host->ops->enable_dma)
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 5503909..9270ff4 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -276,11 +276,6 @@ struct sdhci_ops {
+ 	void	(*platform_reset_exit)(struct sdhci_host *host, u8 mask);
+ 	int	(*set_uhs_signaling)(struct sdhci_host *host, unsigned int uhs);
+ 
+-	int             (*enable)(struct sdhci_host *mmc);
+-	int             (*disable)(struct sdhci_host *mmc, int lazy);
+-	int             (*set_plat_power)(struct sdhci_host *mmc,
+-					  int power_mode);
+-
+ 	int             (*pdma_able)(struct sdhci_host *host,
+ 				     struct mmc_data *data);
+ 	void            (*pdma_avail)(struct sdhci_host *host,
+diff --git a/drivers/thermal/bcm2835-thermal.c b/drivers/thermal/bcm2835-thermal.c
+index 72454d4..091510b 100644
+--- a/drivers/thermal/bcm2835-thermal.c
++++ b/drivers/thermal/bcm2835-thermal.c
+@@ -164,7 +164,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	if(!(bcm2835_data.thermal_dev = thermal_zone_device_register("bcm2835_thermal",	1, NULL, &ops,1,1,1000,1000)))
++	if(!(bcm2835_data.thermal_dev = thermal_zone_device_register("bcm2835_thermal",	1, 0, NULL, &ops,1,1,1000,1000)))
+ 	{
+ 		print_debug("Unable to register the thermal device!");
+ 		return -EFAULT;
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+index 9289fc0..903e670 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+@@ -1164,7 +1164,7 @@ static struct gadget_wrapper *alloc_wrapper(dwc_bus_dev_t *_dev)
+ 	d->gadget.dev.parent = &_dev->dev;
+ 	d->gadget.dev.release = dwc_otg_pcd_gadget_release;
+ 	d->gadget.ops = &dwc_otg_pcd_ops;
+-	d->gadget.is_dualspeed = dwc_otg_pcd_is_dualspeed(otg_dev->pcd);
++	d->gadget.max_speed = dwc_otg_pcd_is_dualspeed(otg_dev->pcd) ? USB_SPEED_HIGH:USB_SPEED_FULL;
+ 	d->gadget.is_otg = dwc_otg_pcd_is_otg(otg_dev->pcd);
+ 
+ 	d->driver = 0;
+@@ -1296,7 +1296,7 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+ 	DWC_DEBUGPL(DBG_PCD, "registering gadget driver '%s'\n",
+ 		    driver->driver.name);
+ 
+-	if (!driver || driver->speed == USB_SPEED_UNKNOWN ||
++	if (!driver || driver->max_speed == USB_SPEED_UNKNOWN ||
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+ 	    !driver->bind ||
+ #else
+diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
+index 3577572..f7ceafd 100644
+--- a/sound/arm/Kconfig
++++ b/sound/arm/Kconfig
+@@ -41,7 +41,7 @@ config SND_PXA2XX_AC97
+ 
+ config SND_BCM2835
+ 	tristate "BCM2835 ALSA driver"
+-	depends on ARCH_BCM2708 && SND
++	depends on ARCH_BCM2708 && BCM2708_VCHIQ && SND
+ 	select SND_PCM
+ 	help
+ 	  Say Y or M if you want to support BCM2835 Alsa pcm card driver
+-- 
+1.7.0.4
+

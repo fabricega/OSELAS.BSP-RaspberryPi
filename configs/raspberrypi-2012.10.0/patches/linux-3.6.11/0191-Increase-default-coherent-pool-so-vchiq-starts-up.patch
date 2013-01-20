@@ -1,0 +1,27 @@
+From 9900679044dc28a779b3afc69191322e8efa6810 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Tue, 11 Dec 2012 19:04:27 +0000
+Subject: [PATCH 191/205] Increase default coherent pool so vchiq starts up
+
+---
+ arch/arm/mach-bcm2708/bcm2708.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 838e0f2..f41cbc0 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -923,9 +923,7 @@ void __init bcm2708_init_early(void)
+ 	 * context. Increase size of atomic coherent pool to make sure such
+ 	 * the allocations won't fail.
+ 	 */
+-#if !defined(CONFIG_BCM_VC_CMA)
+-	init_dma_coherent_pool_size(SZ_2M);
+-#endif
++	init_dma_coherent_pool_size(SZ_4M);
+ }
+ 
+ static void __init board_reserve(void)
+-- 
+1.7.0.4
+
