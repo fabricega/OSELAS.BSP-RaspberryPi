@@ -90,14 +90,14 @@ if XBMC
 config XBMC_VERSION
 	prompt "xbmc version             "
 	string
-	default "baaa51c9fd786da6a3323bf6c01bc292e41a0985"
+	default "c2cd6ee3d2df6a055220b1c5cc750d8b8018d0c7"
 	help
 	  Enter here desired version from https://github.com/xbmc/xbmc/zipball/master/
 
 config XBMC_MD5
 	prompt "src/xbmc-(version).zip md5sum      "
 	string
-	default "d3c457d5f1b5d71978b699c086b4d2e3"
+	default "f1dce022779083b7a1c4871b36e8069b"
 	help
 	  Enter here md5sum of downloaded src/omxplayer-version.zip
 
