@@ -1,0 +1,103 @@
+Index: xbmc-fb595f23fbf4f4a4bc9297373f5f0138a1e01a9f/system/keymaps/keyboard.xml
+===================================================================
+--- xbmc-fb595f23fbf4f4a4bc9297373f5f0138a1e01a9f.orig/system/keymaps/keyboard.xml	2013-02-06 20:59:06.000000000 +0100
++++ xbmc-fb595f23fbf4f4a4bc9297373f5f0138a1e01a9f/system/keymaps/keyboard.xml	2013-02-06 21:05:55.000000000 +0100
+@@ -37,9 +37,34 @@
+ <keymap>
+   <global>
+     <keyboard>
++      <key id="127055">Notification(folder,keypressed)</key> <!-- Folders -->
++      <key id="389328">FullScreen</key> <!-- Fullscreen -->
++      <key id="389169">ActivateWindow(MyMusic)</key> <!-- Green -->
++      <key id="389186">ActivateWindow(MyVideos)</key> <!-- Orange -->
++      <key id="389187">ActivateWindow(MyPictures)</key> <!-- Blue -->
++      <key id="389243">ActivateWindow(Home)</key> <!-- Yellow -->
++      <key id="61615">VolumeUp</key> <!-- Vol+ -->
++      <key id="61597">VolumeDown</key> <!-- Vol- -->
++      <key id="61596">mute</key> <!-- Mute -->
++      <key id="454665">Notification(DoubleWindow,keypressed)</key> <!-- Double Window -->
++      <key id="61508">UpdateLibrary(video)</key> <!--Desktop-->
++      <key id="61662">Powerdown</key> <!--Power-->
++      <key id="323731">ActivateWindow(shutdownmenu)</key> <!--Close-->
++      <key id="61626">BigStepForward</key>
++      <key id="61627">BigStepBack</key>
++      <key id="61484">Notification(1,keypressed)</key> <!-- 1 -->
++      <key id="61505">Notification(2,keypressed)</key>
++      <key id="61508">Notification(3,keypressed)</key>
++      <key id="61511">Notification(4,keypressed)</key>
++      <key id="61514">Notification(5,keypressed)</key>
++      <key id="61517">Notification(6,keypressed)</key>
++      <key id="61520">Notification(7,keypressed)</key>
++      <key id="61524">Notification(8,keypressed)</key>
++      <key id="61527">Notification(9,keypressed)</key>
++      <key id="61472">Notification(0,keypressed)</key>
+       <p>Play</p>
+       <q>Queue</q>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <left>Left</left>
+       <right>Right</right>
+@@ -129,7 +154,7 @@
+       <p mod="ctrl,shift">Play</p>        <!-- Play -->
+       <s mod="ctrl,shift">Stop</s>        <!-- Stop -->
+       <p mod="ctrl">Pause</p>             <!-- Pause -->
+-      <f mod="ctrl,shift">FastForward</f> <!-- Fwd -->
++      <f mod="ctrl,shift"></f>            <!-- Fwd -->
+       <b mod="ctrl,shift">Rewind</b>      <!-- Rew -->
+       <f mod="ctrl">SkipNext</f>          <!-- Skip -->
+       <b mod="ctrl">SkipPrevious</b>      <!-- Replay -->
+@@ -212,7 +237,7 @@
+   </MyMusicLibrary>
+   <FullscreenVideo>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>StepForward</period>
+       <comma>StepBack</comma>
+@@ -251,7 +276,7 @@
+   </VideoTimeSeek>
+   <FullscreenInfo>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>StepForward</period>
+       <o>CodecInfo</o>
+@@ -267,7 +292,7 @@
+   </PlayerControls>
+   <Visualisation>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>SkipNext</period>
+       <comma>SkipPrevious</comma>
+@@ -292,7 +317,7 @@
+   </Visualisation>
+   <MusicOSD>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>SkipNext</period>
+       <comma>SkipPrevious</comma>
+@@ -306,7 +331,7 @@
+   </MusicOSD>
+   <VisualisationSettings>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>SkipNext</period>
+       <comma>SkipPrevious</comma>
+@@ -320,7 +345,7 @@
+   </VisualisationSettings>
+   <VisualisationPresetList>
+     <keyboard>
+-      <f>FastForward</f>
++      <!-- <f></f> -->
+       <r>Rewind</r>
+       <period>SkipNext</period>
+       <comma>SkipPrevious</comma>

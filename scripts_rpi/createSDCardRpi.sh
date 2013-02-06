@@ -284,7 +284,7 @@ gpu_freq=350
 sdram_freq=500
 
 # gpu_mem_256 GPU memory in megabyte for the 256MB Raspberry Pi. Ignored by the 512MB RP. Overrides gpu_mem. Max 192. Default not set
-gpu_mem_256=128
+gpu_mem_256=100
 
 #gpu_mem_512 GPU memory in megabyte for the 512MB Raspberry Pi. Ignored by the 256MB RP. Overrides gpu_mem. Max 448. Default not set 
 gpu_mem_512=256
