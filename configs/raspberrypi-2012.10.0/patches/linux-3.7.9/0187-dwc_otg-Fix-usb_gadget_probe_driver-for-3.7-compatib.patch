@@ -1,0 +1,53 @@
+From 257aeb7b6f64141e3101f3e68924066afdc48406 Mon Sep 17 00:00:00 2001
+From: Oliver <oliver@zerolag.com>
+Date: Wed, 26 Dec 2012 05:24:00 +0100
+Subject: [PATCH 187/195] dwc_otg: Fix usb_gadget_probe_driver for 3.7 compatibility
+
+This makes dwc_otg compile successfully against 3.7 - I have applied
+checks for the new kernel version and now pass driver to driver->bind()
+
+However, I have the uneasy feeling that I may possibly be passing the
+wrong value, or indeed that this entire driver should be reworked. In
+any case however, my RPi boots successfully.
+---
+ drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+index 903e670..bb8ef47 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+@@ -1287,8 +1287,7 @@ void pcd_remove(dwc_bus_dev_t *_dev)
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
+ #else
+-int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+-		int (*bind)(struct usb_gadget *))
++int usb_gadget_probe_driver(struct usb_gadget_driver *driver)
+ #endif
+ {
+ 	int retval;
+@@ -1297,7 +1296,7 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+ 		    driver->driver.name);
+ 
+ 	if (!driver || driver->max_speed == USB_SPEED_UNKNOWN ||
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37) || LINUX_VERSION_CODE >= KERNEL_VERSION(3,7,0)
+ 	    !driver->bind ||
+ #else
+ 		!bind ||
+@@ -1322,8 +1321,10 @@ int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
+ 	DWC_DEBUGPL(DBG_PCD, "bind to driver %s\n", driver->driver.name);
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+ 	retval = driver->bind(&gadget_wrapper->gadget);
+-#else
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(3,7,0)
+ 	retval = bind(&gadget_wrapper->gadget);
++#else
++	retval = driver->bind(&gadget_wrapper->gadget, driver);
+ #endif
+ 	if (retval) {
+ 		DWC_ERROR("bind to driver %s --> error %d\n",
+-- 
+1.7.0.4
+

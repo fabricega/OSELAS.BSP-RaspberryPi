@@ -1,0 +1,22 @@
+From ffd7f8bd4ae403ef1ffeaca4427eab71bfb32aa8 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 1 Sep 2012 00:31:47 +0100
+Subject: [PATCH 135/195] Fix typo
+
+---
+ arch/arm/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 830267b..3bd479b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1,4 +1,4 @@
+-iconfig ARM
++config ARM
+ 	bool
+ 	default y
+ 	select ARCH_BINFMT_ELF_RANDOMIZE_PIE
+-- 
+1.7.0.4
+

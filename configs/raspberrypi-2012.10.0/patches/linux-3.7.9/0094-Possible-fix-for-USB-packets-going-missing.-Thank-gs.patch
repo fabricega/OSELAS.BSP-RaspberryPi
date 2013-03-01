@@ -1,0 +1,44 @@
+From 9117b66422df1d93751181f276d9f258ebb1f494 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Fri, 27 Jul 2012 10:32:03 +0100
+Subject: [PATCH 094/195] Possible fix for USB packets going missing. Thank gsh
+
+---
+ drivers/usb/host/dwc_otg/dwc_otg_hcd_intr.c |   21 +++++++++++++++------
+ 1 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_hcd_intr.c b/drivers/usb/host/dwc_otg/dwc_otg_hcd_intr.c
+index 9758c92..c462ccc 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_hcd_intr.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_hcd_intr.c
+@@ -282,12 +282,21 @@ int32_t dwc_otg_hcd_handle_sof_intr(dwc_otg_hcd_t * hcd)
+ 		qh = DWC_LIST_ENTRY(qh_entry, dwc_otg_qh_t, qh_list_entry);
+ 		qh_entry = qh_entry->next;
+ 		if (dwc_frame_num_le(qh->sched_frame, hcd->frame_number)) {
+-			/*
+-			 * Move QH to the ready list to be executed next
+-			 * (micro)frame.
+-			 */
+-			DWC_LIST_MOVE_HEAD(&hcd->periodic_sched_ready,
+-					   &qh->qh_list_entry);
++
++			if(qh->do_split && qh->sched_frame != hcd->frame_number)
++			{
++				// If we're late we may have missed the beginning of the frame
++				qh->sched_frame += qh->interval;
++			}
++			else
++			{
++				/*
++				* Move QH to the ready list to be executed next
++				* (micro)frame.
++				*/
++				DWC_LIST_MOVE_HEAD(&hcd->periodic_sched_ready,
++						&qh->qh_list_entry);
++			}
+ 		}
+ 	}
+ 	tr_type = dwc_otg_hcd_select_transactions(hcd);
+-- 
+1.7.0.4
+

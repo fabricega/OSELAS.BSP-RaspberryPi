@@ -1,0 +1,50 @@
+From 63a4ca67e057f32ba21d975ccee77fe14c988937 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Thu, 27 Dec 2012 16:08:50 +0000
+Subject: [PATCH 191/195] Silence bootup errors from timer and gpio
+
+---
+ arch/arm/mach-bcm2708/bcm2708.c      |   11 ++++++-----
+ arch/arm/mach-bcm2708/bcm2708_gpio.c |    2 +-
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index f41cbc0..7fe7283 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -762,13 +762,14 @@ static void timer_set_mode(enum clock_event_mode mode,
+ 	unsigned long stc;
+ 
+ 	switch (mode) {
+-	case CLOCK_EVT_MODE_PERIODIC:
+-		stc = readl(__io_address(ST_BASE + 0x04));
+-		writel(stc + TIMER_PERIOD, __io_address(ST_BASE + 0x18));	/* stc3 */
++	case CLOCK_EVT_MODE_ONESHOT: /* Leave the timer disabled, .set_next_event will enable it */
++	case CLOCK_EVT_MODE_SHUTDOWN:
+ 		break;
+-	case CLOCK_EVT_MODE_ONESHOT:
++	case CLOCK_EVT_MODE_PERIODIC:
++
+ 	case CLOCK_EVT_MODE_UNUSED:
+-	case CLOCK_EVT_MODE_SHUTDOWN:
++	case CLOCK_EVT_MODE_RESUME:
++
+ 	default:
+ 		printk(KERN_ERR "timer_set_mode: unhandled mode:%d\n",
+ 		       (int)mode);
+diff --git a/arch/arm/mach-bcm2708/bcm2708_gpio.c b/arch/arm/mach-bcm2708/bcm2708_gpio.c
+index 6c81d9d..c8161e1 100644
+--- a/arch/arm/mach-bcm2708/bcm2708_gpio.c
++++ b/arch/arm/mach-bcm2708/bcm2708_gpio.c
+@@ -263,7 +263,7 @@ static int bcm2708_gpio_probe(struct platform_device *dev)
+ 	struct resource *res;
+ 	int err = 0;
+ 
+-	printk(KERN_ERR DRIVER_NAME ": bcm2708_gpio_probe %p\n", dev);
++	printk(KERN_INFO DRIVER_NAME ": bcm2708_gpio_probe %p\n", dev);
+ 
+ 	ucb = kzalloc(sizeof(*ucb), GFP_KERNEL);
+ 	if (NULL == ucb) {
+-- 
+1.7.0.4
+

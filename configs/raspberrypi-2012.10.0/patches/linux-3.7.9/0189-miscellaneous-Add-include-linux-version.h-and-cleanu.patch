@@ -1,0 +1,107 @@
+From c5dc9967be7908ada2e335be89c1d5f76ee6c05d Mon Sep 17 00:00:00 2001
+From: Oliver <oliver@zerolag.com>
+Date: Wed, 2 Jan 2013 08:32:12 +0100
+Subject: [PATCH 189/195] miscellaneous: Add include/linux/version.h and cleanup some whitespace.
+
+This commit adds version.h to Git as the dwc_otg driver is now modified
+to handle the kernel version and people cloning my repository would need
+this file to successfully build.
+---
+ arch/arm/Makefile                            |    2 +-
+ drivers/net/usb/smsc95xx.c                   |    2 +-
+ drivers/thermal/Kconfig                      |   14 +++++++-------
+ drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c |    5 ++++-
+ include/linux/version.h                      |    2 ++
+ 5 files changed, 15 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/version.h
+
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 541e707..d6ea5e3 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -137,6 +137,7 @@ textofs-$(CONFIG_ARCH_MSM8960) := 0x00208000
+ # Machine directory name.  This list is sorted alphanumerically
+ # by CONFIG_* macro name.
+ machine-$(CONFIG_ARCH_AT91)		+= at91
++machine-$(CONFIG_ARCH_BCM2708)		+= bcm2708
+ machine-$(CONFIG_ARCH_BCM2835)		+= bcm2835
+ machine-$(CONFIG_ARCH_CLPS711X)		+= clps711x
+ machine-$(CONFIG_ARCH_CNS3XXX)		+= cns3xxx
+@@ -193,7 +194,6 @@ machine-$(CONFIG_ARCH_SPEAR13XX)	+= spear13xx
+ machine-$(CONFIG_ARCH_SPEAR3XX)		+= spear3xx
+ machine-$(CONFIG_MACH_SPEAR600)		+= spear6xx
+ machine-$(CONFIG_ARCH_ZYNQ)		+= zynq
+-machine-$(CONFIG_ARCH_BCM2708)		+= bcm2708
+ 
+ # Platform directory name.  This list is sorted alphanumerically
+ # by CONFIG_* macro name.
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index fefa054..88f488f 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -46,7 +46,7 @@
+ #define SMSC95XX_INTERNAL_PHY_ID	(1)
+ #define SMSC95XX_TX_OVERHEAD		(8)
+ #define SMSC95XX_TX_OVERHEAD_CSUM	(12)
+-#define MAC_ADDR_LEN                (6)
++#define MAC_ADDR_LEN                    (6)
+ #define SUPPORTED_WAKE			(WAKE_MAGIC)
+ 
+ #define check_warn(ret, fmt, args...) \
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index e78e9dd..5e084b1 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -40,6 +40,13 @@ config SPEAR_THERMAL
+ 	  Enable this to plug the SPEAr thermal sensor driver into the Linux
+ 	  thermal framework
+ 
++config THERMAL_BCM2835
++	tristate "BCM2835 Thermal Driver"
++	depends on THERMAL
++	help
++	  This will enable temperature monitoring for the Broadcom BCM2835
++	  chip. If built as a module, it will be called 'bcm2835-thermal'.
++
+ config RCAR_THERMAL
+ 	tristate "Renesas R-Car thermal driver"
+ 	depends on THERMAL
+@@ -55,10 +62,3 @@ config EXYNOS_THERMAL
+ 	help
+ 	  If you say yes here you get support for TMU (Thermal Managment
+ 	  Unit) on SAMSUNG EXYNOS series of SoC.
+-
+-config THERMAL_BCM2835
+-	tristate "BCM2835 Thermal Driver"
+-	depends on THERMAL
+-	help
+-	  This will enable temperature monitoring for the Broadcom BCM2835
+-	  chip. If built as a module, it will be called 'bcm2835-thermal'.
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+index bb8ef47..35b21bd 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_pcd_linux.c
+@@ -1286,8 +1286,11 @@ void pcd_remove(dwc_bus_dev_t *_dev)
+  */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
+-#else
++#elif LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)
+ int usb_gadget_probe_driver(struct usb_gadget_driver *driver)
++#else
++int usb_gadget_probe_driver(struct usb_gadget_driver *driver,
++		int (*bind)(struct usb_gadget *))
+ #endif
+ {
+ 	int retval;
+diff --git a/include/linux/version.h b/include/linux/version.h
+new file mode 100644
+index 0000000..a6d0721
+--- /dev/null
++++ b/include/linux/version.h
+@@ -0,0 +1,2 @@
++#define LINUX_VERSION_CODE 197643
++#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+-- 
+1.7.0.4
+

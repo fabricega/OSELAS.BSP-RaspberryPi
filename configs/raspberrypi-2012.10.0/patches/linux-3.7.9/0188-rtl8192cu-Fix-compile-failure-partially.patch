@@ -1,0 +1,30 @@
+From 0cde02a13ad755dc623af65d69f6b071828b7f32 Mon Sep 17 00:00:00 2001
+From: Oliver <oliver@zerolag.com>
+Date: Wed, 26 Dec 2012 06:05:10 +0100
+Subject: [PATCH 188/195] rtl8192cu: Fix compile failure (partially)
+
+The rtl8192cu wireless driver depends on kernel_thread - this requires a
+config definition as of 3.7 so this commit adds that to the Kconfig.
+
+Compiling as a module fails however, so to prevent this issue, the
+select option has been changed from tristate to boolean
+---
+ drivers/net/wireless/rtl8192cu/Kconfig |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/rtl8192cu/Kconfig b/drivers/net/wireless/rtl8192cu/Kconfig
+index bee5ed6..713f34e 100755
+--- a/drivers/net/wireless/rtl8192cu/Kconfig
++++ b/drivers/net/wireless/rtl8192cu/Kconfig
+@@ -1,6 +1,7 @@
+ config RTL8192CU
+-	tristate "Realtek 8192C USB WiFi"
++	boolean "Realtek 8192C USB WiFi"
+ 	depends on USB
++	select GENERIC_KERNEL_THREAD
+ 	---help---
+ 	  Help message of RTL8192CU
+ 
+-- 
+1.7.0.4
+

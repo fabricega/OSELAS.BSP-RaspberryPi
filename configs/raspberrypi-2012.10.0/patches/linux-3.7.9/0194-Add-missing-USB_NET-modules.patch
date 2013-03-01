@@ -1,0 +1,36 @@
+From 2792265509fc63e3641c0d223dcd6d19af27f7f5 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Tue, 1 Jan 2013 16:17:43 +0000
+Subject: [PATCH 194/195] Add missing USB_NET modules
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 92e98e6..4eb9edb 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -386,6 +386,7 @@ CONFIG_USB_USBNET=y
+ CONFIG_USB_NET_AX8817X=m
+ CONFIG_USB_NET_CDCETHER=m
+ CONFIG_USB_NET_CDC_EEM=m
++CONFIG_USB_NET_CDC_NCM=m
+ CONFIG_USB_NET_DM9601=m
+ CONFIG_USB_NET_SMSC75XX=m
+ CONFIG_USB_NET_SMSC95XX=y
+@@ -397,9 +398,10 @@ CONFIG_USB_NET_CDC_SUBSET=m
+ CONFIG_USB_ALI_M5632=y
+ CONFIG_USB_AN2720=y
+ CONFIG_USB_KC2190=y
+-# CONFIG_USB_NET_ZAURUS is not set
++CONFIG_USB_NET_ZAURUS=m
+ CONFIG_USB_NET_CX82310_ETH=m
+ CONFIG_USB_NET_KALMIA=m
++CONFIG_USB_NET_QMI_WWAN=m
+ CONFIG_USB_NET_INT51X1=m
+ CONFIG_USB_IPHETH=m
+ CONFIG_USB_SIERRA_NET=m
+-- 
+1.7.0.4
+

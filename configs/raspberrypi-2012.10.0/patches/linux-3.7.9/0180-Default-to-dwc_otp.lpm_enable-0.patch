@@ -1,0 +1,25 @@
+From 65d8e04a069de0a6411b7a11de0c513240c62733 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Tue, 11 Dec 2012 18:23:03 +0000
+Subject: [PATCH 180/195] Default to dwc_otp.lpm_enable=0
+
+---
+ drivers/usb/host/dwc_otg/dwc_otg_driver.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/usb/host/dwc_otg/dwc_otg_driver.c b/drivers/usb/host/dwc_otg/dwc_otg_driver.c
+index d5d8c4b..25110ca 100644
+--- a/drivers/usb/host/dwc_otg/dwc_otg_driver.c
++++ b/drivers/usb/host/dwc_otg/dwc_otg_driver.c
+@@ -228,7 +228,7 @@ static struct dwc_otg_driver_module_params dwc_otg_module_params = {
+ 	.rx_thr_length = -1,
+ 	.pti_enable = -1,
+ 	.mpi_enable = -1,
+-	.lpm_enable = -1,
++	.lpm_enable = 0,
+ 	.ic_usb_cap = -1,
+ 	.ahb_thr_ratio = -1,
+ 	.power_down = -1,
+-- 
+1.7.0.4
+

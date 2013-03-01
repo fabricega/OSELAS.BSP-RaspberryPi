@@ -1,0 +1,25 @@
+From 03e377a7246b216569c11ae4df2afc661595c020 Mon Sep 17 00:00:00 2001
+From: Ian Tessier <ian@cim.mcgill.ca>
+Date: Wed, 25 Jul 2012 12:22:35 -0400
+Subject: [PATCH 092/195] The TIMER_PERIOD should be calculated using the timer interrupt frequency.
+
+---
+ arch/arm/mach-bcm2708/bcm2708.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index bf9f730..eff6874 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -618,7 +618,7 @@ void __init bcm2708_init(void)
+ #endif
+ }
+ 
+-#define TIMER_PERIOD 10000	/* HZ in microsecs */
++#define TIMER_PERIOD DIV_ROUND_CLOSEST(STC_FREQ_HZ, HZ)
+ 
+ static void timer_set_mode(enum clock_event_mode mode,
+ 			   struct clock_event_device *clk)
+-- 
+1.7.0.4
+
