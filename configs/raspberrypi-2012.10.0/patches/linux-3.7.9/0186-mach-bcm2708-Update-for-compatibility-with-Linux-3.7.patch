@@ -1,0 +1,41 @@
+From 0c4ee17d18c7b57483bc1ca13340f38d12b0434b Mon Sep 17 00:00:00 2001
+From: Oliver <oliver@zerolag.com>
+Date: Wed, 26 Dec 2012 05:18:47 +0100
+Subject: [PATCH 186/195] mach-bcm2708: Update for compatibility with Linux 3.7
+
+Linux 3.7 disposed of VM_RESERVED and provided alternatives; this commit
+applies the recommended mm defines, also adds the new GPIO config define
+required for the appropriate includes.
+---
+ arch/arm/mach-bcm2708/Kconfig |    1 +
+ arch/arm/mach-bcm2708/dmaer.c |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-bcm2708/Kconfig b/arch/arm/mach-bcm2708/Kconfig
+index 2a24db6..66f8bdf 100644
+--- a/arch/arm/mach-bcm2708/Kconfig
++++ b/arch/arm/mach-bcm2708/Kconfig
+@@ -13,6 +13,7 @@ config BCM2708_GPIO
+ 	bool "BCM2708 gpio support"
+ 	depends on MACH_BCM2708
+ 	select ARCH_REQUIRE_GPIOLIB
++	select NEED_MACH_GPIO_H
+         default y
+ 	help
+ 	  Include support for the Broadcom(R) BCM2708 gpio.
+diff --git a/arch/arm/mach-bcm2708/dmaer.c b/arch/arm/mach-bcm2708/dmaer.c
+index 9063874..ace38c4 100755
+--- a/arch/arm/mach-bcm2708/dmaer.c
++++ b/arch/arm/mach-bcm2708/dmaer.c
+@@ -645,7 +645,7 @@ static int Mmap(struct file *pFile, struct vm_area_struct *pVma)
+ 	pVmaList->m_pPageTail = pPages;
+ 
+ 	pVma->vm_ops = &g_vmOps4k;
+-	pVma->vm_flags |= VM_RESERVED;
++	pVma->vm_flags |= (VM_DONTEXPAND | VM_DONTDUMP);
+ 
+ 	VmaOpen4k(pVma);
+ 
+-- 
+1.7.0.4
+

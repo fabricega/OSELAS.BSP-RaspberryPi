@@ -1,0 +1,263 @@
+From 81fc136e545b2bac1ccf94bcdd15a325696ccf21 Mon Sep 17 00:00:00 2001
+From: Number 27 <chris@bham>
+Date: Sun, 8 Jul 2012 20:57:25 +0100
+Subject: [PATCH 080/195] Backport of Chris Boot's i2c and spi drivers.
+
+---
+ arch/arm/configs/bcmrpi_cutdown_defconfig     |    9 +++
+ arch/arm/mach-bcm2708/bcm2708.c               |   95 ++++++++++++++++++++++++-
+ arch/arm/mach-bcm2708/include/mach/platform.h |    3 +
+ drivers/i2c/busses/Kconfig                    |    8 ++
+ drivers/i2c/busses/Makefile                   |    1 +
+ drivers/spi/Kconfig                           |    8 ++
+ drivers/spi/Makefile                          |    1 +
+ 7 files changed, 123 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_cutdown_defconfig b/arch/arm/configs/bcmrpi_cutdown_defconfig
+index bb8cafe..cc9e1df 100644
+--- a/arch/arm/configs/bcmrpi_cutdown_defconfig
++++ b/arch/arm/configs/bcmrpi_cutdown_defconfig
+@@ -550,3 +550,12 @@ CONFIG_CRYPTO_DEFLATE=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC_ITU_T=y
+ CONFIG_LIBCRC32C=y
++CONFIG_I2C=y
++CONFIG_I2C_BOARDINFO=y
++CONFIG_I2C_COMPAT=y
++CONFIG_I2C_CHARDEV=m
++CONFIG_I2C_HELPER_AUTO=y
++CONFIG_I2C_BCM2708=m
++CONFIG_SPI=y
++CONFIG_SPI_MASTER=y
++CONFIG_SPI_BCM2708=m
+\ No newline at end of file
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index 17c6dbd..a466f44 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -31,6 +31,7 @@
+ #include <linux/cnt32_to_63.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/spi/spi.h>
+ 
+ #include <linux/version.h>
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)
+@@ -195,7 +196,6 @@ static struct clk osc_clk = {
+ 
+ /* warning - the USB needs a clock > 34MHz */
+ 
+-#ifdef CONFIG_MMC_BCM2708
+ static struct clk sdhost_clk = {
+ #ifdef CONFIG_ARCH_BCM2708_CHIPIT
+ 	.rate = 4000000,	/* 4MHz */
+@@ -203,7 +203,6 @@ static struct clk sdhost_clk = {
+ 	.rate = 250000000,	/* 250MHz */
+ #endif
+ };
+-#endif
+ 
+ static struct clk_lookup lookups[] = {
+ 	{			/* UART0 */
+@@ -219,6 +218,15 @@ static struct clk_lookup lookups[] = {
+ 	 .dev_id = "bcm2708_mci.0",
+ 	 .clk = &sdhost_clk,
+ #endif
++	 }, {	/* SPI */
++		 .dev_id = "bcm2708_spi.0",
++		 .clk = &sdhost_clk,
++	 }, {	/* BSC0 */
++		 .dev_id = "bcm2708_i2c.0",
++		 .clk = &sdhost_clk,
++	 }, {	/* BSC1 */
++		 .dev_id = "bcm2708_i2c.1",
++		 .clk = &sdhost_clk,
+ 	 }
+ };
+ 
+@@ -461,6 +469,80 @@ static struct platform_device bcm2708_alsa_devices[] = {
+ 	       },
+ };
+ 
++static struct resource bcm2708_spi_resources[] = {
++	{
++		.start = SPI0_BASE,
++		.end = SPI0_BASE + SZ_256 - 1,
++		.flags = IORESOURCE_MEM,
++	}, {
++		.start = IRQ_SPI,
++		.end = IRQ_SPI,
++		.flags = IORESOURCE_IRQ,
++	}
++};
++
++static struct platform_device bcm2708_spi_device = {
++	.name = "bcm2708_spi",
++	.id = 0,
++	.num_resources = ARRAY_SIZE(bcm2708_spi_resources),
++	.resource = bcm2708_spi_resources,
++};
++
++static struct spi_board_info bcm2708_spi_devices[] = {
++	{
++		.modalias = "spidev",
++		.max_speed_hz = 500000,
++		.bus_num = 0,
++		.chip_select = 0,
++		.mode = SPI_MODE_0,
++	}, {
++		.modalias = "spidev",
++		.max_speed_hz = 500000,
++		.bus_num = 0,
++		.chip_select = 1,
++		.mode = SPI_MODE_0,
++	}
++};
++
++static struct resource bcm2708_bsc0_resources[] = {
++	{
++		.start = BSC0_BASE,
++		.end = BSC0_BASE + SZ_256 - 1,
++		.flags = IORESOURCE_MEM,
++	}, {
++		.start = INTERRUPT_I2C,
++		.end = INTERRUPT_I2C,
++		.flags = IORESOURCE_IRQ,
++	}
++};
++
++static struct platform_device bcm2708_bsc0_device = {
++	.name = "bcm2708_i2c",
++	.id = 0,
++	.num_resources = ARRAY_SIZE(bcm2708_bsc0_resources),
++	.resource = bcm2708_bsc0_resources,
++};
++
++
++static struct resource bcm2708_bsc1_resources[] = {
++	{
++		.start = BSC1_BASE,
++		.end = BSC1_BASE + SZ_256 - 1,
++		.flags = IORESOURCE_MEM,
++	}, {
++		.start = INTERRUPT_I2C,
++		.end = INTERRUPT_I2C,
++		.flags = IORESOURCE_IRQ,
++	}
++};
++
++static struct platform_device bcm2708_bsc1_device = {
++	.name = "bcm2708_i2c",
++	.id = 1,
++	.num_resources = ARRAY_SIZE(bcm2708_bsc1_resources),
++	.resource = bcm2708_bsc1_resources,
++};
++
+ int __init bcm_register_device(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -513,6 +595,10 @@ void __init bcm2708_init(void)
+ 	for (i = 0; i < ARRAY_SIZE(bcm2708_alsa_devices); i++)
+ 		bcm_register_device(&bcm2708_alsa_devices[i]);
+ 
++	bcm_register_device(&bcm2708_spi_device);
++	bcm_register_device(&bcm2708_bsc0_device);
++	bcm_register_device(&bcm2708_bsc1_device);
++
+ #ifdef CONFIG_BCM2708_VCMEM
+ 	{
+ 		extern void vc_mem_connected_init(void);
+@@ -525,6 +611,11 @@ void __init bcm2708_init(void)
+ 	}
+ 	system_rev = boardrev;
+ 	system_serial_low = serial;
++
++#ifdef CONFIG_SPI
++	spi_register_board_info(bcm2708_spi_devices,
++			ARRAY_SIZE(bcm2708_spi_devices));
++#endif
+ }
+ 
+ #define TIMER_PERIOD 10000	/* HZ in microsecs */
+diff --git a/arch/arm/mach-bcm2708/include/mach/platform.h b/arch/arm/mach-bcm2708/include/mach/platform.h
+index 5afa0a7..3085af1 100644
+--- a/arch/arm/mach-bcm2708/include/mach/platform.h
++++ b/arch/arm/mach-bcm2708/include/mach/platform.h
+@@ -63,9 +63,12 @@
+ #define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO */
+ #define UART0_BASE               (BCM2708_PERI_BASE + 0x201000)	/* Uart 0 */
+ #define MMCI0_BASE               (BCM2708_PERI_BASE + 0x202000) /* MMC interface */
++#define SPI0_BASE		 (BCM2708_PERI_BASE + 0x204000) /* SPI0 */
++#define BSC0_BASE		 (BCM2708_PERI_BASE + 0x205000) /* BSC0 I2C/TWI */
+ #define UART1_BASE               (BCM2708_PERI_BASE + 0x215000) /* Uart 1 */
+ #define EMMC_BASE                (BCM2708_PERI_BASE + 0x300000) /* eMMC interface */
+ #define SMI_BASE		 (BCM2708_PERI_BASE + 0x600000) /* SMI */
++#define BSC1_BASE		 (BCM2708_PERI_BASE + 0x804000) /* BSC1 I2C/TWI */
+ #define USB_BASE                 (BCM2708_PERI_BASE + 0x980000) /* DTC_OTG USB controller */
+ #define MCORE_BASE               (BCM2708_PERI_BASE + 0x0000)   /* Fake frame buffer device (actually the multicore sync block*/
+ 
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index e9df461..6f0936d 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -319,6 +319,14 @@ config I2C_AU1550
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-au1550.
+ 
++config I2C_BCM2708
++	tristate "BCM2708 BSC"
++	depends on MACH_BCM2708
++	help
++	  Enabling this option will add BSC (Broadcom Serial Controller)
++	  support for the BCM2708. BSC is a Broadcom proprietary bus compatible
++	  with I2C/TWI/SMBus.
++
+ config I2C_BLACKFIN_TWI
+ 	tristate "Blackfin TWI I2C support"
+ 	depends on BLACKFIN
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 395b516..ee9ae96 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_I2C_POWERMAC)	+= i2c-powermac.o
+ # Embedded system I2C/SMBus host controller drivers
+ obj-$(CONFIG_I2C_AT91)		+= i2c-at91.o
+ obj-$(CONFIG_I2C_AU1550)	+= i2c-au1550.o
++obj-$(CONFIG_I2C_BCM2708)	+= i2c-bcm2708.o
+ obj-$(CONFIG_I2C_BLACKFIN_TWI)	+= i2c-bfin-twi.o
+ obj-$(CONFIG_I2C_CPM)		+= i2c-cpm.o
+ obj-$(CONFIG_I2C_DAVINCI)	+= i2c-davinci.o
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 1acae35..719a5a9 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -74,6 +74,14 @@ config SPI_ATMEL
+ 	  This selects a driver for the Atmel SPI Controller, present on
+ 	  many AT32 (AVR32) and AT91 (ARM) chips.
+ 
++config SPI_BCM2708
++	tristate "BCM2708 SPI controller driver (SPI0)"
++	depends on MACH_BCM2708
++	help
++	  This selects a driver for the Broadcom BCM2708 SPI master (SPI0). This
++	  driver is not compatible with the "Universal SPI Master" or the SPI slave
++	  device.
++
+ config SPI_BFIN5XX
+ 	tristate "SPI controller driver for ADI Blackfin5xx"
+ 	depends on BLACKFIN
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index c48df47..5fb3c96 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_SPI_ATH79)			+= spi-ath79.o
+ obj-$(CONFIG_SPI_AU1550)		+= spi-au1550.o
+ obj-$(CONFIG_SPI_BCM63XX)		+= spi-bcm63xx.o
+ obj-$(CONFIG_SPI_BFIN5XX)		+= spi-bfin5xx.o
++obj-$(CONFIG_SPI_BCM2708)		+= spi-bcm2708.o
+ obj-$(CONFIG_SPI_BFIN_SPORT)		+= spi-bfin-sport.o
+ obj-$(CONFIG_SPI_BITBANG)		+= spi-bitbang.o
+ obj-$(CONFIG_SPI_BUTTERFLY)		+= spi-butterfly.o
+-- 
+1.7.0.4
+

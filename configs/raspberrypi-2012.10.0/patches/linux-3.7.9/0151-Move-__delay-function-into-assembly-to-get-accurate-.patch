@@ -1,0 +1,71 @@
+From 974d9ad31e00b603e2a7be461e4b1cdb851eaf95 Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Wed, 26 Sep 2012 13:46:03 +0100
+Subject: [PATCH 151/195] Move __delay function into assembly to get accurate BogoMips
+
+---
+ arch/arm/mach-bcm2708/Makefile  |    2 +-
+ arch/arm/mach-bcm2708/bcm2708.c |    6 ------
+ arch/arm/mach-bcm2708/delay.S   |   20 ++++++++++++++++++++
+ 3 files changed, 21 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm/mach-bcm2708/delay.S
+
+diff --git a/arch/arm/mach-bcm2708/Makefile b/arch/arm/mach-bcm2708/Makefile
+index 164ecb2..3ee8a4b 100644
+--- a/arch/arm/mach-bcm2708/Makefile
++++ b/arch/arm/mach-bcm2708/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the linux kernel.
+ #
+ 
+-obj-$(CONFIG_MACH_BCM2708) 	+= clock.o bcm2708.o armctrl.o vcio.o power.o dma.o
++obj-$(CONFIG_MACH_BCM2708) 	+= clock.o bcm2708.o armctrl.o vcio.o power.o dma.o delay.o
+ obj-$(CONFIG_BCM2708_GPIO)	+= bcm2708_gpio.o
+ obj-$(CONFIG_BCM2708_VCMEM)	+= vc_mem.o
+ 
+diff --git a/arch/arm/mach-bcm2708/bcm2708.c b/arch/arm/mach-bcm2708/bcm2708.c
+index c9d6bd1..ac118a4 100644
+--- a/arch/arm/mach-bcm2708/bcm2708.c
++++ b/arch/arm/mach-bcm2708/bcm2708.c
+@@ -883,12 +883,6 @@ void __const_udelay(unsigned long scaled_usecs)
+ 	} while ((long)(now - start) <= usecs);
+ }
+ 
+-void __delay(int loops)
+-{
+-	while (--loops > 0)
+-		nop();
+-}
+-
+ MACHINE_START(BCM2708, "BCM2708")
+     /* Maintainer: Broadcom Europe Ltd. */
+     .map_io = bcm2708_map_io,.init_irq = bcm2708_init_irq,.timer =
+diff --git a/arch/arm/mach-bcm2708/delay.S b/arch/arm/mach-bcm2708/delay.S
+new file mode 100644
+index 0000000..4256d29
+--- /dev/null
++++ b/arch/arm/mach-bcm2708/delay.S
+@@ -0,0 +1,20 @@
++/*
++ *  linux/arch/arm/lib/delay.S
++ *
++ *  Copyright (C) 1995, 1996 Russell King
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/param.h>
++
++		.text
++@ Delay routine
++ENTRY(__delay)
++		subs	r0, r0, #1
++		bhi	__delay
++		mov	pc, lr
++ENDPROC(__delay)
+-- 
+1.7.0.4
+

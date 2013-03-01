@@ -1,0 +1,25 @@
+From c13db4202382838ccaa3badcd7399c99f840d96f Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Sat, 16 Jun 2012 23:26:28 +0100
+Subject: [PATCH 063/195] Fix bool/int error
+
+---
+ drivers/mmc/host/sdhci-bcm2708.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-bcm2708.c b/drivers/mmc/host/sdhci-bcm2708.c
+index 85bf3ce..eedd724 100644
+--- a/drivers/mmc/host/sdhci-bcm2708.c
++++ b/drivers/mmc/host/sdhci-bcm2708.c
+@@ -1492,7 +1492,7 @@ module_init(sdhci_drv_init);
+ module_exit(sdhci_drv_exit);
+ 
+ module_param(allow_highspeed, bool, 0444);
+-module_param(emmc_clock_freq, bool, 0444);
++module_param(emmc_clock_freq, int, 0444);
+ 
+ MODULE_DESCRIPTION("Secure Digital Host Controller Interface platform driver");
+ MODULE_AUTHOR("Broadcom <info@broadcom.com>");
+-- 
+1.7.0.4
+

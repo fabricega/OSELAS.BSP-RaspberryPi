@@ -1,0 +1,32 @@
+From 46bc788fa2b7f1573655eeb84ef93813d0ab51fb Mon Sep 17 00:00:00 2001
+From: popcornmix <popcornmix@gmail.com>
+Date: Thu, 27 Dec 2012 17:09:39 +0000
+Subject: [PATCH 192/195] Remove RTC_HCTOSYS as it produces a kernel boot error, and doesn't do anything with RTC kernel modules
+
+---
+ arch/arm/configs/bcmrpi_defconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/configs/bcmrpi_defconfig b/arch/arm/configs/bcmrpi_defconfig
+index 14d6ebf..92e98e6 100644
+--- a/arch/arm/configs/bcmrpi_defconfig
++++ b/arch/arm/configs/bcmrpi_defconfig
+@@ -793,7 +793,6 @@ CONFIG_USB_STORAGE_ONETOUCH=m
+ CONFIG_USB_STORAGE_KARMA=m
+ CONFIG_USB_STORAGE_CYPRESS_ATACB=m
+ CONFIG_USB_STORAGE_ENE_UB6250=m
+-CONFIG_USB_UAS=y
+ CONFIG_USB_LIBUSUAL=y
+ CONFIG_USB_MDC800=m
+ CONFIG_USB_MICROTEK=m
+@@ -880,6 +879,7 @@ CONFIG_LEDS_TRIGGER_TIMER=m
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+ CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
+ CONFIG_RTC_CLASS=y
++# CONFIG_RTC_HCTOSYS is not set
+ CONFIG_RTC_DRV_DS1307=m
+ CONFIG_RTC_DRV_DS1374=m
+ CONFIG_RTC_DRV_DS1672=m
+-- 
+1.7.0.4
+

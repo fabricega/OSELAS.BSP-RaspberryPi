@@ -1,0 +1,22 @@
+From 4e6737a3d66dcb7097dcee1bc646075c1badf11f Mon Sep 17 00:00:00 2001
+From: Oliver <oliver@zerolag.com>
+Date: Wed, 2 Jan 2013 14:23:45 +0100
+Subject: [PATCH 195/195] include/linux/version.h: Fix version constant
+
+The current value reflects linux 3.6 - this causes build failures in the
+dwc_otg module. Bumped to 3.7.1 ((3<<16) + (7<<8) + 1)
+---
+ include/linux/version.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/version.h b/include/linux/version.h
+index a6d0721..e49ee78 100644
+--- a/include/linux/version.h
++++ b/include/linux/version.h
+@@ -1,2 +1,2 @@
+-#define LINUX_VERSION_CODE 197643
++#define LINUX_VERSION_CODE 198401
+ #define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+-- 
+1.7.0.4
+
