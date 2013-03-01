@@ -1,0 +1,100 @@
+From 1b982d58bcf6de55c8b14e105841fe1d94e64adb Mon Sep 17 00:00:00 2001
+From: fabricega <pbpoubll798@gmail.com>
+Date: Sat, 9 Feb 2013 15:51:43 +0100
+Subject: [PATCH] Revert "[tvheadend] don't wait for an iframe but let tvheadend handle it"
+
+This reverts commit 560efbc5a901998a752270c8ca97581a7a482f7c.
+---
+ addons/pvr.hts/src/HTSPDemux.cpp |   16 +++++++++++++++-
+ addons/pvr.hts/src/HTSPDemux.h   |    1 +
+ 2 files changed, 16 insertions(+), 1 deletions(-)
+
+diff --git a/addons/pvr.hts/src/HTSPDemux.cpp b/addons/pvr.hts/src/HTSPDemux.cpp
+index b11e3a0..1eaef6b 100644
+--- a/addons/pvr.hts/src/HTSPDemux.cpp
++++ b/addons/pvr.hts/src/HTSPDemux.cpp
+@@ -34,6 +34,7 @@ CHTSPDemux::CHTSPDemux(CHTSPConnection* connection) :
+     m_subs(0),
+     m_channel(0),
+     m_tag(0),
++    m_bWaitForIFrame(false),
+     m_bIsOpen(false)
+ {
+   for (unsigned int i = 0; i < PVR_STREAM_MAX_STREAMS; i++)
+@@ -51,6 +52,7 @@ bool CHTSPDemux::Open(const PVR_CHANNEL &channelinfo)
+ {
+   m_channel              = channelinfo.iUniqueId;
+   m_bIsRadio             = channelinfo.bIsRadio;
++  m_bWaitForIFrame       = !channelinfo.bIsRadio;
+   m_bIsOpen              = false;
+   m_Streams.iStreamCount = 0;
+ 
+@@ -177,7 +179,7 @@ DemuxPacket* CHTSPDemux::Read()
+ 
+ void CHTSPDemux::ParseMuxPacket(htsmsg_t *msg)
+ {
+-  uint32_t    index, duration;
++  uint32_t    index, duration, frametype;
+   const void* bin;
+   size_t      binlen;
+   int64_t     ts;
+@@ -189,6 +191,11 @@ void CHTSPDemux::ParseMuxPacket(htsmsg_t *msg)
+     return;
+   }
+ 
++  // wait for an iframe as first packet for tv channels
++  if (m_bWaitForIFrame && (htsmsg_get_u32(msg, "frametype" , &frametype) || (char)frametype != 'I'))
++    return;
++  m_bWaitForIFrame = false;
++
+   DemuxPacket* pkt = PVR->AllocateDemuxPacket(binlen);
+   if (!pkt)
+     return;
+@@ -331,6 +338,7 @@ void CHTSPDemux::ParseSubscriptionStart(htsmsg_t *m)
+   }
+ 
+   m_Streams.iStreamCount = 0;
++  m_bWaitForIFrame       = false;
+ 
+   HTSMSG_FOREACH(f, streams)
+   {
+@@ -401,11 +409,15 @@ void CHTSPDemux::ParseSubscriptionStart(htsmsg_t *m)
+     {
+       newStreams.stream[newStreams.iStreamCount].iCodecType = AVMEDIA_TYPE_VIDEO;
+       newStreams.stream[newStreams.iStreamCount].iCodecId   = CODEC_ID_MPEG2VIDEO;
++      if (!m_bIsOpen)
++        m_bWaitForIFrame = true;
+     }
+     else if(!strcmp(type, "H264"))
+     {
+       newStreams.stream[newStreams.iStreamCount].iCodecType = AVMEDIA_TYPE_VIDEO;
+       newStreams.stream[newStreams.iStreamCount].iCodecId   = CODEC_ID_H264;
++      if (!m_bIsOpen)
++        m_bWaitForIFrame = true;
+     }
+     else if(!strcmp(type, "VP8"))
+     {
+@@ -416,6 +428,8 @@ void CHTSPDemux::ParseSubscriptionStart(htsmsg_t *m)
+     {
+       newStreams.stream[newStreams.iStreamCount].iCodecType = AVMEDIA_TYPE_VIDEO;
+       newStreams.stream[newStreams.iStreamCount].iCodecId   = CODEC_ID_MPEG4;
++      if (!m_bIsOpen)
++        m_bWaitForIFrame = true;
+     }
+     else if(!strcmp(type, "DVBSUB"))
+     {
+diff --git a/addons/pvr.hts/src/HTSPDemux.h b/addons/pvr.hts/src/HTSPDemux.h
+index 18d4360..a707c68 100644
+--- a/addons/pvr.hts/src/HTSPDemux.h
++++ b/addons/pvr.hts/src/HTSPDemux.h
+@@ -70,6 +70,7 @@ private:
+   SQuality                             m_Quality;
+   SSourceInfo                          m_SourceInfo;
+   std::map<int, unsigned int>          m_StreamIndex;
++  bool                                 m_bWaitForIFrame;
+   PLATFORM::SyncedBuffer<DemuxPacket*> m_demuxPacketBuffer;
+   bool                                 m_bIsOpen;
+ };
+-- 
+1.7.0.4
+
