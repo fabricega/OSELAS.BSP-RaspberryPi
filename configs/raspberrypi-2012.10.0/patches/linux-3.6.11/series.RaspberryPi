@@ -204,3 +204,4 @@
 0204-Add-config-options-for-netfilter-log-and-more-dvb-mo.patch
 0205-Add-more-dvb-modules.patch
 1000-Revert-Linux-logo.patch
+rtl28xxu.patch
