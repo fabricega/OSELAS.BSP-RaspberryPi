@@ -20,6 +20,7 @@ $0:	\n
 Usage: createSDCardRpi.sh /dev/sdx	[ -h ] \n	\n
 
 	/dev/sdX				\t\t\t\t: SD card device (shouls be: sda, sdb, sdc...)	\n
+	[ -f ]					\t\t\t\t: Full erase (even data partition) \n
 	[ -h | --help | -u | --usage ]		\t: This help \n \n
 
 	CAUTION: Take care not to use the device corresponding to you hard drive !\n
@@ -486,6 +487,8 @@ copy_datafs ()
 	if sudo mkdir $SD_MNT_PT/root; then echo -e "\tDone."; else echo -e "\tFailed."; fi
 	echo -n "creatind home folder on "$dev$part"3 ... "
 	if sudo mkdir $SD_MNT_PT/home; then echo -e "\tDone."; else echo -e "\tFailed."; fi
+	echo -n "creatind media folder on "$dev$part"3 ... "
+	if sudo mkdir $SD_MNT_PT/media; then echo -e "\tDone."; else echo -e "\tFailed."; fi
 
 	echo -n "Unmounting SD card datafs partition "$dev$part"3 ... "
 	if sudo umount $SD_MNT_PT >/dev/null 2>&1; then

@@ -10,6 +10,7 @@
 # bind
 /mnt/datafs/root /root		none	bind
 /mnt/datafs/home /home		none	bind
+/mnt/datafs/media /media	none	bind
 
 # special filesystems
 proc    /proc                   proc    defaults                        0 0
