@@ -64,6 +64,7 @@ XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include
 XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include/interface/vcos
 XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include/interface/vcos/pthreads
 XBMC_CFLAGS	+= -I$(SYSROOT)/usr/include/interface/vmcs_host/linux
+XBMC_CFLAGS	+= -Wno-psabi
 
 XBMC_ENV	:= $(CROSS_ENV) CFLAGS="$(XBMC_CFLAGS) -pipe -O3 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp -mabi=aapcs-linux -Wno-psabi -Wa,-mno-warn-deprecated -Wno-deprecated-declarations -fomit-frame-pointer" CPPFLAGS="$(XBMC_CFLAGS)" CXXFLAGS="$(XBMC_CFLAGS)"
 XBMC_PATH	:= PATH=$(CROSS_PATH):$(SYSROOT)/usr/bin
