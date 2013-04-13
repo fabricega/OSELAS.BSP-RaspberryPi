@@ -1,0 +1,62 @@
+#!/bin/sh
+
+ # command line arguments
+PARAMETERS=$@
+
+# detect & backup screen resolution
+RESOL=`fbset | grep mode | grep -v endmode | sed "s/\"/%/" | cut -d'%' -f2 | cut -d'-' -f1`
+XRES=`echo $RESOL | cut -d'x' -f1`
+YRES=`echo $RESOL | cut -d'x' -f2`
+
+# Declare usage display
+usage="
+$0:	\n
+	\n
+Usage: netsurf [url] [-d] \n	\n
+\t	url :\t\t\t\t 	URL (www.google.com by default) \n
+\t	-d | -D | -v | -V\t\t Debug/Verbose \n
+\t	-h | --help | -u | --usage\t This help \n
+\n
+\n
+"
+
+
+# Check Parameters
+get_param()
+{
+#	if [ -z "$PARAMETERS" ] ; then
+#		PARAMETERS="--usage"
+#	fi
+
+	for PARAM in $PARAMETERS ; do
+		case $PARAM in
+		-h | --help | -u | --usage )
+			echo -e $usage
+			exit 1
+			;;
+		-d | -D | -v | -V )
+			DEBUG=1
+			;;
+		www* )
+			URL="$PARAM"
+			;;
+		* )
+			echo "Unknown option $PARAM !!!"
+			exit
+			;;
+		esac
+	done
+
+	# Check parameters
+	if [ -z "$URL" ]; then URL="www.google.com"; fi
+}
+
+# Read command line args
+get_param
+
+if [ -n "$DEBUG" ]; then
+	echo "/usr/bin/netsurf.bin -b 16 -w $XRES -h $YRES $URL"
+fi
+
+/usr/bin/netsurf.bin -b 16 -w $XRES -h $YRES $URL
+
