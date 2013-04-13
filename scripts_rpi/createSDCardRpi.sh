@@ -275,6 +275,11 @@ gen_config_txt()
 {
 	echo -n "Creating config.txt ..."
 	if sudo sh -c "cat > $1/config.txt << EOF
+
+# enable experimental support for MJPEG, VP6, VP8, Ogg Theora, Ogg Vorbis
+# start_file=start_x.elf
+# fixup_file=fixup_x.elf
+
 #arm_freq=1000
 #core_freq=500
 #sdram_freq=500
@@ -291,6 +296,10 @@ gpu_mem_256=100
 gpu_mem_512=256
 
 #framebuffer_ignore_alpha=1
+
+# Disable overscan if you see (unused) black borders on framebuffer
+disable_overscan=1
+
 EOF"
 	then
 		echo -e "\tDone."

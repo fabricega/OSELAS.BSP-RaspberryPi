@@ -1,7 +1,8 @@
 system=fbdev
 #system=sdl
 #no-vt
-mode=1824x984
+mode=1920x1080
+#mode=1824x984
 #mode=1280x720
 #mode=1024x768
 #mode=800x600
