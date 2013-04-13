@@ -2,3 +2,4 @@
 netsurf-2.9-buildsystem.patch -p0
 netsurf-2.9-conditionally-include-image-headers.patch -p0
 netsurf-2.9-includes.patch -p0
+nsfb-F4-exit.patch

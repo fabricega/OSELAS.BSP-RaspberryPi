@@ -1,0 +1,19 @@
+From https://github.com/pld-linux/netsurf/blob/master/enable-nsfb.patch
+Thanks !
+
+--- netsurf-2.9/netsurf-2.9/framebuffer/fbtk/event.c.f10	2013-01-09 20:36:52.505933180 +0100
++++ netsurf-2.9/netsurf-2.9/framebuffer/fbtk/event.c	2013-01-09 20:37:38.776648741 +0100
+@@ -199,6 +199,13 @@ fbtk_event(fbtk_widget_t *root, nsfb_eve
+ 	switch (event->type) {
+ 	case NSFB_EVENT_KEY_DOWN:
+ 	case NSFB_EVENT_KEY_UP:
++		if (event->value.keycode == NSFB_KEY_F4) {
++			event->type = NSFB_EVENT_CONTROL;
++			event->value.controlcode = NSFB_CONTROL_QUIT;
++			unused = true;
++			break;
++		}
++
+ 		if ((event->value.controlcode >= NSFB_KEY_MOUSE_1) &&
+ 		    (event->value.controlcode <= NSFB_KEY_MOUSE_5)) {
+ 			fbtk_click(root, event);
