@@ -1,0 +1,27 @@
+#xbmc-001-add_support_to_specify_GIT_REV-0.1.patch
+xbmc-321-texturepacker-hostflags-and-rework.patch
+#xbmc-454-disable_backslash-0.1.patch
+xbmc-463-add_remote_devinput-0.1.patch
+
+#xbmc-891-watchdog.patch
+
+# 12.1.4
+#xbmc-990.01-PR1934.patch
+#xbmc-990.02-PR2193.patch
+#xbmc-990.03-PR2449-1.patch
+#xbmc-990.04-PR2231.patch
+#xbmc-990.05-PR2403-01.patch
+#xbmc-990.06-omxplayer-reevaluate_HasVideoAudio_after_a_stream_change.patch
+#xbmc-990.07-PR2435.patch
+#xbmc-995.01-xvba_support-39f578c.patch
+#xbmc-995.03-OMXPlayer-Audio-fix_incorrect_usage_of_flag_talled.patch
+#xbmc-995.04-OMXPlayer-some_caching_fixes_for_pvr.patch
+
+# 17411f2
+xbmc-995.01-xvba_support-028576f.patch
+
+#xbmc-995.09-revert-rpi-fixes.patch
+#xbmc-995.10-xvba_rpi_fixes-059b89b.patch
+#rbp-Avoid-blocking-the-video-thread-keeping-the-vide.patch
+irremote-chinavasion_CVSB-983.patch
+
