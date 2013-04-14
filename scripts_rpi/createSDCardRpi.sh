@@ -277,8 +277,8 @@ gen_config_txt()
 	if sudo sh -c "cat > $1/config.txt << EOF
 
 # enable experimental support for MJPEG, VP6, VP8, Ogg Theora, Ogg Vorbis
-# start_file=start_x.elf
-# fixup_file=fixup_x.elf
+start_file=start_x.elf
+fixup_file=fixup_x.elf
 
 #arm_freq=1000
 #core_freq=500
@@ -286,8 +286,12 @@ gen_config_txt()
 #over_voltage=6
 
 arm_freq=900
-gpu_freq=350
-sdram_freq=500
+core_freq=450
+sdram_freq=450
+
+#arm_freq=930
+#gpu_freq=350
+#sdram_freq=500
 
 # gpu_mem_256 GPU memory in megabyte for the 256MB Raspberry Pi. Ignored by the 512MB RP. Overrides gpu_mem. Max 192. Default not set
 gpu_mem_256=100
