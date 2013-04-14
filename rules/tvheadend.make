@@ -16,8 +16,8 @@ PACKAGES-$(PTXCONF_TVHEADEND) += tvheadend
 #
 # Paths and names
 #
-TVHEADEND_VERSION	:= 3.2.18
-TVHEADEND_MD5		:= e1cf63cf2ae8b000e77eb313968f6b7b
+TVHEADEND_VERSION	:= v3.5
+TVHEADEND_MD5		:= 68eb67615fbb2d55e7db7f8304a724de
 TVHEADEND		:= tvheadend-$(TVHEADEND_VERSION)
 TVHEADEND_SUFFIX	:= tar.gz
 TVHEADEND_URL		:= https://github.com/tvheadend/tvheadend/archive/$(TVHEADEND_VERSION).$(TVHEADEND_SUFFIX) \
