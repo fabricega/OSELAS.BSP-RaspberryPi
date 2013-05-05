@@ -30,7 +30,7 @@ W_SCAN_LICENSE	:= unknown
 # ----------------------------------------------------------------------------
 W_SCAN_CFLAGS	:= $(CROSS_CFLAGS)
 W_SCAN_CFLAGS	+= $(CROSS_CPPFLAGS)
-W_SCAN_CFLAGS	+= -I$(SYSROOT)/lib/modules/$(KERNEL_VERSION)/source/include
+#W_SCAN_CFLAGS	+= -I$(SYSROOT)/lib/modules/$(KERNEL_VERSION)/source/include
 W_SCAN_ENV	:= $(CROSS_ENV) CFLAGS="$(W_SCAN_CFLAGS)"
 
 #

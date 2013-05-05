@@ -1,0 +1,26 @@
+Index: firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4/hardfp/opt/vc/include/interface/vmcs_host/vcgencmd.h
+===================================================================
+--- firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4.orig/hardfp/opt/vc/include/interface/vmcs_host/vcgencmd.h	2013-05-04 14:14:01.000000000 +0200
++++ firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4/hardfp/opt/vc/include/interface/vmcs_host/vcgencmd.h	2013-05-04 14:14:50.000000000 +0200
+@@ -30,7 +30,7 @@
+ #ifndef GENCMD_H
+ #define GENCMD_H
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "interface/vchi/vchi.h"
+ 
+ VCHPRE_ void VCHPOST_ vc_vchi_gencmd_init(VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T **connections, uint32_t num_connections );
+Index: firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4/opt/vc/include/interface/vmcs_host/vcgencmd.h
+===================================================================
+--- firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4.orig/opt/vc/include/interface/vmcs_host/vcgencmd.h	2013-05-04 14:14:01.000000000 +0200
++++ firmware-f90b104f4ba8acd14a622b52d1526487a83b62a4/opt/vc/include/interface/vmcs_host/vcgencmd.h	2013-05-04 14:14:47.000000000 +0200
+@@ -30,7 +30,7 @@
+ #ifndef GENCMD_H
+ #define GENCMD_H
+ 
+-#include "vchost_config.h"
++#include "interface/vmcs_host/linux/vchost_config.h"
+ #include "interface/vchi/vchi.h"
+ 
+ VCHPRE_ void VCHPOST_ vc_vchi_gencmd_init(VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T **connections, uint32_t num_connections );

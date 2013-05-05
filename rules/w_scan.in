@@ -3,5 +3,6 @@
 config W_SCAN
 	tristate
 	prompt "w_scan"
+	select KERNEL_HEADER
 	help
 	  FIXME
